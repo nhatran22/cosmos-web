@@ -1,0 +1,160 @@
+/* src/styles/Header.module.css */
+
+.header {
+  background-color: #333;
+  color: white;
+}
+
+.navContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  flex-wrap: wrap; /* Cho phép các phần tử trong container được bọc lại trên màn hình nhỏ */
+}
+
+.navList {
+  list-style: none;
+  display: flex;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+  height: 100%;
+  align-items: center;
+}
+
+.navItem {
+  margin-right: 20px;
+  position: relative;
+  height: 100%;
+}
+
+.navItem a {
+  color: black;
+  padding: 8px 12px;
+  display: block;
+  font-weight: bold;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.navItem a:hover {
+  color: #0a9315;
+}
+
+.linkContainer {
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center;     /* Căn giữa theo chiều dọc */
+    height: 100%;
+}
+
+.linkContainer:hover {
+    border-bottom: 2px solid #0a9315;
+}
+
+.dropdown {
+  position: relative;
+  height: 100%;
+}
+
+.dropdown:hover {
+  color: #0a9315;
+}
+
+.dropdown:hover .dropdownMenu {
+  display: flex;
+}
+
+.dropdownMenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  padding: 10px 0;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.dropdownMenu li {
+  padding: 8px 12px;
+  text-decoration: none;
+}
+
+.dropdownMenu li a {
+  color: #0a9315;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.dropdownMenu li a:hover {
+  border-radius: 4px;
+}
+
+.dropdownList {
+    display: flex;
+    list-style: none;
+}
+
+/* Responsive styles */
+.hamburgerMenu {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.hamburgerMenu div {
+  width: 25px;
+  height: 3px;
+  margin: 4px;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+/* Khi màn hình nhỏ hơn 768px */
+@media (max-width: 768px) {
+  .navList {
+    display: none; /* Ẩn menu khi chưa mở hamburger */
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+  }
+
+  .navItem {
+    margin: 10px 0;
+    height: 80px;
+  }
+
+  .navItem a {
+    font-size: 18px;
+  }
+
+  /* Hiển thị hamburger menu */
+  .hamburgerMenu {
+    display: flex;
+  }
+
+  .hamburgerMenu.active div:nth-child(1) {
+    transform: rotate(-45deg);
+    position: relative;
+    top: 6px;
+  }
+
+  .hamburgerMenu.active div:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburgerMenu.active div:nth-child(3) {
+    transform: rotate(45deg);
+    position: relative;
+    top: -6px;
+  }
+
+  /* Hiển thị menu khi click vào hamburger */
+  .navList.active {
+    display: flex;
+  }
+}

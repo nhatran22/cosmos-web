@@ -1,0 +1,60 @@
+/* src/styles/globals.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #333;
+}
+
+p {
+  color: #555;
+  line-height: 1.6;
+}
+
+/* Responsive - Mặc định khi màn hình nhỏ */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+
+  /* Giảm kích thước hình ảnh trên màn hình nhỏ */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* Màn hình desktop */
+@media (min-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  p {
+    font-size: 1.2rem;
+  }
+
+  /* Điều chỉnh hình ảnh */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
