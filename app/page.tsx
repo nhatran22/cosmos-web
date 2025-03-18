@@ -26,12 +26,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section */}
       <section className="bg-gray-50">
         <SolutionSection />
       </section>
-
-      {/* Services Section */}
       <section>
         <ProductSection />
       </section>

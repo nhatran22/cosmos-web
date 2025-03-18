@@ -3,13 +3,13 @@ import BreadcrumbNav from '@/components/breadcrumb-nav';
 
 export default function Overview() {
   return (
-    <div className="pt-20">
+    <div>
       <BreadcrumbNav />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-gray-900 mb-6">About Us</h1>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
@@ -33,7 +33,7 @@ export default function Overview() {
               </p>
             </div>
           </div>
-          
+
           <div>
             <div className="relative h-[600px] rounded-lg overflow-hidden shadow-xl">
               <Image

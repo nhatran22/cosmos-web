@@ -1,4 +1,9 @@
+'use client';
+
 import Link from 'next/link';
+import Image from 'next/image';
+import { navigation } from './mock/header-navigation';
+import { cn } from '@/lib/utils';
 
 const Footer = () => {
   return (
@@ -38,7 +43,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="bg-gray-100 py-6 text-center text-gray-400">
-        <p>&copy; {new Date().getFullYear()} Cosmos. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Cosmos Web. All rights reserved.</p>
       </div>
     </footer>
   );
