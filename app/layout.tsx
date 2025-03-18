@@ -9,8 +9,9 @@ import FloatingIcons from '@/components/floating-icons';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'ACWA Power Clone',
+  title: 'Cosmos Web',
   description: 'A modern energy and water company',
+  icons: '/other/cosmos-web-icon.png'
 };
 
 export default function RootLayout({

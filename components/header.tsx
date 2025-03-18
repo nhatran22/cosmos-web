@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { navigation } from './mock/header-navigation';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,114 +18,6 @@ const Header = () => {
         : [...prev, sectionName]
     );
   };
-
-  const navigation = [
-    {
-      name: 'Home',
-      href: '/',
-    },
-    {
-      name: 'About Us',
-      href: '/about',
-      submenu: [
-        {
-          title: 'Our Company',
-          items: [
-            { name: 'Overview', href: '/about/overview' },
-            { name: 'Leadership', href: '/about/leadership' },
-            { name: 'History', href: '/about/history' },
-          ]
-        },
-        {
-          title: 'Join Us',
-          items: [
-            { name: 'Careers', href: '/careers' },
-            { name: 'Culture', href: '/about/culture' },
-            { name: 'Benefits', href: '/about/benefits' },
-          ]
-        }
-      ]
-    },
-    {
-      name: 'Product',
-      href: '#',
-      submenu: [
-        {
-          title: 'Residental Hybrid Inverter',
-          items: [
-            { name: 'SH Series Residental PCS', href: '/products/sh-series' },
-            { name: 'TH Series Residental PCS', href: '/products/th-series' },
-          ]
-        },
-        {
-          title: 'Industrial & commercial',
-          items: [
-            { name: 'CSH Series Industrial & comm...', href: '/products/csh-series' },
-            { name: 'CSR Series Industrial & comm...', href: '/products/csr-series' },
-            { name: 'CST Series Industrial & comm...', href: '/products/cst-series' },
-          ]
-        },
-        {
-          title: 'UPS Power Supply',
-          items: [
-            { name: 'ACM Series Modular UPS', href: '/products/acm-series' },
-            { name: 'ACT Series Three-Phase UPS', href: '/products/act-series' },
-            { name: 'ACM Series Modular UPS(480V)', href: '/products/acm-series-480v' },
-            { name: 'ACM Series Modular UPS(208V)', href: '/products/acm-series-208v' },
-            { name: 'ACS Tower Series', href: '/products/acs-tower' },
-            { name: 'ACS Rack Series', href: '/products/acs-rack' },
-          ]
-        },
-        {
-          title: 'Modular Data Center',
-          items: [
-            { name: 'AC5000 Series MDC', href: '/products/ac5000-series' },
-          ]
-        },
-        {
-          title: 'Precision Cooling',
-          items: [
-            { name: 'HA Series In-row cooling', href: '/products/ha-series' },
-            { name: 'BA Series Room Cooling', href: '/products/ba-series' },
-            { name: 'MA Series Large Room Cooling', href: '/products/ma-series' },
-          ]
-        }
-      ]
-    },
-    {
-      name: 'Solution',
-      href: '#',
-      submenu: [
-        {
-          title: 'Data Center Critical Infrastructure',
-          items: [
-            { name: 'Intelligent Modular Data Center', href: '/solutions/data-center' },
-          ]
-        },
-        {
-          title: 'New Energy Storage System',
-          items: [
-            { name: 'Residential Storage Hybrid Inverter', href: '/solutions/residential-storage' },
-            { name: 'Industrial & commercial Storage', href: '/solutions/commercial-storage' },
-          ]
-        }
-      ]
-    },
-    {
-      name: 'Service Support',
-      href: '#',
-      submenu: [
-        {
-          title: 'Contact Us',
-          items: [
-            { name: 'Technical Support', href: '/support/technical' },
-            { name: 'Sales Inquiry', href: '/support/sales' },
-            { name: 'Service Locations', href: '/support/locations' },
-          ]
-        }
-      ]
-    }
-  ];
 
   return (
     <header className="fixed w-full bg-white z-50 shadow-sm">
@@ -144,12 +37,12 @@ const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
+          <div className="hidden lg:flex justify-center items-center gap-x-8 h-full">
             {navigation.map((item) => (
-              <div key={item.name} className="relative group">
+              <div key={item.name} className="relative group hover:border-b-2 hover:border-green-600">
                 <Link
                   href={item.href}
-                  className="px-4 py-2 text-[18px] text-gray-700 hover:text-gray-900 font-medium"
+                  className="px-4 py-2 text-[18px] text-gray-700 hover:text-green-600 font-medium"
                   onClick={(e) => {
                     if (item.submenu) {
                       // e.preventDefault();
@@ -160,16 +53,32 @@ const Header = () => {
                 </Link>
 
                 {item.submenu && (
-                  <div className="absolute left-1/2 -translate-x-1/2 pt-7 w-screen min-w-[20px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                  <div
+                    className="absolute left-1/2 -translate-x-1/2 pt-7 w-screen min-w-[20px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50"
+                    style={{
+                      width: `${(!item.submenu[0].items ? 1 : item.submenu.length) * 150}px`,
+                      height: `20px`
+                    }}
+                  >
                     <div className="bg-white rounded-lg shadow-xl border border-gray-100">
-                      <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className={`px-6 py-4 ${item.submenu.length >= 2 ? 'grid grid-flow-col grid-rows-2' : 'flex'} gap-4`}>
                         {item.submenu.map((section) => (
-                          <div key={section.title} className="space-y-4">
-                            <h3 className="font-semibold text-gray-900 border-b border-gray-200 pb-2 text-green-600">
-                              {section.title}
-                            </h3>
+                          <div key={section.title}>
+                            {section.items && (
+                              <h3 className="font-semibold text-gray-900 border-b border-gray-200 pb-2 text-green-600 text-ellipsis overflow-hidden whitespace-nowrap">
+                                {section.title}
+                              </h3>
+                            )}
+                            {!section.items && (
+                              <Link
+                                href={section.href!}
+                                className="text-sm text-gray-600 hover:text-green-600 block transition-colors duration-200"
+                              >
+                                {section.title}
+                              </Link>
+                            )}
                             <ul className="space-y-2">
-                              {section.items.map((subItem) => (
+                              {section.items && section.items.map((subItem) => (
                                 <li key={subItem.name}>
                                   <Link
                                     href={subItem.href}
@@ -237,7 +146,7 @@ const Header = () => {
                             {section.title}
                           </h3>
                           <ul className="space-y-1">
-                            {section.items.map((subItem) => (
+                            {section.items && section.items.map((subItem) => (
                               <li key={subItem.name}>
                                 <Link
                                   href={subItem.href}
