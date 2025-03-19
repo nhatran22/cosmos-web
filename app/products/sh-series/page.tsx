@@ -1,20 +1,17 @@
 import Image from 'next/image';
-import BreadcrumbNav from '@/components/breadcrumb-nav';
 
 export default function SHSeries() {
   return (
-    <div className="pt-20">
-      <BreadcrumbNav />
-
+    <div>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold text-gray-900 mb-6">SH Series Residential PCS</h1>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Product Overview</h2>
             <div className="prose max-w-none text-gray-600 space-y-4">
               <p>
-                The SH series hybrid inverter is designed for residential solar-plus-storage applications, 
+                The SH series hybrid inverter is designed for residential solar-plus-storage applications,
                 offering high efficiency and reliable performance for home energy management.
               </p>
               <ul className="list-disc pl-6 space-y-2">
@@ -26,7 +23,7 @@ export default function SHSeries() {
               </ul>
             </div>
           </div>
-          
+
           <div>
             <div className="relative h-[400px] rounded-lg overflow-hidden shadow-xl">
               <Image

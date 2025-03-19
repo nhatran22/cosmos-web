@@ -4,8 +4,27 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { navigation } from './mock/header-navigation';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 const Footer = () => {
+  const router = useRouter();
+
+  const handleProductClick = (category: string) => {
+    // Lưu category đã chọn vào localStorage để sử dụng sau khi chuyển trang
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('selectedProductCategory', category);
+    }
+    router.push('/products');
+  };
+
+  const handleSolutionClick = (category: string) => {
+    // Lưu category đã chọn vào localStorage để sử dụng sau khi chuyển trang
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('selectedSolutionCategory', category);
+    }
+    router.push('/solutions');
+  };
+
   return (
     <footer className="bg-gray-50 text-black">
       <div className="container mx-auto py-6">
@@ -13,25 +32,25 @@ const Footer = () => {
           <div>
             <h3 className="text-[18px] font-normal mb-4">About Us</h3>
             <ul className="space-y-2 text-gray-400 text-[12px]">
-              <li><Link href="/about" className="hover:text-green-600">Our Company</Link></li>
-              <li><Link href="/projects" className="hover:text-green-600">Join Us</Link></li>
+              <li><Link href="/about/overview" className="hover:text-green-600">Our Company</Link></li>
+              <li><Link href="/about/join-us" className="hover:text-green-600">Join Us</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="text-[18px] font-normal mb-4">Product Center</h3>
             <ul className="space-y-2 text-gray-400 text-[12px]">
-              <li><Link href="/about" className=" hover:text-green-600">UPS Power Supply</Link></li>
-              <li><Link href="/projects" className=" hover:text-green-600">Modular Data Center</Link></li>
-              <li><Link href="/projects" className=" hover:text-green-600">Precision Cooling</Link></li>
-              <li><Link href="/projects" className=" hover:text-green-600">Household Hybrid Inverter</Link></li>
-              <li><Link href="/projects" className=" hover:text-green-600">Industrial Hybrid Inverter</Link></li>
+              <li><button onClick={() => handleProductClick('UPS Power Supply')} className="hover:text-green-600 text-left">UPS Power Supply</button></li>
+              <li><button onClick={() => handleProductClick('Modular Data Center')} className="hover:text-green-600 text-left">Modular Data Center</button></li>
+              <li><button onClick={() => handleProductClick('Precision Cooling')} className="hover:text-green-600 text-left">Precision Cooling</button></li>
+              <li><button onClick={() => handleProductClick('Residental Hybrid Inverter')} className="hover:text-green-600 text-left">Household Hybrid Inverter</button></li>
+              <li><button onClick={() => handleProductClick('Industrial & commercial')} className="hover:text-green-600 text-left">Industrial Hybrid Inverter</button></li>
             </ul>
           </div>
           <div>
             <h3 className="text-[18px] font-normal mb-4">Solution</h3>
             <ul className="space-y-2 text-gray-400 text-[12px]">
-              <li><Link href="/about" className="hover:text-green-600">Data Center Critical Infrastructure</Link></li>
-              <li><Link href="/projects" className="hover:text-green-600">New Energy Storage System Solutions</Link></li>
+              <li><button onClick={() => handleSolutionClick('Data Center Critical Infrastructure')} className="hover:text-green-600 text-left">Data Center Critical Infrastructure</button></li>
+              <li><button onClick={() => handleSolutionClick('New Energy Storage System')} className="hover:text-green-600 text-left">New Energy Storage System Solutions</button></li>
             </ul>
           </div>
           <div>

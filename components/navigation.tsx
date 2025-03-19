@@ -82,7 +82,7 @@ const Navigation = () => {
                         {navigation.map((item) => (
                             <div key={item.name} className="relative group">
                                 <Link
-                                    href={item.href}
+                                    href={item.href || '/'}
                                     className="px-3 py-2 text-[16px] font-medium text-gray-700 hover:text-green-600 border-b-2 border-transparent hover:border-current transition-colors duration-300"
                                 >
                                     {item.name}
@@ -101,13 +101,17 @@ const Navigation = () => {
                                                 {item.submenu.map((section) => (
                                                     <div key={section.title}>
                                                         {section.items ? (
-                                                            <h3 className="font-semibold text-gray-900 border-b border-gray-200 pb-2 text-green-600 text-ellipsis overflow-hidden whitespace-nowrap">
-                                                                {section.title}
-                                                            </h3>
+                                                            <Link
+                                                                href={section.href || '/'}
+                                                            >
+                                                                <h3 className="font-semibold text-gray-900 pb-2 text-green-600 text-ellipsis overflow-hidden whitespace-nowrap hover:underline">
+                                                                    {section.title}
+                                                                </h3>
+                                                            </Link>
                                                         ) : (
                                                             <Link
-                                                                href={section.href!}
-                                                                className="text-sm text-gray-600 hover:text-green-600 block transition-colors duration-200"
+                                                                href={section.href || '/'}
+                                                                className="text-sm text-gray-600 hover:text-green-600 block transition-colors duration-200 hover:underline"
                                                             >
                                                                 {section.title}
                                                             </Link>
@@ -116,8 +120,8 @@ const Navigation = () => {
                                                             {section.items?.map((subItem) => (
                                                                 <li key={subItem.name}>
                                                                     <Link
-                                                                        href={subItem.href}
-                                                                        className="text-sm text-gray-600 hover:text-green-600 block transition-colors duration-200"
+                                                                        href={subItem.href || '/'}
+                                                                        className="text-sm text-gray-600 hover:text-green-600 block transition-colors duration-200 hover:underline"
                                                                     >
                                                                         {subItem.name}
                                                                     </Link>
@@ -184,7 +188,7 @@ const Navigation = () => {
                                                         {section.items?.map((subItem) => (
                                                             <li key={subItem.name}>
                                                                 <Link
-                                                                    href={subItem.href}
+                                                                    href={subItem.href || '/'}
                                                                     className="block py-2 text-sm text-gray-600 hover:text-green-600"
                                                                 >
                                                                     {subItem.name}

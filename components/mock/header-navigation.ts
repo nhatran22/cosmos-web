@@ -12,6 +12,7 @@ interface SubMenu {
 interface SubItem {
     name: string;
     href: string;
+    fullName?: string;
 }
 
 export const navigation: NavBar[] = [
@@ -21,88 +22,104 @@ export const navigation: NavBar[] = [
     },
     {
         name: 'About Us',
-        href: '/about',
+        href: '/about/overview',
         submenu: [
             {
                 title: 'Our Company',
                 href: '/about/overview',
-                image: '/images/our-company.jpg'  // Thêm hình ảnh cho submenu này
+                image: '/images/our-company.jpg'
             },
             {
                 title: 'Join Us',
                 href: '/about/join-us',
-                image: '/images/join-us.jpg'  // Thêm hình ảnh cho submenu này
+                image: '/images/join-us.jpg'
             }
         ]
     },
     {
         name: 'Product',
-        href: '#',
+        href: '/products',
         submenu: [
             {
-                title: 'Residental Hybrid Inverter',
+                title: 'UPS Power Supply',
+                href: '/products',
                 items: [
-                    { name: 'SH Series Residental PCS', href: '/products/sh-series' },
-                    { name: 'TH Series Residental PCS', href: '/products/th-series' },
+                    {
+                        name: 'ACM Series Modular UPS',
+                        href: '/products/ups-power-supply',
+                        fullName: 'ACM Series Modular UPS'
+                    },
+                    { name: 'ACT Series Three-Phase UPS', href: '#', fullName: 'ACT Series Three-Phase UPS' },
+                    { name: 'ACM Series Modula UPS(480V)', href: '#', fullName: 'ACM Series Modula UPS(480V)' },
+                    { name: 'ACM Series Modula UPS(208V)', href: '#', fullName: 'ACM Series Modula UPS(208V)' },
+                    { name: 'ACS Tower Series', href: '#', fullName: 'ACS Tower Series' },
+                    { name: 'ACS Rack Series', href: '#', fullName: 'ACS Rack Series' },
+                ],
+            },
+            {
+                title: 'Precision Cooling',
+                href: '/products',
+                items: [
+                    {
+                        name: 'HA-Series In-row Cooling',
+                        href: '/products/precision-cooling',
+                        fullName: 'HA-Series In-row Cooling'
+                    },
+                    { name: 'BA Series Room Cooling', href: '#', fullName: 'BA Series Small Room Precision Cooling' },
+                    { name: 'MA Series Large Room Precision Cooling', href: '#', fullName: 'MA Series Large Room Precision Cooling' },
+                ],
+            },
+            {
+                title: 'Residental Hybrid Inverter',
+                href: '/products',
+                items: [
+                    { name: 'SH Series Residental PCS', href: '/products/sh-series', fullName: 'SH Series Residental PCS' },
+                    { name: 'TH Series Residental PCS', href: '/products/th-series', fullName: 'TH Series Residental PCS' },
                 ]
             },
             {
                 title: 'Industrial & commercial',
+                href: '/products',
                 items: [
-                    { name: 'CSH Series Industrial & comm...', href: '/products/csh-series' },
-                    { name: 'CSR Series Industrial & comm...', href: '/products/csr-series' },
-                    { name: 'CST Series Industrial & comm...', href: '/products/cst-series' },
-                ]
-            },
-            {
-                title: 'UPS Power Supply',
-                items: [
-                    { name: 'ACM Series Modular UPS', href: '/products/acm-series' },
-                    { name: 'ACT Series Three-Phase UPS', href: '/products/act-series' },
-                    { name: 'ACM Series Modular UPS(480V)', href: '/products/acm-series-480v' },
-                    { name: 'ACM Series Modular UPS(208V)', href: '/products/acm-series-208v' },
-                    { name: 'ACS Tower Series', href: '/products/acs-tower' },
-                    { name: 'ACS Rack Series', href: '/products/acs-rack' },
+                    { name: 'CSH Series', href: '/products/csh-series', fullName: 'CSH Series Industrial & Commercial Hybrid Inverter' },
+                    { name: 'CSR Series', href: '/products/csr-series', fullName: 'CSR Series Industrial & Commercial Hybrid Inverter' },
+                    { name: 'CST Series', href: '/products/cst-series', fullName: 'CST Series Industrial & Commercial Hybrid Inverter' },
                 ]
             },
             {
                 title: 'Modular Data Center',
+                href: '/products',
                 items: [
-                    { name: 'AC5000 Series MDC', href: '/products/ac5000-series' },
+                    { name: 'AC5000 Series MDC', href: '/products/ac5000-series', fullName: 'AC5000 Series Modular Data Center' },
                 ]
             },
-            {
-                title: 'Precision Cooling',
-                items: [
-                    { name: 'HA Series In-row cooling', href: '/products/ha-series' },
-                    { name: 'BA Series Room Cooling', href: '/products/ba-series' },
-                    { name: 'MA Series Large Room Cooling', href: '/products/ma-series' },
-                ]
-            }
         ]
     },
     {
         name: 'Solution',
-        href: '#',
+        href: '/solutions',
         submenu: [
             {
                 title: 'Data Center Critical Infrastructure',
+                href: '/solutions',
                 items: [
                     { name: 'Intelligent Modular Data Center', href: '/solutions/data-center' },
                 ]
             },
             {
                 title: 'New Energy Storage System',
+                href: '/solutions',
                 items: [
                     { name: 'Residential Storage Hybrid Inverter', href: '/solutions/residential-storage' },
-                    { name: 'Industrial & commercial Storage', href: '/solutions/commercial-storage' },
+                    { name: 'Industrial & Commercial Storage', href: '/solutions/commercial-storage' },
+                    { name: 'Utility-Scale Storage', href: '/solutions/utility-scale-storage' },
                 ]
             }
         ]
     },
     {
         name: 'Service Support',
-        href: '#',
+        href: '/support',
         submenu: [
             {
                 title: 'Contact Us', href: '/support/technical'
