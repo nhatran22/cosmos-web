@@ -6,6 +6,7 @@ interface SubMenu {
     title: string;
     href?: string;
     image?: string;
+    fullName?: string;
     items?: SubItem[];
 }
 
@@ -42,6 +43,7 @@ export const navigation: NavBar[] = [
         submenu: [
             {
                 title: 'UPS Power Supply',
+                fullName: 'UPS Power Suppy',
                 href: '/products',
                 items: [
                     {
@@ -58,6 +60,7 @@ export const navigation: NavBar[] = [
             },
             {
                 title: 'Precision Cooling',
+                fullName: 'Precision Cooling',
                 href: '/products',
                 items: [
                     {
@@ -71,6 +74,7 @@ export const navigation: NavBar[] = [
             },
             {
                 title: 'Residental Hybrid Inverter',
+                fullName: 'Residential Hybrid Inverter(Coming Soon)',
                 href: '/products',
                 items: [
                     { name: 'SH Series Residental PCS', href: '/products/sh-series', fullName: 'SH Series Residental PCS' },
@@ -78,7 +82,8 @@ export const navigation: NavBar[] = [
                 ]
             },
             {
-                title: 'Industrial & commercial',
+                title: 'Industrial & Commercial Hybrid',
+                fullName: 'Industrial and Commercial Hybrid Inverter',
                 href: '/products',
                 items: [
                     { name: 'CSH Series', href: '/products/csh-series', fullName: 'CSH Series Industrial & Commercial Hybrid Inverter' },

@@ -99,7 +99,7 @@ export default function ProductSection() {
                         <div className="flex justify-center items-center gap-x-10">
                             <div className="relative h-64">
                                 <Image
-                                    src="/product/modular-data-center.png"
+                                    src="/product/modular/ac500.png"
                                     height={400}
                                     width={300}
                                     alt="Modular Data Center"

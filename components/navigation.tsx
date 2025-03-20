@@ -39,6 +39,8 @@ const Navigation = () => {
         };
     }, []);
 
+    console.log(navigation);
+
     return (
         <header
             className={cn(
@@ -65,7 +67,7 @@ const Navigation = () => {
                         <Link href="/">
                             <Image
                                 src="/other/cosmos-web-logo.png"
-                                width={180}
+                                width={350}
                                 height={100}
                                 alt="Cosmos Logo"
                                 className="object-cover"
@@ -83,7 +85,12 @@ const Navigation = () => {
                             <div key={item.name} className="relative group">
                                 <Link
                                     href={item.href || '/'}
-                                    className="px-3 py-2 text-[16px] font-medium text-gray-700 hover:text-green-600 border-b-2 border-transparent hover:border-current transition-colors duration-300"
+                                    className={cn(
+                                        "px-3 py-2 text-[16px] font-medium border-b-2 border-transparent hover:border-current transition-colors duration-300",
+                                        isHomePage || scrolled
+                                            ? "text-gray-700 hover:text-green-600"
+                                            : "text-gray-700 hover:text-white"
+                                    )}
                                 >
                                     {item.name}
                                 </Link>

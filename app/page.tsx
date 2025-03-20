@@ -1,7 +1,19 @@
 import Image from 'next/image';
-import AboutSection from '@/app/home/about-section';
-import ProductSection from './home/product-section';
-import SolutionSection from './home/solution-section';
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
+
+// Lazy load các section components
+const AboutSection = dynamic(() => import('@/app/home/about-section'), {
+  loading: () => <div className="h-96 bg-gray-50 animate-pulse"></div>
+});
+
+const ProductSection = dynamic(() => import('./home/product-section'), {
+  loading: () => <div className="h-96 bg-white animate-pulse"></div>
+});
+
+const SolutionSection = dynamic(() => import('./home/solution-section'), {
+  loading: () => <div className="h-96 bg-gray-50 animate-pulse"></div>
+});
 
 export default function Home() {
   return (
@@ -9,32 +21,40 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative h-screen">
         <Image
-          src="/other/main-bg.png"
+          src="/other/background.png"
           alt="Main Background"
           fill
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-opacity-50">
+        <div className="absolute inset-0 bg-black bg-opacity-30">
           <div className="container mx-auto px-4 h-full flex items-center">
             <div className="max-w-full text-white">
-              <h1 className="text-[60px] font-medium mb-6">
-                For the green Digital World
+              <h1 className="text-[60px] font-medium mb-6 text-shadow-lg">
+                For the Green Digital World
               </h1>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-gray-50">
-        <SolutionSection />
-      </section>
-      <section>
-        <ProductSection />
-      </section>
-      <section>
-        <AboutSection />
-      </section>
+      <Suspense fallback={<div className="h-96 bg-gray-50 animate-pulse"></div>}>
+        <section className="bg-gray-50">
+          <SolutionSection />
+        </section>
+      </Suspense>
+
+      <Suspense fallback={<div className="h-96 bg-white animate-pulse"></div>}>
+        <section>
+          <ProductSection />
+        </section>
+      </Suspense>
+
+      <Suspense fallback={<div className="h-96 bg-gray-50 animate-pulse"></div>}>
+        <section>
+          <AboutSection />
+        </section>
+      </Suspense>
     </div>
   );
 }

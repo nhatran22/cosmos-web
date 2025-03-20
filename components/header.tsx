@@ -20,17 +20,17 @@ const Header = () => {
       {!isHomePage && (
         <div className="relative h-[500px] w-full">
           <Image
-            src="/other/sub-bg.png"
+            src="/other/background.png"
             alt="Main Background"
             fill
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-opacity-50">
+          <div className="absolute inset-0 bg-black bg-opacity-40">
             <div className="container mx-auto px-4 h-full flex items-center">
               <div className="max-w-full text-white">
-                <h1 className="text-[60px] font-medium mb-6 ml-20">
-                  For the green Digital World
+                <h1 className="text-[60px] font-medium mb-6 ml-20 text-shadow-lg">
+                  For the Green Digital World
                 </h1>
               </div>
             </div>

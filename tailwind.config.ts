@@ -78,13 +78,66 @@ const config: Config = {
             height: '0',
           },
         },
+        'slide-out-left': {
+          '0%': { transform: 'translateX(0)', opacity: '1' },
+          '100%': { transform: 'translateX(-10%)', opacity: '0' },
+        },
+        'slide-out-right': {
+          '0%': { transform: 'translateX(0)', opacity: '1' },
+          '100%': { transform: 'translateX(10%)', opacity: '0' },
+        },
+        'slide-in-left': {
+          '0%': { transform: 'translateX(-10%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        'slide-in-right': {
+          '0%': { transform: 'translateX(10%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'fade-out': {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
+        'ripple': {
+          '0%': { transform: 'scale(0)', opacity: '0.8' },
+          '100%': { transform: 'scale(2)', opacity: '0' },
+        },
+        'gradient-slide': {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'slide-out-left': 'slide-out-left 0.3s forwards',
+        'slide-out-right': 'slide-out-right 0.3s forwards',
+        'slide-in-left': 'slide-in-left 0.3s forwards',
+        'slide-in-right': 'slide-in-right 0.3s forwards',
+        'fade-in': 'fade-in 0.3s ease-in-out',
+        'fade-out': 'fade-out 0.3s ease-in-out',
+        'ripple': 'ripple 0.6s ease-out forwards',
+        'gradient-slide': 'gradient-slide 3s ease infinite',
+        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    // Plugin để cung cấp hỗ trợ prefetch (tải trước) để cải thiện hiệu suất
+    function ({ addVariant }: { addVariant: (name: string, definition: string | string[]) => void }) {
+      addVariant('hocus', ['&:hover', '&:focus']);
+      addVariant('group-hocus', ['.group:hover &', '.group:focus &']);
+    }
+  ],
+  // Tối ưu hoá với JIT mode
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
 };
 export default config;

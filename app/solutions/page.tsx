@@ -1,13 +1,11 @@
 'use client';
 
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import React, { useEffect, useState, useRef, useCallback, Suspense } from 'react';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { navigation } from '@/components/mock/header-navigation';
-
-// Display 3 solutions per page
-const ITEMS_PER_PAGE = 3;
+import { useSearchParams } from 'next/navigation';
 
 // Solution data structure
 interface Solution {
@@ -16,355 +14,175 @@ interface Solution {
     description: string;
     image: string;
     href: string;
+    category: string;
 }
 
+// Component cho Solution Item theo yêu cầu mới: hiển thị bên trái là thông tin, bên phải là hình ảnh
+const SolutionItem = ({ solution }: { solution: Solution }) => (
+    <div className="flex flex-col md:flex-row gap-6 mb-12 border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
+        {/* Phần bên trái: Thông tin và nút Load More */}
+        <div className="p-6 md:w-1/2 flex flex-col justify-center">
+            <h3 className="text-2xl font-semibold mb-4 text-gray-800">
+                {solution.title}
+            </h3>
+            <p className="text-gray-600 mb-6 text-base leading-relaxed">
+                {solution.description}
+            </p>
+            <Link
+                href={solution.href}
+                className="inline-flex items-center text-green-600 hover:text-green-700 transition-colors group w-fit"
+            >
+                <span className="font-medium mr-2">View Details</span>
+                <ArrowRight className="h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
+            </Link>
+        </div>
+
+        {/* Phần bên phải: Hình ảnh */}
+        <div className="md:w-1/2 relative h-64 md:h-auto">
+            <Image
+                src={solution.image || "/placeholder-solution.png"}
+                alt={solution.title}
+                className="object-cover"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                loading="lazy"
+            />
+        </div>
+    </div>
+);
+
 export default function SolutionsPage() {
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const searchParams = useSearchParams();
     const [allSolutions, setAllSolutions] = useState<Solution[]>([]);
-    const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
-    const [categoryTitle, setCategoryTitle] = useState('');
-    const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
-    const [paused, setPaused] = useState(false);
-    const [isAnimating, setIsAnimating] = useState(false);
-    const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('right');
+    const [filteredSolutions, setFilteredSolutions] = useState<Solution[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    // Calculate solutions to display on current page
-    const currentSolutions = allSolutions.slice(
-        currentPage * ITEMS_PER_PAGE,
-        (currentPage * ITEMS_PER_PAGE) + ITEMS_PER_PAGE
-    );
-
-    // Get solution categories from navigation
-    const solutionCategories = navigation.find(item => item.name === 'Solution')?.submenu || [];
-
-    // Function to change page with animation
-    const goToPage = useCallback((pageIndex: number) => {
-        if (isAnimating) return; // Prevent page change during animation
-
-        setIsAnimating(true);
-
-        // Determine slide direction
-        if (pageIndex < 0) {
-            setSlideDirection('left');
-            setTimeout(() => {
-                setCurrentPage(totalPages - 1);
-            }, 300); // Wait for slide out animation to complete before changing page
-        } else if (pageIndex >= totalPages) {
-            setSlideDirection('right');
-            setTimeout(() => {
-                setCurrentPage(0);
-            }, 300);
-        } else {
-            // Determine direction based on current and target page
-            setSlideDirection(pageIndex > currentPage ? 'right' : 'left');
-            setTimeout(() => {
-                setCurrentPage(pageIndex);
-            }, 300);
-        }
-
-        // End animation
-        setTimeout(() => {
-            setIsAnimating(false);
-        }, 600); // Total animation duration
-    }, [totalPages, currentPage, isAnimating]);
-
-    // Function to go to next page
-    const goToNextPage = useCallback(() => {
-        goToPage(currentPage + 1);
-    }, [currentPage, goToPage]);
-
-    // Function to go to previous page
-    const goToPrevPage = useCallback(() => {
-        goToPage(currentPage - 1);
-    }, [currentPage, goToPage]);
-
-    // Handle automatic page transition
+    // Lấy danh sách giải pháp từ navigation
     useEffect(() => {
-        // Only auto-transition when there are more than 1 page of solutions
-        if (!paused && !isAnimating && totalPages > 1) {
-            autoPlayRef.current = setInterval(() => {
-                goToNextPage();
-            }, 5000); // 5 seconds per transition
-        }
+        setIsLoading(true);
 
-        return () => {
-            if (autoPlayRef.current) {
-                clearInterval(autoPlayRef.current);
-            }
-        };
-    }, [goToNextPage, paused, isAnimating, totalPages]);
-
-    // Handle category change event listening
-    useEffect(() => {
-        const handleCategoryChange = (event: CustomEvent) => {
-            setSelectedCategory(event.detail);
-        };
-
-        window.addEventListener('solutionCategorySelected', handleCategoryChange as EventListener);
-
-        // Set initial category if not set yet
-        if (!selectedCategory && solutionCategories.length > 0) {
-            setSelectedCategory(solutionCategories[0].title);
-            updateSolutions(solutionCategories[0].title);
-        }
-
-        return () => {
-            window.removeEventListener('solutionCategorySelected', handleCategoryChange as EventListener);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (selectedCategory) {
-            updateSolutions(selectedCategory);
-            // Reset to first page when changing category
-            setCurrentPage(0);
-        }
-    }, [selectedCategory]);
-
-    const handleCategorySelect = (category: string) => {
-        setSelectedCategory(category);
-
-        // Lưu category đã chọn vào localStorage để solution-sidebar có thể sử dụng
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('selectedSolutionCategory', category);
-        }
-    };
-
-    const updateSolutions = useCallback((category: string) => {
         const solutions: Solution[] = [];
-        let title = '';
 
-        if (category === 'Data Center Critical Infrastructure') {
-            title = 'Data Center Solutions';
-            solutions.push({
-                id: 'data-center',
-                title: 'Intelligent Modular Data Center',
-                description: 'Smart, modular data center solution with high performance, easy scalability, and energy efficiency.',
-                image: '/images/data-center.jpg',
-                href: '/solutions/data-center'
-            });
-        }
-        else if (category === 'New Energy Storage System') {
-            title = 'Energy Storage Solutions';
+        // Lấy danh sách giải pháp từ navigation
+        const solutionNav = navigation.find(item => item.name === 'Solution');
 
-            solutions.push({
-                id: 'residential-storage',
-                title: 'Residential Storage',
-                description: 'Residential energy storage solution with hybrid inverter, optimizing solar energy utilization and providing backup power.',
-                image: '/images/residential-storage.jpg',
-                href: '/solutions/residential-storage'
-            });
+        if (solutionNav?.submenu) {
+            // Duyệt qua các danh mục giải pháp
+            solutionNav.submenu.forEach(category => {
+                // Xử lý cho từng danh mục
+                if (category.title === 'Data Center Critical Infrastructure' && category.items) {
+                    solutions.push({
+                        id: 'data-center',
+                        title: 'Intelligent Modular Data Center',
+                        description: 'Smart, modular data center solution with high performance, easy scalability, and energy efficiency. Our modular data center infrastructure provides a comprehensive solution for businesses looking to build efficient, scalable, and resilient IT environments. With advanced cooling technologies, integrated power management, and intelligent monitoring systems, our solution ensures optimal performance and reliability for mission-critical operations.',
+                        image: '/images/data-center.jpg',
+                        href: '/solutions/data-center',
+                        category: category.title
+                    });
+                }
 
-            solutions.push({
-                id: 'commercial-storage',
-                title: 'Commercial & Industrial Storage',
-                description: 'Energy storage system for businesses and industrial facilities, optimizing electricity costs and ensuring continuous operation.',
-                image: '/images/commercial-storage.jpg',
-                href: '/solutions/commercial-storage'
-            });
+                if (category.title === 'New Energy Storage System' && category.items) {
+                    solutions.push({
+                        id: 'residential-storage',
+                        title: 'Residential Storage Hybrid Inverter',
+                        description: 'Residential energy storage solution with hybrid inverter, optimizing solar energy utilization and providing backup power. Our residential storage systems are designed for homeowners seeking energy independence and reduced electricity bills. By integrating seamlessly with solar installations, these systems store excess energy during the day for use during peak hours or power outages, ensuring continuous power supply and maximum energy efficiency.',
+                        image: '/images/residential-storage.jpg',
+                        href: '/solutions/residential-storage',
+                        category: category.title
+                    });
 
-            solutions.push({
-                id: 'utility-storage',
-                title: 'Utility-Scale Storage',
-                description: 'Large-scale energy storage solutions for power plants and grids, supporting renewable energy integration and grid stability.',
-                image: '/images/utility-storage.jpg',
-                href: '/solutions/utility-scale-storage'
+                    solutions.push({
+                        id: 'commercial-storage',
+                        title: 'Industrial & Commercial Storage',
+                        description: 'Energy storage system for businesses and industrial facilities, optimizing electricity costs and ensuring continuous operation. Our industrial and commercial storage solutions help businesses manage energy costs, improve grid stability, and ensure operational continuity. With scalable capacity and advanced energy management systems, these solutions provide peak shaving, load shifting, and emergency backup capabilities that reduce operational expenses while supporting sustainability goals.',
+                        image: '/images/commercial-storage.jpg',
+                        href: '/solutions/commercial-storage',
+                        category: category.title
+                    });
+
+                    solutions.push({
+                        id: 'utility-storage',
+                        title: 'Utility-Scale Storage',
+                        description: 'Large-scale energy storage solutions for power plants and grids, supporting renewable energy integration and grid stability. Our utility-scale storage systems are designed to address the challenges of grid modernization and renewable energy integration. These large-capacity solutions provide frequency regulation, renewable energy time-shifting, and grid stabilization services that enhance the reliability and efficiency of power distribution networks while facilitating the transition to cleaner energy sources.',
+                        image: '/images/utility-storage.jpg',
+                        href: '/solutions/utility-scale-storage',
+                        category: category.title
+                    });
+                }
             });
         }
 
         setAllSolutions(solutions);
-        setCategoryTitle(title);
-        setCurrentPage(0);
-        setTotalPages(Math.ceil(solutions.length / ITEMS_PER_PAGE));
-    }, []);
 
-    // Pause auto-transition when user interacts
-    const handleUserInteraction = () => {
-        setPaused(true);
-        if (autoPlayRef.current) {
-            clearInterval(autoPlayRef.current);
+        // Lấy category từ URL (nếu có)
+        const categoryParam = searchParams.get('category');
+        if (categoryParam) {
+            setActiveCategory(categoryParam);
+            const filtered = solutions.filter(solution => solution.category === categoryParam);
+            setFilteredSolutions(filtered);
+        } else {
+            setFilteredSolutions(solutions);
         }
 
-        // After 30 seconds of no interaction, resume auto-transition
-        setTimeout(() => {
-            setPaused(false);
-        }, 30000);
-    };
+        setIsLoading(false);
+    }, [searchParams]);
 
-    // Define CSS class for animation effect
-    const getSlideClass = () => {
-        if (!isAnimating) return '';
+    // Xử lý khi có sự kiện thay đổi category
+    useEffect(() => {
+        const handleCategoryChange = (event: CustomEvent) => {
+            const selectedCategory = event.detail;
+            setActiveCategory(selectedCategory);
 
-        return slideDirection === 'right'
-            ? 'animate-slide-out-left'
-            : 'animate-slide-out-right';
-    };
+            const filtered = allSolutions.filter(solution =>
+                solution.category === selectedCategory
+            );
+
+            setFilteredSolutions(filtered);
+        };
+
+        window.addEventListener('solutionCategorySelected', handleCategoryChange as EventListener);
+
+        return () => {
+            window.removeEventListener('solutionCategorySelected', handleCategoryChange as EventListener);
+        };
+    }, [allSolutions]);
+
+    // Display loading state
+    if (isLoading) {
+        return (
+            <div className="mb-24 px-6">
+                <h1 className="text-3xl font-bold mb-10 text-gray-800">Loading Solutions...</h1>
+                {[1, 2, 3].map((item) => (
+                    <div key={item} className="mb-10 h-64 animate-pulse bg-gray-100 rounded-lg"></div>
+                ))}
+            </div>
+        );
+    }
 
     // Display message if no solutions
-    if (allSolutions.length === 0 && selectedCategory) {
+    if (filteredSolutions.length === 0) {
         return (
-            <div className="container mx-auto px-4 py-8 mb-24">
-                <h1 className="text-3xl font-bold mb-6 text-gray-800">Solutions</h1>
-
-                <div className="mb-8">
-                    <div className="border-b border-gray-200">
-                        <nav className="-mb-px flex space-x-8">
-                            {solutionCategories.map((category) => (
-                                <button
-                                    key={category.title}
-                                    onClick={() => handleCategorySelect(category.title)}
-                                    className={`${selectedCategory === category.title
-                                        ? 'border-blue-500 text-blue-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                        } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200`}
-                                >
-                                    {category.title}
-                                </button>
-                            ))}
-                        </nav>
-                    </div>
-                </div>
-
+            <div className="mb-24 px-6">
+                <h1 className="text-3xl font-bold mb-10 text-gray-800">Solutions</h1>
                 <div className="bg-gray-100 p-8 rounded-lg text-center">
-                    <p className="text-gray-600">No solutions found in this category.</p>
+                    <p className="text-gray-600">No solutions available in this category.</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="container mx-auto px-4 py-8 mb-24">
-            <h1 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">Solutions</h1>
+        <div className="mb-24 px-6">
+            <h1 className="text-3xl font-bold mb-10 text-gray-800">
+                {activeCategory || "Cosmos Solutions"}
+            </h1>
 
-            <div className="mb-8">
-                <div className="border-b border-gray-200">
-                    <nav className="-mb-px flex space-x-8">
-                        {solutionCategories.map((category) => (
-                            <button
-                                key={category.title}
-                                onClick={() => handleCategorySelect(category.title)}
-                                className={`${selectedCategory === category.title
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200`}
-                            >
-                                {category.title}
-                            </button>
-                        ))}
-                    </nav>
-                </div>
+            <div className="space-y-12">
+                {filteredSolutions.map((solution) => (
+                    <SolutionItem key={solution.id} solution={solution} />
+                ))}
             </div>
-
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">{categoryTitle}</h2>
-
-            <div className="py-8 relative overflow-hidden" onMouseEnter={handleUserInteraction}>
-                <div className={`grid grid-rows-1 md:grid-cols-1 gap-8 transition-all duration-300 ${getSlideClass()}`}>
-                    {currentSolutions.map((solution, index) => (
-                        <Link
-                            key={solution.id}
-                            href={solution.href}
-                            className="group"
-                        >
-                            <div className=" flex flex-row items-center gap-y-4 bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group-hover:translate-y-[-5px] h-[250px]">
-                                <div className="p-5 flex flex-col flex-grow w-[100px]">
-                                    <h3 className="text-xl text-blue-600 font-semibold mb-1 group-hover:text-blue-500 line-clamp-2 min-h-[56px]">
-                                        {solution.title}
-                                    </h3>
-                                    <p className="text-gray-700 mb-4 line-clamp-3 flex-grow">
-                                        {solution.description}
-                                    </p>
-                                    <div className="flex items-center text-blue-600 group-hover:text-blue-500 transition-colors mt-auto">
-                                        <span className="font-medium">Learn More</span>
-                                        <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
-                                    </div>
-                                </div>
-                                <div className="h-60 relative overflow-hidden flex-1">
-                                    <div className="w-full h-full bg-gray-100 flex items-center justify-center group-hover:bg-gray-50 transition-colors duration-300">
-                                        <img
-                                            src={solution.image}
-                                            alt={solution.title}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-
-                {/* Pagination controls */}
-                {totalPages > 1 && (
-                    <div className="flex justify-center mt-10 items-center">
-                        <button
-                            onClick={goToPrevPage}
-                            className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 hover:bg-blue-100 transition-colors mr-2"
-                        >
-                            <ArrowLeft className="h-5 w-5 text-gray-600" />
-                        </button>
-
-                        {Array.from({ length: totalPages }).map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => goToPage(index)}
-                                className={`w-10 h-10 rounded-full flex items-center justify-center mx-1 ${currentPage === index
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-gray-200 text-gray-700 hover:bg-blue-100'
-                                    } transition-colors`}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-
-                        <button
-                            onClick={goToNextPage}
-                            className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 hover:bg-blue-100 transition-colors ml-2"
-                        >
-                            <ArrowRight className="h-5 w-5 text-gray-600" />
-                        </button>
-                    </div>
-                )}
-            </div>
-
-            <style jsx global>{`
-                @keyframes slideOutLeft {
-                  0% { transform: translateX(0); opacity: 1; }
-                  100% { transform: translateX(-10%); opacity: 0; }
-                }
-                
-                @keyframes slideOutRight {
-                  0% { transform: translateX(0); opacity: 1; }
-                  100% { transform: translateX(10%); opacity: 0; }
-                }
-                
-                @keyframes slideInLeft {
-                  0% { transform: translateX(10%); opacity: 0; }
-                  100% { transform: translateX(0); opacity: 1; }
-                }
-                
-                @keyframes slideInRight {
-                  0% { transform: translateX(-10%); opacity: 0; }
-                  100% { transform: translateX(0); opacity: 1; }
-                }
-                
-                .animate-slide-out-left {
-                  animation: slideOutLeft 0.3s forwards;
-                }
-                
-                .animate-slide-out-right {
-                  animation: slideOutRight 0.3s forwards;
-                }
-                
-                .animate-slide-in-left {
-                  animation: slideInLeft 0.3s forwards;
-                }
-                
-                .animate-slide-in-right {
-                  animation: slideInRight 0.3s forwards;
-                }
-             `}</style>
         </div>
     );
 } 
