@@ -207,8 +207,6 @@ const CategorySidebar: React.FC<CategorySidebarProps> = ({
     return (
         <aside className={`category-sidebar ${className}`}>
             <div className="p-4 bg-white rounded-lg shadow-sm border border-gray-200">
-                <h2 className="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">Products</h2>
-
                 <ul className="space-y-1">
                     {headerNavigationData.map((category) => {
                         // Kiểm tra xem category có đang active không dựa trên pathname và id của category

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef, useCallback, Suspense } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,177 +10,264 @@ import { useSearchParams } from 'next/navigation';
 // Solution data structure
 interface Solution {
     id: string;
-    title: string;
+    title?: string;
     description: string;
     image: string;
     href: string;
     category: string;
 }
 
-// Component cho Solution Item theo yêu cầu mới: hiển thị bên trái là thông tin, bên phải là hình ảnh
-const SolutionItem = ({ solution }: { solution: Solution }) => (
-    <div className="flex flex-col md:flex-row gap-6 mb-12 border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
-        {/* Phần bên trái: Thông tin và nút Load More */}
-        <div className="p-6 md:w-1/2 flex flex-col justify-center">
-            <h3 className="text-2xl font-semibold mb-4 text-gray-800">
+// Tab interface
+interface Tab {
+    id: string;
+    label: string;
+    category: string;
+}
+
+// Tách DataCenterSolutionItem thành component riêng
+const DataCenterSolutionItem = ({ solution }: { solution: Solution }) => (
+    <>
+        <div className="relative md:h-auto">
+            <Image
+                src={solution.image}
+                alt={solution.title || ''}
+                className="object-cover"
+                width={800}
+                height={500}
+                loading="lazy"
+            />
+        </div>
+        <div className="p-6 w-full flex flex-col justify-center">
+            <h3 className="text-2xl font-semibold mb-4 text-green-600">
                 {solution.title}
             </h3>
-            <p className="text-gray-600 mb-6 text-base leading-relaxed">
+            <p className="text-gray-600 mb-6 text-[12px] leading-relaxed">
+                {solution.description}
+            </p>
+        </div>
+    </>
+);
+
+// Tách StandardSolutionItem thành component riêng
+const StandardSolutionItem = ({ solution }: { solution: Solution }) => (
+    <>
+        {/* Phần bên trái: Thông tin và nút Load More */}
+        <div className="p-6 md:w-1/2 flex flex-col w-[550px] justify-center">
+            <h3 className="text-2xl font-semibold mb-4 text-green-600">
+                {solution.title}
+            </h3>
+            <p className="text-gray-600 mb-6 text-[12px] leading-relaxed">
                 {solution.description}
             </p>
             <Link
                 href={solution.href}
                 className="inline-flex items-center text-green-600 hover:text-green-700 transition-colors group w-fit"
             >
-                <span className="font-medium mr-2">View Details</span>
+                <span className="font-medium mr-2">Load More</span>
                 <ArrowRight className="h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
             </Link>
         </div>
 
         {/* Phần bên phải: Hình ảnh */}
-        <div className="md:w-1/2 relative h-64 md:h-auto">
+        <div className="md:w-1/2 relative h-64 md:h-auto flex-1">
             <Image
-                src={solution.image || "/placeholder-solution.png"}
-                alt={solution.title}
+                src={solution.image}
+                alt={solution.title || ''}
                 className="object-cover"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
+                width={450}
+                height={200}
                 loading="lazy"
             />
+        </div>
+    </>
+);
+
+// SolutionItem component sử dụng các components con
+const SolutionItem = ({ solution, isDataSolutionPage }: { solution: Solution, isDataSolutionPage: boolean }) => (
+    <div className={`flex ${isDataSolutionPage ? 'flex-col' : 'flex-row'} items-center gap-6 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-all duration-300`}>
+        {isDataSolutionPage ? (
+            <DataCenterSolutionItem solution={solution} />
+        ) : (
+            <StandardSolutionItem solution={solution} />
+        )}
+    </div>
+);
+
+// Component LoadingState tách riêng
+const LoadingState = () => (
+    <div className="mb-24 px-6">
+        <h1 className="text-3xl font-bold mb-10 text-gray-800">Loading Solutions...</h1>
+        {[1, 2, 3].map((item) => (
+            <div key={item} className="mb-10 h-64 animate-pulse bg-gray-100 rounded-lg"></div>
+        ))}
+    </div>
+);
+
+// Component EmptyState tách riêng
+const EmptyState = () => (
+    <div className="mb-24 px-6">
+        <h1 className="text-3xl font-bold mb-10 text-gray-800">Solutions</h1>
+        <div className="bg-gray-100 p-8 rounded-lg text-center">
+            <p className="text-gray-600">No solutions available in this category.</p>
         </div>
     </div>
 );
 
+// Các dữ liệu giải pháp cố định
+const SOLUTIONS_DATA = {
+    'Data Center Critical Infrastructure': [
+        {
+            id: 'data-center',
+            description: 'The key infrastructure system solution for the data center adopts a modular, prefabricated, and intelligent design concept. It efficiently integrates and integrates power supply and distribution systems, UPS power supply systems, intelligent temperature control systems, cabinet systems, closed channel systems, dynamic and environmental monitoring systems, and is equipped with various environmental data sampling sensors for unified monitoring and management, achieving automatic control, intelligent operation and maintenance, and improving the reliability of the data center Availability and maintainability.',
+            image: '/solutions/data-center-solution.png',
+            href: '/solutions/data-center',
+            category: 'Data Center Critical Infrastructure'
+        }
+    ],
+    'New Energy Storage System': [
+        {
+            id: 'residential-storage',
+            title: 'Household Hybrid Inverter',
+            description: 'ACwatt household energy storage solutions include "energy storage converter energy storage battery" as complete solution, with a variety of energy storage converter and battery products, suitable for new optical storage power station, the original household grid system transformation or no (weak) grid areas. Acwatt household energy storage solution realizes a higher proportion of green electricity for self-use and reduces electricity',
+            image: '/solutions/household-hybrid.png',
+            href: '/solutions/residential-storage',
+            category: 'New Energy Storage System'
+        },
+        {
+            id: 'commercial-storage',
+            title: 'Industrial and Commercial Hybrid Inverter',
+            description: 'ACwatt industrial and commercial roofs include not only standard industrial and commercial roofs such as factory roofs, supermarkets and office buildings, but also party and government organs (courts, government buildings, etc.), roofs of public buildings (schools, hospitals, stations, etc.) and some application scenarios of "photovoltaic energy storage". The industrial and commercial roof area is large, the electricity consumption of users is large and the electricity price is relatively high. The return on',
+            image: '/solutions/industrial-hybrid.png',
+            href: '/solutions/commercial-storage',
+            category: 'New Energy Storage System'
+        }
+    ]
+};
+
+// Danh sách tabs
+const TABS: Tab[] = [
+    {
+        id: 'data-center',
+        label: 'Data Center Critical Infrastructure',
+        category: 'Data Center Critical Infrastructure'
+    },
+    {
+        id: 'energy-storage',
+        label: 'New Energy Storage System',
+        category: 'New Energy Storage System'
+    }
+];
+
 export default function SolutionsPage() {
     const searchParams = useSearchParams();
-    const [allSolutions, setAllSolutions] = useState<Solution[]>([]);
-    const [filteredSolutions, setFilteredSolutions] = useState<Solution[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
+    const [solutions, setSolutions] = useState<Solution[]>([]);
+    const [activeTab, setActiveTab] = useState<string>(TABS[0]?.id || '');
 
-    // Lấy danh sách giải pháp từ navigation
+    // Memoize categoryParam để tránh tính toán lại
+    const categoryParam = useMemo(() => searchParams.get('category'), [searchParams]);
+    const isDataSolutionPage = useMemo(() => {
+        const currentTab = TABS.find(tab => tab.id === activeTab);
+        return currentTab?.category === 'Data Center Critical Infrastructure';
+    }, [activeTab]);
+
+    // Xử lý thay đổi tab
+    const handleTabChange = (tabId: string) => {
+        setActiveTab(tabId);
+        const selectedTab = TABS.find(tab => tab.id === tabId);
+        if (selectedTab) {
+            setActiveCategory(selectedTab.category);
+        }
+    };
+
+    // Sử dụng useMemo để tối ưu việc lọc giải pháp
+    const filteredSolutions = useMemo(() => {
+        const currentTab = TABS.find(tab => tab.id === activeTab);
+        if (!currentTab) return [];
+        return solutions.filter(solution => solution.category === currentTab.category);
+    }, [solutions, activeTab]);
+
+    // Xử lý lấy dữ liệu giải pháp
     useEffect(() => {
-        setIsLoading(true);
+        const fetchSolutions = () => {
+            setIsLoading(true);
 
-        const solutions: Solution[] = [];
+            try {
+                const allSolutions: Solution[] = [];
 
-        // Lấy danh sách giải pháp từ navigation
-        const solutionNav = navigation.find(item => item.name === 'Solution');
+                // Lấy từ dữ liệu cố định thay vì tính toán mỗi lần render
+                Object.values(SOLUTIONS_DATA).forEach(categoryItems => {
+                    allSolutions.push(...categoryItems);
+                });
 
-        if (solutionNav?.submenu) {
-            // Duyệt qua các danh mục giải pháp
-            solutionNav.submenu.forEach(category => {
-                // Xử lý cho từng danh mục
-                if (category.title === 'Data Center Critical Infrastructure' && category.items) {
-                    solutions.push({
-                        id: 'data-center',
-                        title: 'Intelligent Modular Data Center',
-                        description: 'Smart, modular data center solution with high performance, easy scalability, and energy efficiency. Our modular data center infrastructure provides a comprehensive solution for businesses looking to build efficient, scalable, and resilient IT environments. With advanced cooling technologies, integrated power management, and intelligent monitoring systems, our solution ensures optimal performance and reliability for mission-critical operations.',
-                        image: '/images/data-center.jpg',
-                        href: '/solutions/data-center',
-                        category: category.title
-                    });
+                setSolutions(allSolutions);
+
+                // Nếu có category param, thiết lập tab phù hợp
+                if (categoryParam) {
+                    const tabForCategory = TABS.find(tab => tab.category === categoryParam);
+                    if (tabForCategory) {
+                        setActiveTab(tabForCategory.id);
+                        setActiveCategory(categoryParam);
+                    }
+                } else {
+                    // Mặc định là tab đầu tiên
+                    setActiveTab(TABS[0]?.id || '');
+                    setActiveCategory(TABS[0]?.category || null);
                 }
 
-                if (category.title === 'New Energy Storage System' && category.items) {
-                    solutions.push({
-                        id: 'residential-storage',
-                        title: 'Residential Storage Hybrid Inverter',
-                        description: 'Residential energy storage solution with hybrid inverter, optimizing solar energy utilization and providing backup power. Our residential storage systems are designed for homeowners seeking energy independence and reduced electricity bills. By integrating seamlessly with solar installations, these systems store excess energy during the day for use during peak hours or power outages, ensuring continuous power supply and maximum energy efficiency.',
-                        image: '/images/residential-storage.jpg',
-                        href: '/solutions/residential-storage',
-                        category: category.title
-                    });
+            } catch (error) {
+                console.error('Error fetching solutions:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-                    solutions.push({
-                        id: 'commercial-storage',
-                        title: 'Industrial & Commercial Storage',
-                        description: 'Energy storage system for businesses and industrial facilities, optimizing electricity costs and ensuring continuous operation. Our industrial and commercial storage solutions help businesses manage energy costs, improve grid stability, and ensure operational continuity. With scalable capacity and advanced energy management systems, these solutions provide peak shaving, load shifting, and emergency backup capabilities that reduce operational expenses while supporting sustainability goals.',
-                        image: '/images/commercial-storage.jpg',
-                        href: '/solutions/commercial-storage',
-                        category: category.title
-                    });
+        fetchSolutions();
+    }, [categoryParam]);
 
-                    solutions.push({
-                        id: 'utility-storage',
-                        title: 'Utility-Scale Storage',
-                        description: 'Large-scale energy storage solutions for power plants and grids, supporting renewable energy integration and grid stability. Our utility-scale storage systems are designed to address the challenges of grid modernization and renewable energy integration. These large-capacity solutions provide frequency regulation, renewable energy time-shifting, and grid stabilization services that enhance the reliability and efficiency of power distribution networks while facilitating the transition to cleaner energy sources.',
-                        image: '/images/utility-storage.jpg',
-                        href: '/solutions/utility-scale-storage',
-                        category: category.title
-                    });
-                }
-            });
-        }
-
-        setAllSolutions(solutions);
-
-        // Lấy category từ URL (nếu có)
-        const categoryParam = searchParams.get('category');
-        if (categoryParam) {
-            setActiveCategory(categoryParam);
-            const filtered = solutions.filter(solution => solution.category === categoryParam);
-            setFilteredSolutions(filtered);
-        } else {
-            setFilteredSolutions(solutions);
-        }
-
-        setIsLoading(false);
-    }, [searchParams]);
-
-    // Xử lý khi có sự kiện thay đổi category
+    // Xử lý sự kiện thay đổi category
     useEffect(() => {
         const handleCategoryChange = (event: CustomEvent) => {
             const selectedCategory = event.detail;
             setActiveCategory(selectedCategory);
 
-            const filtered = allSolutions.filter(solution =>
-                solution.category === selectedCategory
-            );
-
-            setFilteredSolutions(filtered);
+            // Tìm tab phù hợp với category
+            const tabForCategory = TABS.find(tab => tab.category === selectedCategory);
+            if (tabForCategory) {
+                setActiveTab(tabForCategory.id);
+            }
         };
 
         window.addEventListener('solutionCategorySelected', handleCategoryChange as EventListener);
-
         return () => {
             window.removeEventListener('solutionCategorySelected', handleCategoryChange as EventListener);
         };
-    }, [allSolutions]);
+    }, []);
 
-    // Display loading state
+    // Hiển thị trạng thái loading
     if (isLoading) {
-        return (
-            <div className="mb-24 px-6">
-                <h1 className="text-3xl font-bold mb-10 text-gray-800">Loading Solutions...</h1>
-                {[1, 2, 3].map((item) => (
-                    <div key={item} className="mb-10 h-64 animate-pulse bg-gray-100 rounded-lg"></div>
-                ))}
-            </div>
-        );
+        return <LoadingState />;
     }
 
-    // Display message if no solutions
+    // Hiển thị thông báo nếu không có giải pháp
     if (filteredSolutions.length === 0) {
-        return (
-            <div className="mb-24 px-6">
-                <h1 className="text-3xl font-bold mb-10 text-gray-800">Solutions</h1>
-                <div className="bg-gray-100 p-8 rounded-lg text-center">
-                    <p className="text-gray-600">No solutions available in this category.</p>
-                </div>
-            </div>
-        );
+        return <EmptyState />;
     }
 
     return (
         <div className="mb-24 px-6">
             <h1 className="text-3xl font-bold mb-10 text-gray-800">
-                {activeCategory || "Cosmos Solutions"}
+                {activeCategory + ' Solutions'}
             </h1>
 
             <div className="space-y-12">
                 {filteredSolutions.map((solution) => (
-                    <SolutionItem key={solution.id} solution={solution} />
+                    <SolutionItem
+                        key={solution.id}
+                        solution={solution}
+                        isDataSolutionPage={isDataSolutionPage}
+                    />
                 ))}
             </div>
         </div>

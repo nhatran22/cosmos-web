@@ -36,131 +36,63 @@ export const navigationData: Category[] = [
         name: "UPS Power Supply",
         href: "/products/ups-power-supply",
         level: 1,
-        description: "Giải pháp nguồn điện dự phòng UPS chất lượng cao, bảo vệ thiết bị của bạn khỏi sự cố mất điện và dao động điện áp.",
         subcategories: [
             {
                 id: "acm-series",
                 name: "ACM Series Modular UPS",
                 href: "/products/ups-power-supply/acm-series",
                 level: 2,
-                image: "/images/categories/acm-series.jpg",
-                description: "Hệ thống UPS dạng module linh hoạt với khả năng mở rộng dễ dàng và độ tin cậy cao.",
                 products: [
                     {
-                        id: "acm-series-1",
-                        name: "ACM Series 1",
-                        href: "/products/ups-power-supply/acm-series/acm-series-1",
+                        id: "acm-series-50",
+                        name: "ACM Series",
+                        href: "/products/ups-power-supply/acm-series/acm-series-50",
                         level: 3,
                         categoryId: "ups",
                         subcategoryId: "acm-series",
-                        image: "/images/products/acm-series-1.jpg",
-                        shortDescription: "UPS module 50kVA với hiệu suất cao và thiết kế tiết kiệm không gian.",
-                        specifications: {
-                            "Công suất": "50kVA",
-                            "Hiệu suất": "96%",
-                            "Kích thước": "482.6 x 916 x 173 mm",
-                            "Trọng lượng": "42kg",
-                            "Nhiệt độ hoạt động": "0-40°C"
-                        },
-                        features: [
-                            "Thiết kế module hot-swappable",
-                            "Quản lý nhiệt thông minh",
-                            "Hỗ trợ N+X redundancy",
-                            "Hệ thống giám sát từ xa"
-                        ],
+                        image: "/product/acm-series/acm-series-50.png",
+                        shortDescription: "50 ~ 600kVA Modular UPS",
                         isRepresentative: true
                     },
                     {
-                        id: "acm-series-2",
-                        name: "ACM Series 2",
-                        href: "/products/ups-power-supply/acm-series/acm-series-2",
+                        id: "acm-series-62",
+                        name: "ACM Series",
+                        href: "/products/ups-power-supply/acm-series/acm-series-62",
                         level: 3,
                         categoryId: "ups",
                         subcategoryId: "acm-series",
-                        image: "/images/products/acm-series-2.jpg",
-                        shortDescription: "UPS module 100kVA với khả năng mở rộng cao và quản lý năng lượng tiên tiến.",
-                        specifications: {
-                            "Công suất": "100kVA",
-                            "Hiệu suất": "97%",
-                            "Kích thước": "482.6 x 916 x 173 mm",
-                            "Trọng lượng": "45kg",
-                            "Nhiệt độ hoạt động": "0-40°C"
-                        },
-                        features: [
-                            "Tính năng ECO mode tiết kiệm năng lượng",
-                            "Quản lý pin thông minh",
-                            "Dung sai điện áp đầu vào rộng",
-                            "Giao diện quản lý thân thiện"
-                        ]
+                        image: "/product/acm-series/acm-series-62.png",
+                        shortDescription: "62.5 ~ 500kVA Modular UPS",
                     },
                     {
-                        id: "acm-series-3",
-                        name: "ACM Series 3",
-                        href: "/products/ups-power-supply/acm-series/acm-series-3",
+                        id: "acm-series-25-modular",
+                        name: "ACM Series",
+                        href: "/products/ups-power-supply/acm-series/acm-series-25-modular",
                         level: 3,
                         categoryId: "ups",
                         subcategoryId: "acm-series",
-                        image: "/images/products/acm-series-3.jpg",
-                        shortDescription: "UPS module 150kVA với công nghệ điều khiển DSP và khả năng song song hóa cao.",
-                        specifications: {
-                            "Công suất": "150kVA",
-                            "Hiệu suất": "97.5%",
-                            "Kích thước": "482.6 x 975 x 175 mm",
-                            "Trọng lượng": "50kg",
-                            "Nhiệt độ hoạt động": "0-40°C"
-                        },
-                        features: [
-                            "Công nghệ điều khiển DSP 3 lớp",
-                            "Hỗ trợ đến 8 module song song",
-                            "Cổng giao tiếp đa dạng",
-                            "Tương thích với các hệ thống giám sát DCIM"
-                        ]
+                        image: "/product/acm-series/acm-series-25-modular.png",
+                        shortDescription: "25 ~ 300KVA Modular UPSacm",
                     },
                     {
-                        id: "acm-series-4",
-                        name: "ACM Series 4",
-                        href: "/products/ups-power-supply/acm-series/acm-series-4",
+                        id: "acm-series-25-rack",
+                        name: "ACM Series",
+                        href: "/products/ups-power-supply/acm-series/acm-series-25-rack",
                         level: 3,
                         categoryId: "ups",
                         subcategoryId: "acm-series",
-                        image: "/images/products/acm-series-4.jpg",
-                        shortDescription: "UPS module 200kVA với dung lượng cao và khả năng mở rộng linh hoạt.",
-                        specifications: {
-                            "Công suất": "200kVA",
-                            "Hiệu suất": "98%",
-                            "Kích thước": "482.6 x 975 x 175 mm",
-                            "Trọng lượng": "55kg",
-                            "Nhiệt độ hoạt động": "0-40°C"
-                        },
-                        features: [
-                            "Tích hợp bộ chuyển mạch tĩnh (STS)",
-                            "Hệ thống quản lý pin thông minh",
-                            "Giao diện màn hình cảm ứng LCD",
-                            "Khả năng tương thích cao với các hệ thống điện khác nhau"
-                        ]
+                        image: "/product/acm-series/acm-series-25-rack.png",
+                        shortDescription: "25~ 180kVA Rack Modular UPS",
                     },
                     {
-                        id: "acm-series-5",
-                        name: "ACM Series 5",
-                        href: "/products/ups-power-supply/acm-series/acm-series-5",
+                        id: "acm-series-15",
+                        name: "ACM Series",
+                        href: "/products/ups-power-supply/acm-series/acm-series-15",
                         level: 3,
                         categoryId: "ups",
                         subcategoryId: "acm-series",
-                        image: "/images/products/acm-series-5.jpg",
-                        shortDescription: "UPS module 250kVA với công nghệ tiên tiến nhất và hiệu suất vượt trội.",
-                        specifications: {
-                            "Công suất": "250kVA",
-                            "Hiệu suất": "98.5%",
-                            "Kích thước": "482.6 x 975 x 175 mm",
-                            "Trọng lượng": "60kg",
-                            "Nhiệt độ hoạt động": "0-40°C"
-                        },
-                        features: [
-                            "Công nghệ tiết kiệm năng lượng thế hệ mới",
-                            "Khả năng chịu tải lớn",
-                            "Thiết kế module dễ dàng thay thế",
-                            "Hỗ trợ kết nối thông minh"
-                        ]
+                        image: "/product/acm-series/acm-series-15.png",
+                        shortDescription: "15 ~ 120kVA Rack Modular UPS",
                     }
                 ],
             },
@@ -169,65 +101,36 @@ export const navigationData: Category[] = [
                 name: "ACT Series Three-Phase UPS",
                 href: "/products/ups-power-supply/act-series",
                 level: 2,
-                image: "/images/categories/act-series.jpg",
-                description: "Hệ thống UPS ba pha mạnh mẽ, tin cậy với hiệu suất cao và khả năng bảo vệ tuyệt vời.",
                 products: [
                     {
-                        id: "act-series-1",
-                        name: "ACT Series 1",
-                        href: "/products/ups-power-supply/act-series/act-series-1",
+                        id: "act-series-120",
+                        name: "ACT Series",
+                        href: "/products/ups-power-supply/act-series/act-series-120",
                         level: 3,
                         categoryId: "ups",
                         subcategoryId: "act-series",
-                        image: "/images/products/act-series-1.jpg",
-                        shortDescription: "UPS ba pha 100kVA với công nghệ IGBT và khả năng chịu tải cao.",
-                        specifications: {
-                            "Công suất": "100kVA",
-                            "Hiệu suất": "95%",
-                            "Kích thước": "850 x 1900 x 960 mm",
-                            "Trọng lượng": "800kg",
-                            "Nhiệt độ hoạt động": "0-40°C"
-                        },
-                        features: [
-                            "Công nghệ IGBT hoàn toàn",
-                            "Hệ số công suất đầu ra 1.0",
-                            "Khả năng chịu tải không cân bằng cao",
-                            "Chức năng tự chẩn đoán"
-                        ],
+                        image: "/product/act-series/act-series-120.png",
+                        shortDescription: "120 ~ 600kVA Tower UPS",
                         isRepresentative: true
                     },
                     {
-                        id: "act-series-2",
-                        name: "ACT Series 2",
-                        href: "/products/ups-power-supply/act-series/act-series-2",
+                        id: "act-series-10",
+                        name: "ACT Series",
+                        href: "/products/ups-power-supply/act-series/act-series-10",
                         level: 3,
                         categoryId: "ups",
                         subcategoryId: "act-series",
-                        image: "/images/products/act-series-2.jpg",
-                        shortDescription: "UPS ba pha 200kVA với thiết kế chắc chắn và khả năng mở rộng linh hoạt.",
-                        specifications: {
-                            "Công suất": "200kVA",
-                            "Hiệu suất": "96%",
-                            "Kích thước": "850 x 1900 x 960 mm",
-                            "Trọng lượng": "900kg",
-                            "Nhiệt độ hoạt động": "0-40°C"
-                        },
-                        features: [
-                            "Thiết kế dự phòng nội bộ cho các thành phần quan trọng",
-                            "Khả năng song song hóa đến 6 máy",
-                            "Hỗ trợ kết nối với máy phát điện",
-                            "Quản lý pin thông minh"
-                        ]
+                        image: "/product/act-series/act-series-10.png",
+                        shortDescription: "10 ~ 40kVA Rack UPS",
                     }
                 ],
             },
+            // cần check lại
             {
                 id: "acm-series-480v",
                 name: "ACM Series Modular UPS (480W)",
                 href: "/products/ups-power-supply/acm-series-480v",
                 level: 2,
-                image: "/images/categories/acm-series-480v.jpg",
-                description: "UPS module 480V cao cấp dành cho trung tâm dữ liệu lớn và ứng dụng công nghiệp.",
                 products: [
                     {
                         id: "acm-480v",
@@ -260,78 +163,37 @@ export const navigationData: Category[] = [
                 name: "ACM Series Modular UPS (208V)",
                 href: "/products/ups-power-supply/acm-series-208v",
                 level: 2,
-                image: "/images/categories/acm-series-208v.jpg",
-                description: "UPS module 208V hiệu suất cao cho các ứng dụng thương mại và doanh nghiệp vừa.",
                 products: [
                     {
-                        id: "acm-208-1",
-                        name: "ACM 208 1",
-                        href: "/products/ups-power-supply/acm-series-208v/acm-208-1",
+                        id: "acm-208-40",
+                        name: "ACM Series",
+                        href: "/products/ups-power-supply/acm-series-208v/acm-208-40",
                         level: 3,
                         categoryId: "ups",
                         subcategoryId: "acm-series-208v",
-                        image: "/images/products/acm-208-1.jpg",
-                        shortDescription: "UPS module 208V hiệu suất cao với công nghệ tiết kiệm năng lượng tiên tiến.",
-                        specifications: {
-                            "Điện áp đầu vào": "208V",
-                            "Công suất": "100kVA",
-                            "Hiệu suất": "96.5%",
-                            "Kích thước": "600 x 1800 x 800 mm",
-                            "Trọng lượng": "650kg"
-                        },
-                        features: [
-                            "Thiết kế module linh hoạt",
-                            "Giao diện quản lý dễ sử dụng",
-                            "Hỗ trợ cài đặt song song",
-                            "Khả năng mở rộng linh hoạt"
-                        ],
+                        image: "/product/acm-series/acm-208-40.png",
+                        shortDescription: "40 ~ 400kVA Modular UPS",
                         isRepresentative: true
                     },
                     {
-                        id: "acm-208-2",
-                        name: "ACM 208 2",
-                        href: "/products/ups-power-supply/acm-series-208v/acm-208-2",
+                        id: "acm-208-20",
+                        name: "ACM Series",
+                        href: "/products/ups-power-supply/acm-series-208v/acm-208-20",
                         level: 3,
                         categoryId: "ups",
                         subcategoryId: "acm-series-208v",
-                        image: "/images/products/acm-208-2.jpg",
-                        shortDescription: "UPS module 208V công suất trung bình với hiệu năng ổn định cho môi trường văn phòng.",
-                        specifications: {
-                            "Điện áp đầu vào": "208V",
-                            "Công suất": "50kVA",
-                            "Hiệu suất": "96%",
-                            "Kích thước": "520 x 1600 x 800 mm",
-                            "Trọng lượng": "450kg"
-                        },
-                        features: [
-                            "Hệ thống giám sát từ xa",
-                            "Bảo vệ quá tải toàn diện",
-                            "Cổng giao tiếp RS232/USB",
-                            "Thiết kế tiết kiệm không gian"
-                        ]
+                        image: "/product/acm-series/acm-208-20.png",
+                        shortDescription: "20 ~ 120kVA Rack Modular UPS",
                     },
                     {
-                        id: "acm-208-3",
-                        name: "ACM 208 3",
-                        href: "/products/ups-power-supply/acm-series-208v/acm-208-3",
+                        id: "acm-208-10",
+                        name: "ACM Series",
+                        href: "/products/ups-power-supply/acm-series-208v/acm-208-10",
                         level: 3,
                         categoryId: "ups",
                         subcategoryId: "acm-series-208v",
-                        image: "/images/products/acm-208-3.jpg",
-                        shortDescription: "UPS module 208V hiệu suất cao dành cho các hệ thống đòi hỏi độ ổn định cao.",
-                        specifications: {
-                            "Điện áp đầu vào": "208V",
-                            "Công suất": "150kVA",
-                            "Hiệu suất": "97%",
-                            "Kích thước": "650 x 1800 x 850 mm",
-                            "Trọng lượng": "750kg"
-                        },
-                        features: [
-                            "Công nghệ inverter hiện đại",
-                            "Giao diện màn hình cảm ứng LCD",
-                            "Hệ thống cảnh báo thông minh",
-                            "Khả năng dự phòng N+1"
-                        ]
+                        image: "/product/acm-series/acm-208-10.png",
+                        shortDescription: "10 ~ 60kVA Rack Modular UPS",
                     }
                 ],
             },
@@ -496,7 +358,6 @@ export const navigationData: Category[] = [
         name: "Modular Data Center",
         href: "/products/modular-data-center",
         level: 1,
-        description: "Giải pháp trung tâm dữ liệu module toàn diện, thiết kế linh hoạt và dễ dàng triển khai.",
         subcategories: [
             {
                 id: "ac500",
@@ -538,7 +399,6 @@ export const navigationData: Category[] = [
         name: "Precision Cooling",
         href: "/products/precision-cooling",
         level: 1,
-        description: "Giải pháp làm mát chính xác tiên tiến cho trung tâm dữ liệu và các ứng dụng đặc biệt.",
         subcategories: [
             {
                 id: "ha-series",
@@ -670,7 +530,6 @@ export const navigationData: Category[] = [
         name: "Household Hybrid",
         href: "/products/household-hybrid",
         level: 1,
-        description: "Hệ thống inverter hybrid dành cho hộ gia đình, kết hợp giữa năng lượng mặt trời và lưới điện.",
         subcategories: [
             {
                 id: "sh-series",
@@ -747,7 +606,6 @@ export const navigationData: Category[] = [
         name: "Industrial Hybrid",
         href: "/products/industrial-hybrid",
         level: 1,
-        description: "Hệ thống inverter hybrid công nghiệp, thiết kế cho các ứng dụng công suất lớn và yêu cầu cao.",
         subcategories: [
             {
                 id: "csh-series",

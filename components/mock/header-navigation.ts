@@ -108,16 +108,15 @@ export const navigation: NavBar[] = [
                 title: 'Data Center Critical Infrastructure',
                 href: '/solutions',
                 items: [
-                    { name: 'Intelligent Modular Data Center', href: '/solutions/data-center' },
+                    { name: 'Intelligent Micro Module System Solution', href: '/solutions/data-center' },
                 ]
             },
             {
                 title: 'New Energy Storage System',
                 href: '/solutions',
                 items: [
-                    { name: 'Residential Storage Hybrid Inverter', href: '/solutions/residential-storage' },
-                    { name: 'Industrial & Commercial Storage', href: '/solutions/commercial-storage' },
-                    { name: 'Utility-Scale Storage', href: '/solutions/utility-scale-storage' },
+                    { name: 'Household Storage PCS System Solution', href: '/solutions/residential-storage' },
+                    { name: 'Industrial and Commercial Storage PCS System Solution', href: '/solutions/commercial-storage' },
                 ]
             }
         ]
