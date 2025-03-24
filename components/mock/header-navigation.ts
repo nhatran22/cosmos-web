@@ -108,14 +108,14 @@ export const navigation: NavBar[] = [
                 title: 'Data Center Critical Infrastructure',
                 href: '/solutions',
                 items: [
-                    { name: 'Intelligent Micro Module System Solution', href: '/solutions/data-center' },
+                    { name: 'Intelligent Micro Module System Solution', href: '/solutions' },
                 ]
             },
             {
                 title: 'New Energy Storage System',
                 href: '/solutions',
                 items: [
-                    { name: 'Household Storage PCS System Solution', href: '/solutions/residential-storage' },
+                    { name: 'Household Storage PCS System Solution', href: '/solutions/household-storage' },
                     { name: 'Industrial and Commercial Storage PCS System Solution', href: '/solutions/commercial-storage' },
                 ]
             }
@@ -126,7 +126,7 @@ export const navigation: NavBar[] = [
         href: '/support',
         submenu: [
             {
-                title: 'Contact Us', href: '/support/technical'
+                title: 'Contact Us', href: '/support'
             }
         ]
     }

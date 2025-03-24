@@ -6,23 +6,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { navigation } from '@/components/mock/header-navigation';
 import { useSearchParams } from 'next/navigation';
-
-// Solution data structure
-interface Solution {
-    id: string;
-    title?: string;
-    description: string;
-    image: string;
-    href: string;
-    category: string;
-}
-
-// Tab interface
-interface Tab {
-    id: string;
-    label: string;
-    category: string;
-}
+import { RelatedProduct, Solution, Tab } from '@/app/interface/solutions';
+import { SOLUTIONS_DATA, TABS } from '@/data/solution-data';
 
 // Tách DataCenterSolutionItem thành component riêng
 const DataCenterSolutionItem = ({ solution }: { solution: Solution }) => (
@@ -60,7 +45,7 @@ const StandardSolutionItem = ({ solution }: { solution: Solution }) => (
                 {solution.description}
             </p>
             <Link
-                href={solution.href}
+                href={solution.href || '#'}
                 className="inline-flex items-center text-green-600 hover:text-green-700 transition-colors group w-fit"
             >
                 <span className="font-medium mr-2">Load More</span>
@@ -113,50 +98,50 @@ const EmptyState = () => (
     </div>
 );
 
-// Các dữ liệu giải pháp cố định
-const SOLUTIONS_DATA = {
-    'Data Center Critical Infrastructure': [
-        {
-            id: 'data-center',
-            description: 'The key infrastructure system solution for the data center adopts a modular, prefabricated, and intelligent design concept. It efficiently integrates and integrates power supply and distribution systems, UPS power supply systems, intelligent temperature control systems, cabinet systems, closed channel systems, dynamic and environmental monitoring systems, and is equipped with various environmental data sampling sensors for unified monitoring and management, achieving automatic control, intelligent operation and maintenance, and improving the reliability of the data center Availability and maintainability.',
-            image: '/solutions/data-center-solution.png',
-            href: '/solutions/data-center',
-            category: 'Data Center Critical Infrastructure'
-        }
-    ],
-    'New Energy Storage System': [
-        {
-            id: 'residential-storage',
-            title: 'Household Hybrid Inverter',
-            description: 'ACwatt household energy storage solutions include "energy storage converter energy storage battery" as complete solution, with a variety of energy storage converter and battery products, suitable for new optical storage power station, the original household grid system transformation or no (weak) grid areas. Acwatt household energy storage solution realizes a higher proportion of green electricity for self-use and reduces electricity',
-            image: '/solutions/household-hybrid.png',
-            href: '/solutions/residential-storage',
-            category: 'New Energy Storage System'
-        },
-        {
-            id: 'commercial-storage',
-            title: 'Industrial and Commercial Hybrid Inverter',
-            description: 'ACwatt industrial and commercial roofs include not only standard industrial and commercial roofs such as factory roofs, supermarkets and office buildings, but also party and government organs (courts, government buildings, etc.), roofs of public buildings (schools, hospitals, stations, etc.) and some application scenarios of "photovoltaic energy storage". The industrial and commercial roof area is large, the electricity consumption of users is large and the electricity price is relatively high. The return on',
-            image: '/solutions/industrial-hybrid.png',
-            href: '/solutions/commercial-storage',
-            category: 'New Energy Storage System'
-        }
-    ]
-};
+// Component hiển thị related products
+const RelatedProducts = React.memo(({ products }: { products?: RelatedProduct[] }) => {
+    if (!products || products.length === 0) return null;
 
-// Danh sách tabs
-const TABS: Tab[] = [
-    {
-        id: 'data-center',
-        label: 'Data Center Critical Infrastructure',
-        category: 'Data Center Critical Infrastructure'
-    },
-    {
-        id: 'energy-storage',
-        label: 'New Energy Storage System',
-        category: 'New Energy Storage System'
-    }
-];
+    return (
+        <div className="mt-8 p-6 bg-gray-50 rounded-lg">
+            <h4 className="text-xl font-semibold mb-4 text-gray-800">Sản phẩm liên quan</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {products.map(product => (
+                    <Link
+                        key={product.id}
+                        href={product.href || '#'}
+                        className="flex flex-col bg-white rounded-lg shadow-sm p-4 transition-all hover:shadow-md"
+                    >
+                        <div className="h-40 mb-3 relative">
+                            <Image
+                                src={product.image}
+                                alt={product.title}
+                                className="object-contain"
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            />
+                        </div>
+                        <h5 className="font-medium text-green-600">{product.title}</h5>
+                        {product.features && (
+                            <div className="flex flex-wrap gap-1 my-2">
+                                {product.features.slice(0, 2).map((feature: string, index: number) => (
+                                    <span key={index} className="inline-block bg-gray-100 rounded-full px-2 py-1 text-xs font-semibold text-gray-700">
+                                        {feature}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                        {product.description && (
+                            <p className="text-gray-600 text-sm mt-1 line-clamp-2">{product.description}</p>
+                        )}
+                    </Link>
+                ))}
+            </div>
+        </div>
+    );
+});
+
+RelatedProducts.displayName = 'RelatedProducts';
 
 export default function SolutionsPage() {
     const searchParams = useSearchParams();
@@ -196,7 +181,7 @@ export default function SolutionsPage() {
             try {
                 const allSolutions: Solution[] = [];
 
-                // Lấy từ dữ liệu cố định thay vì tính toán mỗi lần render
+                // Lấy từ dữ liệu cố định từ SOLUTIONS_DATA
                 Object.values(SOLUTIONS_DATA).forEach(categoryItems => {
                     allSolutions.push(...categoryItems);
                 });
