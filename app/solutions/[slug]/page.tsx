@@ -8,6 +8,7 @@ import { CheckCircle, ShieldCheck, Zap, Settings } from 'lucide-react';
 import { RelatedProductsCarousel } from './RelatedProductsCarousel';
 import { Advantage, Solution } from '@/app/interface/solutions';
 import { getSolutionBySlug } from '@/data/solution-data';
+import { navigation } from '@/components/mock/header-navigation';
 
 // Mock data for advantages
 const advantages: Advantage[] = [
@@ -33,6 +34,29 @@ const advantages: Advantage[] = [
         description: 'Support insulation, leakage current, ground fault detection, with lightning protection, input reverse connection, AC overvoltage/overcurrent/short',
     },
 ];
+
+// Tạo danh sách các params tĩnh cho trang
+export async function generateStaticParams() {
+    // Tìm menu Solutions
+    const solutionsMenu = navigation.find(item => item.name === 'Solution' || item.href === '/solutions');
+
+    if (!solutionsMenu?.submenu) {
+        return [];
+    }
+
+    // Tạo danh sách các slug từ tất cả các giải pháp
+    const params = solutionsMenu.submenu.flatMap(category => {
+        if (!category.items) return [];
+
+        return category.items.map(item => {
+            // Lấy slug từ href hoặc tạo slug từ tên
+            const slug = item.href.split('/').pop() || item.name.toLowerCase().replace(/\s+/g, '-');
+            return { slug };
+        });
+    });
+
+    return params;
+}
 
 // Detail page component
 export default function SolutionDetail({ params }: { params: { slug: string } }) {

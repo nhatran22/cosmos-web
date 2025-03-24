@@ -17,7 +17,7 @@ export default function ProductSection() {
                         <div className="p-8">
                             <h3 className="text-[26px] mb-8">UPS Power Supply</h3>
                             <Link
-                                href="/product/industrial-inverter"
+                                href="/products?category=UPS%20Power%20Supply"
                                 className="inline-flex text-[14px] items-center text-green-500 hover:text-green-600 hover:underline"
                             >
                                 {'Learn more ->'}
@@ -38,7 +38,7 @@ export default function ProductSection() {
                             <div className="p-8">
                                 <h3 className="text-[26px] font-semibold text-green-500 mb-8">Hybrid Inverter</h3>
                                 <Link
-                                    href="/product/industrial-inverter"
+                                    href="/products?category=Residental%20Hybrid%20Inverter"
                                     className="inline-flex text-[14px] items-center text-green-500 hover:text-green-600 hover:underline"
                                 >
                                     {'Learn more ->'}
@@ -46,14 +46,14 @@ export default function ProductSection() {
                             </div>
                             <div className="flex gap-x-4">
                                 <Image
-                                    src="/product/hybrid-inverter-1.png"
+                                    src="/product/household-inverter/th-series.png"
                                     width={200}
                                     height={150}
                                     alt="Hybrid Inverter 1"
                                     className="object-contain"
                                 />
                                 <Image
-                                    src="/product/hybrid-inverter-2.png"
+                                    src="/product/household-inverter/sh-series.png"
                                     width={180}
                                     height={50}
                                     alt="Hybrid Inverter 2"
@@ -64,7 +64,7 @@ export default function ProductSection() {
                         <div className="flex items-center gap-x-1 bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
                             <div className="pl-8">
                                 <Image
-                                    src="/product/industrial-converter.png"
+                                    src="product/industrial-commercial/csh-series.png"
                                     width={120}
                                     height={50}
                                     alt="Industrial Converter"
@@ -75,14 +75,14 @@ export default function ProductSection() {
                                 <h3 className="text-[26px] font-semibold text-green-500">Industrial and Commercial Hybrid Inverter</h3>
                                 <div className="flex justify-center gap-x-15">
                                     <Image
-                                        src="/product/commercial-hybrid-converter.png"
+                                        src="product/industrial-commercial/csr-series.png"
                                         width={250}
                                         height={200}
                                         alt="Commercial Hybrid Converter"
                                         className="object-contain"
                                     />
                                     <Link
-                                        href="/product/industrial-inverter"
+                                        href="/products?category=Industrial%20%26%20commercial"
                                         className="inline-flex text-[14px] items-center text-green-500 hover:text-green-600 hover:underline"
                                     >
                                         {'Learn more ->'}
@@ -109,7 +109,7 @@ export default function ProductSection() {
                             <div className="py-8">
                                 <h3 className="text-[26px] font-semibold text-green-500 mb-8">Modula Data Center</h3>
                                 <Link
-                                    href="/product/industrial-inverter"
+                                    href="/products?category=Modular%20Data%20Center"
                                     className="inline-flex text-[14px] items-center text-green-500 hover:text-green-600 hover:underline"
                                 >
                                     {'Learn more ->'}
@@ -121,7 +121,7 @@ export default function ProductSection() {
                         <div className="flex justify-center items-center gap-x-10">
                             <div className="relative h-64">
                                 <Image
-                                    src="/product/precision-cooling.png"
+                                    src="/product/precision-cooling/ha-series.png"
                                     height={350}
                                     width={150}
                                     alt="Modular Data Center"
@@ -131,7 +131,7 @@ export default function ProductSection() {
                             <div className="py-8">
                                 <h3 className="text-[26px] font-semibold text-green-500 mb-8">Precision Cooling</h3>
                                 <Link
-                                    href="/product/industrial-inverter"
+                                    href="/products?category=Precision%20Cooling"
                                     className="inline-flex text-[14px] items-center text-green-500 hover:text-green-600 hover:underline"
                                 >
                                     {'Learn more ->'}

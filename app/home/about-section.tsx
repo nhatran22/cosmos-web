@@ -12,17 +12,10 @@ export default function AboutSection() {
                 </div>
 
                 <div className="max-w-4xl mx-auto">
-                    <h3 className="text-2xl font-medium text-center mb-8">For the green digital world</h3>
+                    <h3 className="text-2xl font-medium text-center mb-8">For the green Digital World</h3>
 
                     <p className="text-gray-700 text-center mb-8 leading-relaxed">
-                        Shenzhen ACwatt Power Co., Ltd. (abbreviation: ACwatt), with the mission of "For the green digital world",
-                        has gathered a group of well-known power electronics technology experts in the industry and a team of senior
-                        engineers who are masters and PhDs with 20 years of development experiences, focusing on the technical
-                        research and product development of critical infrastructure with integrated solutions in data centers and
-                        new energy storage system solutions, has continued intensive cultivation, committed to providing global
-                        customers with highly reliable, high-quality solutions and a full range of quality services, through the
-                        innovative integration of digital and energy, enabling the transformation of the global energy structure and
-                        driving the creation of a zero-carbon future.
+                        Coming Soon
                     </p>
 
                     <div className="text-center">
