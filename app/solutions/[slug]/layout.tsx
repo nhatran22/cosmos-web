@@ -1,8 +1,8 @@
-import { navigation } from '@/components/mock/header-navigation';
+import { baseNavigation } from '@/data/navigation-data';
 
 export async function generateStaticParams() {
     // Tìm menu Solutions
-    const solutionsMenu = navigation.find(item => item.name === 'Solution' || item.href === '/solutions');
+    const solutionsMenu = baseNavigation.find(item => item.name === 'Solution' || item.href === '/solutions');
 
     if (!solutionsMenu?.submenu) {
         return [];

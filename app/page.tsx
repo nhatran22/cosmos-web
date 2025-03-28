@@ -38,23 +38,15 @@ export default function Home() {
         </div>
       </section>
 
-      <Suspense fallback={<div className="h-96 bg-gray-50 animate-pulse"></div>}>
-        <section className="bg-gray-50">
-          <SolutionSection />
-        </section>
-      </Suspense>
-
-      <Suspense fallback={<div className="h-96 bg-white animate-pulse"></div>}>
-        <section>
-          <ProductSection />
-        </section>
-      </Suspense>
-
-      <Suspense fallback={<div className="h-96 bg-gray-50 animate-pulse"></div>}>
-        <section>
-          <AboutSection />
-        </section>
-      </Suspense>
-    </div>
+      <section className="bg-gray-50">
+        <SolutionSection />
+      </section>
+      <section>
+        <ProductSection />
+      </section>
+      <section>
+        <AboutSection />
+      </section>
+    </div >
   );
 }

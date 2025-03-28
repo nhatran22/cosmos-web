@@ -8,7 +8,6 @@ export const registerWorker = (scriptUrl: string): Promise<Worker> => {
         try {
             const worker = new Worker(scriptUrl);
             worker.onmessage = () => {
-                console.log('Worker đã sẵn sàng');
                 resolve(worker);
             };
             worker.onerror = (err) => {
@@ -70,7 +69,6 @@ export const measurePageLoadTime = () => {
     if (typeof window === 'undefined' || !performance) return;
 
     const pageLoadTime = performance.now();
-    console.log(`Thời gian tải trang: ${Math.round(pageLoadTime)}ms`);
 
     return pageLoadTime;
 };

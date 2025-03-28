@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { navigation } from './mock/header-navigation';
 import { ChevronRight } from 'lucide-react';
+import { useCategories } from '@/app/contexts/CategoriesContext';
 
 interface SolutionCategory {
     title: string;
@@ -27,6 +27,8 @@ const SolutionSidebar = () => {
     const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
     const [previouslyExpanded, setPreviouslyExpanded] = useState<string | null>(null);
     const [animating, setAnimating] = useState(false);
+
+    const { navigation } = useCategories();
 
     // Reference to track animation timeouts
     const animationTimeout = useRef<NodeJS.Timeout | null>(null);

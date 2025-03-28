@@ -1,50 +1,82 @@
 'use client';
 
+import { useCategories } from '@/app/contexts/CategoriesContext';
 import Link from 'next/link';
-import Image from 'next/image';
-import { navigation } from './mock/header-navigation';
-import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 const Footer = () => {
   const router = useRouter();
+  const { navigation } = useCategories();
 
-  const handleCategoryClick = (category: string) => {
-    router.push(`/products?category=${encodeURIComponent(category)}`);
-  };
+  // Tìm các mục menu chính từ navigation
+  const aboutSection = navigation.find(item => item.name === 'About Us');
+  const productsSection = navigation.find(item => item.name === 'Products');
+  const solutionSection = navigation.find(item => item.name === 'Solution');
+  const supportSection = navigation.find(item => item.name === 'Service Support');
 
   return (
     <footer className="bg-gray-50 text-black">
       <div className="container mx-auto py-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* About Us Section */}
           <div>
             <h3 className="text-[18px] font-normal mb-4">About Us</h3>
             <ul className="space-y-2 text-gray-400 text-[12px]">
-              <li><Link href="/about" className="hover:text-green-600">Our Company</Link></li>
-              <li><Link href="/projects" className="hover:text-green-600">Join Us</Link></li>
+              {aboutSection?.submenu?.map(item => (
+                <li key={item.title}>
+                  <Link href={item.href || '/'} className="hover:text-green-600">
+                    {item.title}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
+
+          {/* Product Center Section */}
           <div>
             <h3 className="text-[18px] font-normal mb-4">Product Center</h3>
             <ul className="space-y-2 text-gray-400 text-[12px]">
-              <li><Link href="/products?category=UPS%20Power%20Supply" className="hover:text-green-600 text-left">UPS Power Supply</Link></li>
-              <li><Link href="/products?category=Modular%20Data%20Center" className="hover:text-green-600 text-left">Modular Data Center</Link></li>
-              <li><Link href="/products?category=Precision%20Cooling" className="hover:text-green-600 text-left">Precision Cooling</Link></li>
-              <li><Link href="/products?category=Residental%20Hybrid%20Inverter" className="hover:text-green-600 text-left">Household Hybrid Inverter</Link></li>
-              <li><Link href="/products?category=Industrial%20%26%20commercial" className="hover:text-green-600 text-left">Industrial Hybrid Inverter</Link></li>
+              {productsSection?.submenu?.map(category => (
+                <li key={category.title}>
+                  <Link
+                    href={`/products?category=${encodeURIComponent(category.title)}`}
+                    className="hover:text-green-600 text-left"
+                  >
+                    {category.title}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
+
+          {/* Solution Section */}
           <div>
             <h3 className="text-[18px] font-normal mb-4">Solution</h3>
             <ul className="space-y-2 text-gray-400 text-[12px]">
-              <li><Link href="/solutions?category=Data%20Center%20Critical%20Infrastructure" className="hover:text-green-600">Data Center Critical Infrastructure</Link></li>
-              <li><Link href="/solutions?category=New%20Energy%20Storage%20System" className="hover:text-green-600">New Energy Storage System Solutions</Link></li>
+              {solutionSection?.submenu?.map(solution => (
+                <li key={solution.title}>
+                  <Link
+                    href={`/solutions?category=${encodeURIComponent(solution.title)}`}
+                    className="hover:text-green-600"
+                  >
+                    {solution.title}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
+
+          {/* Service Support Section */}
           <div>
             <h3 className="text-[18px] font-normal mb-4">Service Support</h3>
             <ul className="space-y-2 text-gray-400 text-[12px]">
-              <li><Link href="/about" className="hover:text-green-600">Contact Us</Link></li>
+              {supportSection?.submenu?.map(item => (
+                <li key={item.title}>
+                  <Link href={item.href || '/'} className="hover:text-green-600">
+                    {item.title}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

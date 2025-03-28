@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 
 // Client wrapper cho FloatingIcons để có thể sử dụng ssr: false
-const FloatingIconsWrapper = dynamic(() => import('@/components/floating-icons'), {
+const FloatingIconsWrapper = dynamic(() => import('@/components/FloatingIcons'), {
     ssr: false
 });
 

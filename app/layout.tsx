@@ -1,24 +1,25 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from '@/components/ThemeProvider';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
-import Script from 'next/script';
-import { FloatingIconsWrapper } from '@/components/client-wrappers';
+import { FloatingIconsWrapper } from '@/components/ClientWrappers';
 import PerformanceInitializer from '@/app/utils/performance-init';
+import { CategoriesProvider } from '@/app/contexts/CategoriesContext';
+import { Toaster } from '@/components/ui/toaster';
 
-// Lazy load các components
+// Dynamic imports for performance
 const Header = dynamic(() => import('@/components/header'), {
-  loading: () => <div className="h-16 bg-white shadow-sm"></div>
+  ssr: true,
 });
 
 const Breadcrumb = dynamic(() => import('@/components/breadcrumb'), {
-  loading: () => <div className="h-12 bg-gray-50"></div>
+  ssr: true,
 });
 
 const Footer = dynamic(() => import('@/components/footer'), {
-  loading: () => <div className="h-20 bg-gray-100"></div>
+  ssr: true,
 });
 
 const inter = Inter({ subsets: ['latin'] });
@@ -56,18 +57,20 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light">
-          <Header />
-          <Breadcrumb />
-          <main>
-            <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">
-              <div className="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
-            </div>}>
-              {children}
-            </Suspense>
-          </main>
-          <Footer />
-          <FloatingIconsWrapper />
-          <PerformanceInitializer />
+          <CategoriesProvider>
+            <Header />
+            <Breadcrumb />
+            <main>
+              <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+              </div>}>
+                {children}
+              </Suspense>
+            </main>
+            <Footer />
+            <FloatingIconsWrapper />
+            <PerformanceInitializer />
+          </CategoriesProvider>
         </ThemeProvider>
       </body>
     </html>

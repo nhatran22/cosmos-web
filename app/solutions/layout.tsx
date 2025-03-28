@@ -1,28 +1,29 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import SolutionSidebar from '@/components/solution-sidebar';
+import SolutionSidebar from '@/components/SolutionSidebar';
 
 export default function SolutionsLayout({
     children,
 }: {
-    children: React.ReactNode;
+    children: React.ReactNode
 }) {
     const pathname = usePathname();
-    const isMainSolutionPage = pathname === '/solutions';
+    const isDetailPage = pathname.split('/').length > 2;
 
     return (
-        <div className="bg-gray-50 min-h-screen">
-            <div className="container mx-auto px-4 py-8 pb-24">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    {isMainSolutionPage && (
-                        <div className="md:col-span-1">
-                            <SolutionSidebar />
-                        </div>
-                    )}
-                    <main className={isMainSolutionPage ? "md:col-span-3" : "md:col-span-4"}>
-                        {children}
-                    </main>
+        <div className="container mx-auto px-4 py-10">
+            <div className="flex flex-col md:flex-row md:gap-10">
+                {/* Sidebar - ẩn ở trang chi tiết */}
+                {!isDetailPage && (
+                    <div className="w-full md:w-1/4 mb-8 md:mb-0">
+                        <SolutionSidebar />
+                    </div>
+                )}
+
+                {/* Nội dung chính */}
+                <div className={isDetailPage ? "w-full" : "w-full md:w-3/4"}>
+                    {children}
                 </div>
             </div>
         </div>

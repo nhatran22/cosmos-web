@@ -4,12 +4,9 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Home, ChevronRight } from 'lucide-react';
-import { navigation } from './mock/header-navigation';
-import { setCategoryEvent } from './product-sidebar';
-import { setSolutionCategoryEvent } from './solution-sidebar';
 import { useEffect, useState } from 'react';
-import { tabNavigationData } from './navigation-data';
-import { findCategoryFromUrl } from './mock/adapter-utils';
+import { useCategories } from '@/app/contexts/CategoriesContext';
+import { setSolutionCategoryEvent } from './SolutionSidebar';
 
 interface BreadcrumbItemType {
     name: string;
@@ -75,12 +72,13 @@ export default function Breadcrumb() {
     // Không hiện breadcrumb ở trang chủ
     if (pathname === '/') return null;
 
+    const { navigation } = useCategories();
     const paths = pathname.split('/').filter(Boolean);
     const isProductPage = pathname.startsWith('/products');
     const isSolutionPage = pathname.startsWith('/solutions');
     const isAboutPage = pathname.startsWith('/about');
     const isSubPage = paths.length > 1;
-    const isProductDetail = isProductPage && paths.length > 3; // Trang chi tiết sản phẩm
+    const isProductDetail = pathname.includes('/products/') && paths.length > 3; // Kiểm tra trang chi tiết sản phẩm format /products/[category]/[subcategory]/[productId]
 
     // ===== CategoryTabs logic =====
 
@@ -92,16 +90,17 @@ export default function Breadcrumb() {
 
     // Kiểm tra xem một tab có đang active hay không
     const isTabActive = (tabId: string, href: string) => {
-        // Kiểm tra nếu pathname khớp chính xác với href hoặc bắt đầu bằng href/
-        const isPathActive = pathname === href || pathname.startsWith(`${href}/`);
+        // // Kiểm tra nếu pathname khớp chính xác với href hoặc bắt đầu bằng href/
+        // const isPathActive = pathname === href || pathname.startsWith(`${href}/`);
 
-        // Tìm thông tin danh mục từ URL
-        const categoryInfo = findCategoryFromUrl(pathname);
+        // // Tìm thông tin danh mục từ URL
+        // const categoryInfo = findCategoryFromUrl(pathname);
 
-        // Tab cũng là active nếu categoryId khớp với tabId
-        const isCategoryMatch = categoryInfo?.id === tabId;
+        // // Tab cũng là active nếu categoryId khớp với tabId
+        // const isCategoryMatch = categoryInfo?.id === tabId;
 
-        return isPathActive || isCategoryMatch;
+        // return isPathActive || isCategoryMatch;
+        return true;
     };
 
     // Tạo hiệu ứng ripple khi click
@@ -153,34 +152,6 @@ export default function Breadcrumb() {
     // Xử lý khi click vào tab
     const handleCategoryTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabId: string, href: string) => {
         e.preventDefault();
-
-        // Tìm thông tin tab từ tabNavigationData
-        const selectedTab = tabNavigationData.find(tab => tab.id === tabId);
-        if (selectedTab) {
-            // Sử dụng hàm createRippleEffect thay vì createCategoryTabRippleEffect
-            createRippleEffect(e, () => {
-                // Kích hoạt sự kiện để cập nhật product sidebar
-                setCategoryEvent(selectedTab.name);
-
-                // Nếu URL hiện tại đã có query params, giữ lại nhưng reset subcategory
-                if (searchParams.toString()) {
-                    const newUrl = new URL(window.location.origin + pathname);
-                    const newSearchParams = new URLSearchParams(searchParams.toString());
-                    newSearchParams.delete('subcategory'); // Xóa subcategory khi chuyển tab
-
-                    // Cập nhật URL không reload trang
-                    const newPath = href + (newSearchParams.toString() ? `?${newSearchParams.toString()}` : '');
-                    window.history.pushState({}, '', newPath);
-                } else {
-                    // Cập nhật URL không reload trang
-                    window.history.pushState({}, '', href);
-                }
-
-                // Kích hoạt custom event để thông báo CategoryTab đã thay đổi
-                const event = new CustomEvent('categoryTabChange', { detail: { tabId, name: selectedTab.name } });
-                window.dispatchEvent(event);
-            });
-        }
     };
 
     // Render CategoryTabs
@@ -188,22 +159,18 @@ export default function Breadcrumb() {
         // Chỉ hiển thị category tabs cho trang products và không phải trang chi tiết sản phẩm
         if (!isProductPage || isLevel3ProductPage()) return null;
 
+        const tabNavigationData = navigation.find(item => item.name === 'Products')?.submenu;
+
         return (
             <div className="ml-auto">
                 <div className="container mx-auto px-4">
                     <div className="flex items-center space-x-1">
-                        {tabNavigationData.map((tab) => {
-                            const isActive = isTabActive(tab.id, tab.href);
-
+                        {tabNavigationData?.map((tab) => {
                             return (
-                                <div key={tab.id}>
-                                    {renderTab(
-                                        tab.name,
-                                        isActive,
-                                        (e) => {
-                                            handleCategoryTabClick(e as unknown as React.MouseEvent<HTMLAnchorElement>, tab.id, tab.href);
-                                        }
-                                    )}
+                                <div key={tab.title}>
+                                    {renderTab(tab.title, isTabActive(tab.title, tab.href!), (e) => {
+                                        handleCategoryTabClick(e as unknown as React.MouseEvent<HTMLAnchorElement>, tab.title, tab.href!);
+                                    })}
                                 </div>
                             );
                         })}
@@ -218,7 +185,7 @@ export default function Breadcrumb() {
         <div
             onClick={handleClick}
             className={`
-                font-medium px-4 py-2 cursor-pointer transition-all duration-300 relative rounded-t-md overflow-hidden
+                font-light text-[12px] px-4 py-2 cursor-pointer transition-all duration-300 relative rounded-t-md overflow-hidden
                 ${isActive
                     ? 'text-green-600 bg-white shadow-md z-10'
                     : 'text-gray-700 hover:text-green-600 hover:bg-gray-100 hover:shadow-sm hover:translate-y-[-2px] hover:border-b-2 hover:border-green-300'
@@ -258,35 +225,115 @@ export default function Breadcrumb() {
                 href: breadcrumbData.category.href
             });
 
-            // Chỉ thêm subcategory và product khi xem trang chi tiết sản phẩm
-            if (isProductDetail) {
-                if (breadcrumbData.subcategory) {
-                    breadcrumbItems.push({
-                        name: breadcrumbData.subcategory.name,
-                        href: breadcrumbData.subcategory.href
-                    });
-                }
+            // Kiểm tra xem nếu có subcategory và đang xem trang subcategory
+            if (breadcrumbData.showSubcategory && breadcrumbData.subcategory) {
+                breadcrumbItems.push({
+                    name: breadcrumbData.subcategory.name,
+                    href: breadcrumbData.subcategory.href
+                });
+            }
 
-                if (breadcrumbData.product) {
-                    breadcrumbItems.push({
-                        name: breadcrumbData.product.name,
-                        href: breadcrumbData.product.href
-                    });
-                }
+            // Chỉ thêm product khi xem trang chi tiết sản phẩm
+            if (isProductDetail && breadcrumbData.product) {
+                breadcrumbItems.push({
+                    name: breadcrumbData.product.name,
+                    href: breadcrumbData.product.href
+                });
             }
         } else {
             // Fallback cho trường hợp không có dữ liệu từ sessionStorage
-            if (paths.length > 1) {
-                const categorySlug = paths[1];
-                const category = navigation.find(item =>
-                    item.href && item.href.split('/').filter(Boolean).pop() === categorySlug
-                );
+            // Lấy thông tin từ URL
+            const urlParts = pathname.split('/').filter(Boolean);
 
-                if (category) {
+            if (urlParts.length > 1) {
+                const categorySlug = urlParts[1]; // Lấy category slug từ URL
+
+                // Tìm category từ navigation
+                const productNav = navigation.find(item => item.name === 'Product' || item.href === '/products');
+                if (productNav?.submenu) {
+                    // Tìm category dựa trên slug từ URL
+                    const categoryObj = productNav.submenu.find(
+                        cat => cat.title.toLowerCase().replace(/\s+/g, '-') === categorySlug ||
+                            (cat.href && cat.href.includes(categorySlug))
+                    );
+
+                    if (categoryObj) {
+                        breadcrumbItems.push({
+                            name: categoryObj.title,
+                            href: `/products?category=${encodeURIComponent(categoryObj.title)}`
+                        });
+
+                        // Nếu URL có subcategory
+                        if (urlParts.length > 2) {
+                            const subcategorySlug = urlParts[2];
+                            const subcategoryObj = categoryObj.items?.find(
+                                item => item.name.toLowerCase().replace(/\s+/g, '-') === subcategorySlug ||
+                                    item.href.includes(subcategorySlug) ||
+                                    item.id === subcategorySlug
+                            );
+
+                            if (subcategoryObj) {
+                                breadcrumbItems.push({
+                                    name: subcategoryObj.name,
+                                    href: `/products?category=${encodeURIComponent(categoryObj.title)}&subcategory=${encodeURIComponent(subcategoryObj.id!)}`
+                                });
+
+                                // Nếu URL có ID sản phẩm
+                                if (urlParts.length > 3) {
+                                    const productId = urlParts[3];
+                                    // Sử dụng đường dẫn đầy đủ nhưng vẫn giữ định dạng URL cũ
+                                    breadcrumbItems.push({
+                                        name: `Sản phẩm ${productId}`,
+                                        href: pathname
+                                    });
+                                }
+                            }
+                        }
+                    } else {
+                        // Fallback khi không tìm thấy category trong navigation
+                        const displayName = categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1).replace(/-/g, ' ');
+                        breadcrumbItems.push({
+                            name: displayName,
+                            href: `/products?category=${encodeURIComponent(displayName)}`
+                        });
+                    }
+                }
+            } else if (searchParams.has('category')) {
+                // Lấy thông tin từ query params
+                const categoryName = searchParams.get('category');
+                if (categoryName) {
+                    // Cập nhật lại đường dẫn cho UPS Supply và ACM Series
+                    let displayName = categoryName;
+                    if (categoryName === "UPS Supply") {
+                        displayName = "UPS Supply";
+                    } else if (categoryName === "ACM Series") {
+                        displayName = "ACM Series";
+                    }
+
                     breadcrumbItems.push({
-                        name: category.name,
-                        href: category.href || '/products'
+                        name: displayName,
+                        href: `/products?category=${encodeURIComponent(categoryName)}`
                     });
+
+                    if (searchParams.has('subcategory')) {
+                        const subcategoryId = searchParams.get('subcategory');
+                        if (subcategoryId) {
+                            // Tìm subcategory để lấy tên hiển thị
+                            const productNav = navigation.find(item => item.name === 'Product' || item.href === '/products');
+                            if (productNav?.submenu) {
+                                const category = productNav.submenu.find(cat => cat.title === categoryName);
+                                if (category?.items) {
+                                    const subcategory = category.items.find(item => item.id === subcategoryId);
+                                    if (subcategory) {
+                                        breadcrumbItems.push({
+                                            name: subcategory.name,
+                                            href: `/products?category=${encodeURIComponent(categoryName)}&subcategory=${encodeURIComponent(subcategoryId)}`
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

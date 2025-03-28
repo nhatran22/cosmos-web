@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import ProductSidebar from '@/components/product-sidebar';
+import ProductSidebar from '@/components/ProductSidebar';
 
 export default function ProductsLayout({
   children,
@@ -9,20 +9,21 @@ export default function ProductsLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isMainProductPage = pathname === '/products';
+  const isProductDetailPage = pathname.split('/').length > 2;
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="container mx-auto px-4 py-8 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {isMainProductPage && (
-            <div className="md:col-span-1">
-              <ProductSidebar />
-            </div>
-          )}
-          <main className={isMainProductPage ? "md:col-span-3" : "md:col-span-4"}>
-            {children}
-          </main>
+    <div className="container mx-auto px-2 md:px-6 py-10">
+      <div className="flex flex-col md:flex-row md:gap-10">
+        {/* Sidebar - chỉ hiển thị ở trang danh sách sản phẩm, không hiển thị ở trang chi tiết */}
+        {!isProductDetailPage && (
+          <div className="w-full md:w-1/4 xl:w-1/5 mb-6 md:mb-0">
+            <ProductSidebar />
+          </div>
+        )}
+
+        {/* Nội dung chính */}
+        <div className={isProductDetailPage ? "w-full" : "w-full md:w-3/4 xl:w-4/5"}>
+          {children}
         </div>
       </div>
     </div>

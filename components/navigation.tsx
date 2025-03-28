@@ -5,11 +5,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { navigation } from './mock/header-navigation';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useCategories } from '@/app/contexts/CategoriesContext';
 
 const Navigation = () => {
+    const { navigation } = useCategories();
     const [isOpen, setIsOpen] = useState(false);
     const [expandedSections, setExpandedSections] = useState<string[]>([]);
     const [scrolled, setScrolled] = useState(false);
@@ -38,8 +39,6 @@ const Navigation = () => {
             window.removeEventListener("scroll", handleScroll);
         };
     }, []);
-
-    console.log(navigation);
 
     return (
         <header

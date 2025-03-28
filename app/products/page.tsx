@@ -1,513 +1,446 @@
-'use client';
-
-import React, { useState, useEffect, useRef } from 'react';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import CategorySidebar from '@/components/CategorySidebar';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useCategories } from '../contexts/CategoriesContext';
+import ProductSidebar from '@/components/ProductSidebar';
+import ProductAPI from '../services/api/product.api';
+import { RefreshCw, AlertCircle } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
-import {
-  findCategoryFromUrl,
-  getRepresentativeProductsForPage,
-  findSubcategoryById,
-  getProductsBySubcategoryId
-} from '@/components/mock/adapter-utils';
-import { navigationData, headerNavigationData, tabNavigationData } from '@/components/navigation-data';
-import { setCategoryEvent } from '@/components/product-sidebar';
 
 export default function ProductsPage() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const initialLoadRef = useRef(true);
-
-  // State cho tiêu đề trang và danh mục hiện tại
-  const [pageTitle, setPageTitle] = useState<string>("Sản phẩm");
-  const [pageDescription, setPageDescription] = useState<string>("");
-  const [categoryId, setCategoryId] = useState<string | null>(null);
-  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | null>(null);
-
-  // State cho danh sách sản phẩm hiển thị
-  const [products, setProducts] = useState<any[]>([]);
-
-  // Lắng nghe sự kiện từ CategoryTabs trong breadcrumb.tsx
-  useEffect(() => {
-    const handleCategoryTabChange = (e: Event) => {
-      const customEvent = e as CustomEvent;
-      if (customEvent.detail && customEvent.detail.tabId) {
-        // Cập nhật tab được chọn
-        handleTabSelect(customEvent.detail.tabId);
-
-        // Kích hoạt sự kiện cập nhật sidebar
-        if (customEvent.detail.name) {
-          setCategoryEvent(customEvent.detail.name);
-        }
-      }
-    };
-
-    window.addEventListener('categoryTabChange', handleCategoryTabChange);
-    return () => {
-      window.removeEventListener('categoryTabChange', handleCategoryTabChange);
-    };
-  }, []);
-
-  // Kiểm tra xem đang ở trang sản phẩm cấp 3 hay không
-  const isLevel3ProductPage = () => {
-    const urlParts = pathname.split('/').filter(Boolean);
-    return urlParts.length > 3 && urlParts[0] === 'products';
-  };
-
-  // Kiểm tra xem một subcategory có phải là trang sản phẩm chi tiết không
-  const isDetailPage = (categoryId: string, subcategoryId: string) => {
-    // Tìm category từ ID
-    const category = navigationData.find(cat => cat.id === categoryId);
-    if (!category) return false;
-
-    // Tìm subcategory từ ID
-    const subcategory = category.subcategories.find(sub => sub.id === subcategoryId);
-    if (!subcategory) return false;
-
-    // Kiểm tra nếu subcategory chỉ có 1 sản phẩm thì đây là trang chi tiết (trường hợp 1)
-    return subcategory.products.length === 1;
-  };
-
-  // Thay đổi hàm getRepresentativeProductsForPage để hiển thị danh sách sản phẩm đại diện từ mỗi subcategory
-  const getRepresentativeProductsForPage = (categoryId: string | null) => {
-    if (!categoryId) return [];
-
-    // Tìm category từ navigationData
-    const category = navigationData.find(cat => cat.id === categoryId);
-    if (!category) return [];
-
-    // Lấy sản phẩm đại diện từ mỗi subcategory
-    const representativeProducts: any[] = [];
-
-    category.subcategories.forEach(subcategory => {
-      // Tìm sản phẩm đại diện trong mỗi subcategory
-      const representativeProduct = subcategory.products.find(product => product.isRepresentative) ||
-        subcategory.products[0]; // Nếu không có sản phẩm đánh dấu là đại diện, lấy sản phẩm đầu tiên
-
-      if (representativeProduct) {
-        representativeProducts.push({
-          id: representativeProduct.id,
-          name: representativeProduct.name,
-          image: representativeProduct.image || `https://via.placeholder.com/300x200?text=${subcategory.name}`,
-          description: representativeProduct.shortDescription || `Sản phẩm đại diện cho ${subcategory.name}`,
-          href: representativeProduct.href,
-          subcategoryId: subcategory.id,
-          subcategoryName: subcategory.name
-        });
-      }
-    });
-
-    return representativeProducts;
-  };
-
-  // Xử lý URL cho các cấp độ khác nhau
-  useEffect(() => {
-    const urlParts = pathname.split('/').filter(Boolean);
-
-    // Nếu chỉ là đường dẫn gốc "/products"
-    if (urlParts.length === 1 && urlParts[0] === 'products') {
-      // Mặc định mở tab đầu tiên
-      const firstTab = tabNavigationData[0];
-      if (firstTab) {
-        setCategoryId(firstTab.id);
-        setPageTitle(firstTab.name);
-
-        // Tìm thông tin chi tiết
-        const categoryData = navigationData.find(cat => cat.id === firstTab.id);
-        if (categoryData) {
-          setPageDescription(categoryData.description || "");
-        }
-
-        // Lấy sản phẩm đại diện từ các subcategory
-        const representativeProducts = getRepresentativeProductsForPage(firstTab.id);
-        setProducts(representativeProducts);
-
-        // Cập nhật URL
-        window.history.pushState({}, '', firstTab.href);
-
-        // Cập nhật breadcrumb
-        if (categoryData) {
-          updateBreadcrumb(categoryData.name, categoryData.href);
-        }
-      }
-      initialLoadRef.current = false;
-      return;
-    }
-
-    // Nếu là URL cấp độ 1 (ví dụ: /products/ups-power-supply)
-    if (urlParts.length === 2 && urlParts[0] === 'products') {
-      const categorySlug = urlParts[1];
-
-      // Tìm category từ navigationData
-      const matchingCategory = navigationData.find(category => {
-        const catSlug = category.href.split('/').filter(Boolean).pop();
-        return catSlug === categorySlug;
-      });
-
-      if (matchingCategory) {
-        // Cập nhật state cho tab được chọn
-        setCategoryId(matchingCategory.id);
-        setPageTitle(matchingCategory.name);
-        setPageDescription(matchingCategory.description || "");
-        setSelectedSubcategoryId(null); // Reset selected subcategory
-
-        // Lấy sản phẩm đại diện từ các subcategory
-        const representativeProducts = getRepresentativeProductsForPage(matchingCategory.id);
-        setProducts(representativeProducts);
-
-        // Cập nhật breadcrumb
-        updateBreadcrumb(matchingCategory.name, matchingCategory.href);
-      } else {
-        // Nếu không tìm thấy category, chuyển hướng đến trang lỗi 404
-        router.push('/404');
-      }
-      initialLoadRef.current = false;
-      return;
-    }
-
-    // Nếu là URL cấp độ 2 (ví dụ: /products/ups-power-supply/acm-series)
-    if (urlParts.length === 3 && urlParts[0] === 'products') {
-      const categorySlug = urlParts[1];
-      const subcategorySlug = urlParts[2];
-
-      // Tìm category từ slug
-      const matchingCategory = navigationData.find(cat => {
-        const catSlug = cat.href.split('/').filter(Boolean).pop();
-        return catSlug === categorySlug;
-      });
-
-      if (matchingCategory) {
-        // Cập nhật category
-        setCategoryId(matchingCategory.id);
-
-        // Tìm subcategory từ slug
-        const subcategory = matchingCategory.subcategories.find(sub => {
-          const subSlug = sub.href.split('/').filter(Boolean).pop();
-          return subSlug === subcategorySlug;
-        });
-
-        if (subcategory) {
-          // Cập nhật thông tin subcategory
-          setPageTitle(subcategory.name);
-          setPageDescription(subcategory.description || "");
-          setSelectedSubcategoryId(subcategory.id);
-
-          // Lấy tất cả sản phẩm của subcategory này
-          setProducts(subcategory.products.map(product => ({
-            id: product.id,
-            name: product.name,
-            image: product.image || `https://via.placeholder.com/300x200?text=${product.name}`,
-            description: product.shortDescription || `Mô tả cho ${product.name}`,
-            href: product.href
-          })));
-
-          // Cập nhật breadcrumb - chỉ hiển thị đến category theo yêu cầu
-          updateBreadcrumb(matchingCategory.name, matchingCategory.href);
-        } else {
-          // Nếu không tìm thấy subcategory, hiển thị sản phẩm đại diện của category
-          setPageTitle(matchingCategory.name);
-          setPageDescription(matchingCategory.description || "");
-          setSelectedSubcategoryId(null);
-
-          // Lấy sản phẩm đại diện từ các subcategory
-          const representativeProducts = getRepresentativeProductsForPage(matchingCategory.id);
-          setProducts(representativeProducts);
-
-          // Cập nhật breadcrumb
-          updateBreadcrumb(matchingCategory.name, matchingCategory.href);
-        }
-      } else {
-        // Nếu không tìm thấy category, chuyển hướng đến trang lỗi 404
-        router.push('/404');
-      }
-      initialLoadRef.current = false;
-      return;
-    }
-
-    // Nếu là URL cấp độ 3 (ví dụ: /products/ups-power-supply/acm-series/acm-series-1)
-    if (urlParts.length === 4 && urlParts[0] === 'products') {
-      const categorySlug = urlParts[1];
-      const subcategorySlug = urlParts[2];
-      const productSlug = urlParts[3];
-
-      // Tìm category từ slug
-      const matchingCategory = navigationData.find(cat => {
-        const catSlug = cat.href.split('/').filter(Boolean).pop();
-        return catSlug === categorySlug;
-      });
-
-      if (matchingCategory) {
-        // Tìm subcategory từ slug
-        const subcategory = matchingCategory.subcategories.find(sub => {
-          const subSlug = sub.href.split('/').filter(Boolean).pop();
-          return subSlug === subcategorySlug;
-        });
-
-        if (subcategory) {
-          // Tìm product từ slug
-          const product = subcategory.products.find(prod => {
-            const prodSlug = prod.href.split('/').filter(Boolean).pop();
-            return prodSlug === productSlug;
-          });
-
-          if (product) {
-            // Đây là trang chi tiết sản phẩm - chuyển hướng đến trang chi tiết
-            // Cập nhật breadcrumb đầy đủ cho trang chi tiết sản phẩm
-            const breadcrumbData = {
-              category: {
-                name: matchingCategory.name,
-                href: matchingCategory.href
-              },
-              showSubcategory: true,
-              subcategory: {
-                name: subcategory.name,
-                href: subcategory.href
-              },
-              product: {
-                name: product.name,
-                href: product.href
-              }
-            };
-            sessionStorage.setItem('breadcrumbData', JSON.stringify(breadcrumbData));
-
-            // Kích hoạt custom event để thông báo breadcrumb đã thay đổi
-            window.dispatchEvent(new Event('breadcrumbUpdate'));
-
-            router.push(pathname);
-          } else {
-            // Không tìm thấy sản phẩm, hiển thị danh sách sản phẩm của subcategory
-            setPageTitle(subcategory.name);
-            setPageDescription(subcategory.description || "");
-            setSelectedSubcategoryId(subcategory.id);
-            setCategoryId(matchingCategory.id);
-
-            // Lấy tất cả sản phẩm của subcategory này
-            setProducts(subcategory.products.map(product => ({
-              id: product.id,
-              name: product.name,
-              image: product.image || `https://via.placeholder.com/300x200?text=${product.name}`,
-              description: product.shortDescription || `Mô tả cho ${product.name}`,
-              href: product.href
-            })));
-
-            // Cập nhật breadcrumb - chỉ hiển thị đến category
-            updateBreadcrumb(matchingCategory.name, matchingCategory.href);
-          }
-        } else {
-          // Không tìm thấy subcategory, hiển thị sản phẩm đại diện của category
-          router.push(`/products/${categorySlug}`);
-        }
-      } else {
-        // Không tìm thấy category, chuyển hướng đến trang lỗi 404
-        router.push('/404');
-      }
-      initialLoadRef.current = false;
-      return;
-    }
-
-    // Xử lý các đường dẫn không khớp
-    if (urlParts.length > 0 && !urlParts.includes('products')) {
-      // Chuyển hướng đến trang not found
-      router.push('/404');
-    }
-
-    initialLoadRef.current = false;
-  }, [pathname, router]);
-
-  // Xử lý khi chọn tab
-  const handleTabSelect = (tabId: string) => {
-    // Reset selected subcategory
-    setSelectedSubcategoryId(null);
-
-    // Tìm thông tin chi tiết về category
-    const categoryData = navigationData.find(cat => cat.id === tabId);
-    if (categoryData) {
-      // Cập nhật category ID và thông tin
-      setCategoryId(tabId);
-      setPageTitle(categoryData.name);
-      setPageDescription(categoryData.description || "");
-
-      // Lấy sản phẩm đại diện từ các subcategory
-      const representativeProducts = getRepresentativeProductsForPage(tabId);
-      setProducts(representativeProducts);
-
-      // Cập nhật URL - chỉ hiển thị đến cấp 1
-      window.history.pushState({}, '', categoryData.href);
-
-      // Cập nhật breadcrumb thông qua sessionStorage
-      updateBreadcrumb(categoryData.name, categoryData.href);
-    }
-  };
-
-  // Xử lý khi chọn category từ sidebar
-  const handleCategorySelect = (selectedCategoryId: string) => {
-    // Nếu đã chọn category này rồi thì không làm gì
-    if (selectedCategoryId === categoryId) return;
-
-    // Reset selected subcategory
-    setSelectedSubcategoryId(null);
-
-    // Tìm thông tin chi tiết về category
-    const categoryData = navigationData.find(cat => cat.id === selectedCategoryId);
-    if (categoryData) {
-      // Cập nhật category ID và thông tin
-      setCategoryId(selectedCategoryId);
-      setPageTitle(categoryData.name);
-      setPageDescription(categoryData.description || "");
-
-      // Lấy sản phẩm đại diện từ các subcategory
-      const representativeProducts = getRepresentativeProductsForPage(selectedCategoryId);
-      setProducts(representativeProducts);
-
-      // Cập nhật URL - chỉ hiển thị đến cấp 1
-      window.history.pushState({}, '', categoryData.href);
-
-      // Cập nhật breadcrumb thông qua sessionStorage
-      updateBreadcrumb(categoryData.name, categoryData.href);
-    }
-  };
-
-  // Xử lý khi chọn subcategory từ sidebar
-  const handleSubcategorySelect = (subcategoryId: string, subcategoryProducts: any[], subcategoryName: string) => {
-    // Tìm thông tin subcategory
-    const subcategoryInfo = findSubcategoryById(subcategoryId);
-
-    if (subcategoryInfo && subcategoryInfo.subcategory) {
-      // Cập nhật thông tin
-      setSelectedSubcategoryId(subcategoryId);
-      setPageTitle(subcategoryName);
-      setPageDescription(subcategoryInfo.subcategory.description || "");
-
-      // Tìm tất cả sản phẩm của subcategory này từ navigationData
-      const products = subcategoryInfo.subcategory.products.map(product => ({
-        id: product.id,
-        name: product.name,
-        image: product.image || `https://via.placeholder.com/300x200?text=${product.name}`,
-        description: product.shortDescription || `Mô tả cho ${product.name}`,
-        href: product.href
-      }));
-
-      setProducts(products);
-
-      // Cập nhật URL - vẫn giữ cấp 2 trong URL nhưng breadcrumb chỉ hiển thị đến cấp 1
-      window.history.pushState({}, '', subcategoryInfo.subcategory.href);
-
-      // Cập nhật breadcrumb thông qua sessionStorage - chỉ hiển thị đến category
-      updateBreadcrumb(subcategoryInfo.category.name, subcategoryInfo.category.href);
-    }
-  };
-
-  // Xử lý quay lại danh sách sản phẩm đại diện
-  const handleBackToRepresentative = () => {
-    showRepresentativeProducts(categoryId);
-
-    // Cập nhật tiêu đề và mô tả
-    const categoryData = navigationData.find(cat => cat.id === categoryId);
-    if (categoryData) {
-      setPageTitle(categoryData.name);
-      setPageDescription(categoryData.description || "");
-
-      // Cập nhật URL
-      window.history.pushState({}, '', categoryData.href);
-    }
-  };
-
-  // Hàm hiển thị sản phẩm đại diện
-  const showRepresentativeProducts = (categoryId: string | null) => {
-    setSelectedSubcategoryId(null);
-    const representativeProducts = getRepresentativeProductsForPage(categoryId);
-    setProducts(representativeProducts);
-  };
-
-  // Kiểm tra query parameter khi component được mount
-  useEffect(() => {
-    if (!initialLoadRef.current && searchParams) {
-      const subcategoryParam = searchParams.get('subcategory');
-
-      if (subcategoryParam && categoryId) {
-        // Tìm thông tin subcategory dựa vào ID
-        const categoryData = navigationData.find(cat => cat.id === categoryId);
-        if (categoryData) {
-          const subcategory = categoryData.subcategories.find(sub => sub.id === subcategoryParam);
-
-          if (subcategory) {
-            // Sử dụng đúng href từ subcategory để cập nhật URL
-            if (subcategory.href) {
-              window.history.pushState({}, '', subcategory.href);
+    const { loading, error, refreshing, refreshCategories, navigation } = useCategories();
+    const [isClient, setIsClient] = useState(false);
+    const [products, setProducts] = useState<any[]>([]);
+    const [activeCategory, setActiveCategory] = useState<string | null>(null);
+    const [loadingProducts, setLoadingProducts] = useState(false);
+    const searchParams = useSearchParams();
+    const router = useRouter();
+
+    // Phân trang
+    const [currentPage, setCurrentPage] = useState(0);
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
+    const productsPerPage = 3;
+
+    // Đảm bảo chỉ render ở phía client
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    // Mở tab đầu tiên và cập nhật breadcrumb khi component được load
+    useEffect(() => {
+        if (!isClient || !navigation || navigation.length === 0) return;
+
+        const productNav = navigation.find(item => item.name === 'Product' || item.href === '/products');
+        if (productNav?.submenu && productNav.submenu.length > 0) {
+            const firstCategory = productNav.submenu[0];
+            const categoryFromQuery = searchParams.get('category');
+
+            // Nếu có category trong URL, sử dụng nó, nếu không sử dụng tab đầu tiên
+            const categoryToActivate = categoryFromQuery || firstCategory.title;
+
+            // Set active category
+            setActiveCategory(categoryToActivate);
+
+            // Cập nhật URL nếu cần
+            if (!categoryFromQuery) {
+                router.push(`/products?category=${encodeURIComponent(categoryToActivate)}`, { scroll: false });
             }
 
-            // Hiển thị sản phẩm của subcategory
-            const subcategoryProducts = getProductsBySubcategoryId(subcategoryParam);
-            handleSubcategorySelect(subcategoryParam, subcategoryProducts, subcategory.name);
-          }
-        }
-      }
-    }
-  }, [categoryId, searchParams, initialLoadRef]);
+            // Cập nhật breadcrumb
+            updateBreadcrumb(categoryToActivate);
 
-  // Hàm cập nhật breadcrumb
-  const updateBreadcrumb = (categoryName: string, categoryHref: string) => {
-    // Lưu thông tin vào sessionStorage để BreadcrumbNavigation component có thể sử dụng
-    const breadcrumbData = {
-      category: {
-        name: categoryName,
-        href: categoryHref
-      },
-      showSubcategory: false, // Mặc định không hiển thị subcategory trong breadcrumb
-      subcategory: null,
-      product: null
+            // Load sản phẩm của category đầu tiên
+            loadInitialProducts(categoryToActivate);
+        }
+    }, [isClient, navigation]);
+
+    // Xử lý thay đổi trang
+    const handlePageChange = useCallback((newPage: number) => {
+        if (isTransitioning) return;
+
+        setIsTransitioning(true);
+        setTimeout(() => {
+            setCurrentPage(newPage);
+            setTimeout(() => {
+                setIsTransitioning(false);
+            }, 400);
+        }, 300);
+    }, [isTransitioning]);
+
+    // Tính toán số lượng trang dựa trên số lượng sản phẩm
+    const totalPages = Math.ceil(products.length / productsPerPage);
+
+    // Lấy sản phẩm của trang hiện tại - sử dụng useMemo để tối ưu hiệu suất
+    const currentProducts = useMemo(() => {
+        return products.slice(
+            currentPage * productsPerPage,
+            (currentPage * productsPerPage) + productsPerPage
+        );
+    }, [products, currentPage, productsPerPage]);
+
+    // Tự động chuyển trang mỗi 3 giây
+    useEffect(() => {
+        // Nếu đang tạm dừng hoặc chỉ có 1 trang thì không tự động chuyển
+        if (isPaused || totalPages <= 1) return;
+
+        const timer = setInterval(() => {
+            const nextPage = (currentPage + 1) % totalPages;
+            handlePageChange(nextPage);
+        }, 3000);
+
+        // Xóa interval khi component unmount
+        return () => clearInterval(timer);
+    }, [currentPage, totalPages, isPaused, handlePageChange]);
+
+    // Listen for category selection from product-sidebar
+    useEffect(() => {
+        const handleCategorySelected = (event: CustomEvent) => {
+            const eventData = event.detail;
+
+            // Kiểm tra cấu trúc dữ liệu event mới
+            if (eventData === null) {
+                setActiveCategory(null);
+                setProducts([]);
+                return;
+            }
+
+            // Phiên bản mới - có thể có cả category và subcategory
+            if (typeof eventData === 'object' && eventData.category) {
+                const { category: categoryName, subcategory: subcategoryId } = eventData;
+
+                // Luôn cập nhật activeCategory nếu có
+                if (categoryName) {
+                    setActiveCategory(categoryName);
+                    setCurrentPage(0); // Reset về trang đầu tiên khi chuyển category
+
+                    // Nếu chỉ có category mà không có subcategory
+                    if (!subcategoryId) {
+                        // Tải danh sách sản phẩm của category
+                        if (navigation && navigation.length > 0) {
+                            const productNav = navigation.find(item => item.name === 'Product' || item.href === '/products');
+                            if (!productNav?.submenu) return;
+
+                            const category = productNav.submenu.find(cat => cat.title === categoryName);
+                            if (!category) return;
+
+                            setLoadingProducts(true);
+
+                            // Tạm thời trả về danh sách mẫu dựa trên các items của category
+                            if (category.items && category.items.length > 0) {
+                                setProducts(category.items);
+                            } else {
+                                setProducts([]);
+                            }
+
+                            setLoadingProducts(false);
+                        }
+                    } else {
+                        // Nếu có cả subcategory, gọi API để lấy danh sách sản phẩm của subcategory
+                        loadProductsBySubcategory(subcategoryId);
+                    }
+                }
+            } else {
+                // Phiên bản cũ (tương thích ngược) - chỉ có category
+                const categoryName = eventData;
+
+                // Kiểm tra nếu categoryName là null hoặc rỗng (đóng tab)
+                if (!categoryName) {
+                    setActiveCategory(null);
+                    setProducts([]);
+                    return;
+                }
+
+                setActiveCategory(categoryName);
+                setCurrentPage(0); // Reset về trang đầu tiên khi chuyển category
+
+                // Tải danh sách sản phẩm của category
+                if (navigation && navigation.length > 0) {
+                    const productNav = navigation.find(item => item.name === 'Product' || item.href === '/products');
+                    if (!productNav?.submenu) return;
+
+                    const category = productNav.submenu.find(cat => cat.title === categoryName);
+                    if (!category) return;
+
+                    setLoadingProducts(true);
+
+                    // Tạm thời trả về danh sách mẫu dựa trên các items của category
+                    if (category.items && category.items.length > 0) {
+                        setProducts(category.items);
+                    } else {
+                        setProducts([]);
+                    }
+
+                    setLoadingProducts(false);
+                }
+            }
+        };
+
+        window.addEventListener('categorySelected', handleCategorySelected as EventListener);
+
+        return () => {
+            window.removeEventListener('categorySelected', handleCategorySelected as EventListener);
+        };
+    }, [navigation]); // Thêm navigation lại vào dependencies
+
+    // Cập nhật breadcrumb
+    const updateBreadcrumb = (categoryName: string) => {
+        // Tìm category từ navigation
+        const productNav = navigation.find(item => item.name === 'Product' || item.href === '/products');
+        if (!productNav?.submenu) return;
+
+        const category = productNav.submenu.find(cat => cat.title === categoryName);
+        if (!category) return;
+
+        // Sử dụng format URL với query params
+        const categoryHref = `/products?category=${encodeURIComponent(categoryName)}`;
+
+        // Tạo breadcrumb data với đúng tên hiển thị cho UPS Supply và ACM Series
+        let displayName = categoryName;
+
+        // Tinh chỉnh hiển thị cho breadcrumb tùy theo tab được chọn
+        if (categoryName === "UPS Supply") {
+            displayName = "UPS Supply";
+        } else if (categoryName === "ACM Series") {
+            displayName = "ACM Series";
+        }
+
+        const breadcrumbData = {
+            category: {
+                name: displayName,
+                href: categoryHref
+            },
+            showSubcategory: false,
+            subcategory: null,
+            product: null
+        };
+
+        try {
+            sessionStorage.setItem('breadcrumbData', JSON.stringify(breadcrumbData));
+
+            // Trigger breadcrumbUpdate event
+            if (typeof window !== 'undefined') {
+                const event = new CustomEvent('breadcrumbUpdate');
+                window.dispatchEvent(event);
+            }
+        } catch (e) {
+            console.error('Error interacting with sessionStorage:', e);
+        }
     };
 
-    sessionStorage.setItem('breadcrumbData', JSON.stringify(breadcrumbData));
+    // Load sản phẩm ban đầu dựa vào category
+    const loadInitialProducts = async (categoryName: string) => {
+        try {
+            setLoadingProducts(true);
 
-    // Kích hoạt custom event để thông báo breadcrumb đã thay đổi
-    window.dispatchEvent(new Event('breadcrumbUpdate'));
-  };
+            // Tìm category từ navigation
+            const productNav = navigation.find(item => item.name === 'Product' || item.href === '/products');
+            if (!productNav?.submenu) {
+                setLoadingProducts(false);
+                return;
+            }
 
-  // Nếu đang tải trang
-  if (initialLoadRef.current) {
-    return <div className="container mx-auto px-4 py-8">Đang tải...</div>;
-  }
+            const category = productNav.submenu.find(cat => cat.title === categoryName);
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Sidebar */}
-        <div className="md:col-span-1">
-          <CategorySidebar
-            onSubcategorySelect={handleSubcategorySelect}
-            onCategorySelect={handleCategorySelect}
-          />
-        </div>
+            if (!category) {
+                setLoadingProducts(false);
+                return;
+            }
 
-        {/* Main Content */}
-        <div className="md:col-span-3">
-          <div className="border border-gray-200 rounded-lg p-6 bg-white">
-            <h1 className="text-3xl font-bold mb-4 text-gray-900">{pageTitle}</h1>
+            // Tạm thời trả về danh sách mẫu dựa trên các items của category
+            if (category.items && category.items.length > 0) {
+                setProducts(category.items);
+            } else {
+                setProducts([]);
+            }
+        } catch (error) {
+            console.error("Error loading products:", error);
+        } finally {
+            setLoadingProducts(false);
+        }
+    };
 
-            {pageDescription && (
-              <p className="text-gray-600 mb-8">{pageDescription}</p>
-            )}
+    // Load sản phẩm dựa vào subcategory
+    const loadProductsBySubcategory = async (subcategoryId: string) => {
+        try {
+            setLoadingProducts(true);
+            // Call API here
+            const productsData = await ProductAPI.getProductsList(subcategoryId);
+            setProducts(productsData);
+            setCurrentPage(0); // Reset về trang đầu tiên khi load sản phẩm mới
+        } catch (error) {
+            console.error("Error loading products:", error);
+            // Hiển thị dữ liệu mẫu nếu API thất bại
+            setProducts([
+                {
+                    id: "1",
+                    name: "Sản phẩm mẫu 1",
+                    description: "Mô tả sản phẩm mẫu 1",
+                    image: "https://via.placeholder.com/300"
+                },
+                {
+                    id: "2",
+                    name: "Sản phẩm mẫu 2",
+                    description: "Mô tả sản phẩm mẫu 2",
+                    image: "https://via.placeholder.com/300"
+                }
+            ]);
+        } finally {
+            setLoadingProducts(false);
+        }
+    };
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-              {products.length > 0 ? (
-                products.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    isRepresentative={!selectedSubcategoryId}
-                  />
-                ))
-              ) : (
-                <div className="col-span-full text-center py-12">
-                  <p className="text-gray-500">Không có sản phẩm nào trong danh mục này.</p>
+    // Xử lý khi chọn subcategory từ URL params
+    useEffect(() => {
+        if (!isClient || !navigation) return;
+
+        const subcategoryId = searchParams.get('subcategory');
+        const categoryName = searchParams.get('category');
+
+        if (categoryName) {
+            setActiveCategory(categoryName);
+            setCurrentPage(0); // Reset về trang đầu tiên khi chuyển category/subcategory
+
+            if (subcategoryId) {
+                // Nếu có subcategory, gọi API để lấy danh sách sản phẩm của subcategory
+                loadProductsBySubcategory(subcategoryId);
+
+                // Cập nhật breadcrumb với subcategory
+                const productNav = navigation.find(item => item.name === 'Product' || item.href === '/products');
+                if (!productNav?.submenu) return;
+
+                const category = productNav.submenu.find(cat => cat.title === categoryName);
+                if (!category?.items) return;
+
+                const subcategory = category.items.find(item => item.id === subcategoryId);
+                if (!subcategory) return;
+
+                // Cập nhật breadcrumb với subcategory
+                const breadcrumbData = {
+                    category: {
+                        name: categoryName,
+                        href: `/products?category=${encodeURIComponent(categoryName)}`
+                    },
+                    showSubcategory: true,
+                    subcategory: {
+                        name: subcategory.name,
+                        href: `/products?category=${encodeURIComponent(categoryName)}&subcategory=${encodeURIComponent(subcategoryId)}`
+                    },
+                    product: null
+                };
+
+                try {
+                    sessionStorage.setItem('breadcrumbData', JSON.stringify(breadcrumbData));
+
+                    // Trigger breadcrumbUpdate event
+                    const event = new CustomEvent('breadcrumbUpdate');
+                    window.dispatchEvent(event);
+                } catch (e) {
+                    console.error('Error interacting with sessionStorage:', e);
+                }
+            } else {
+                // Nếu chỉ có category, load danh sách sản phẩm của category đó
+                loadInitialProducts(categoryName);
+            }
+        }
+    }, [searchParams, navigation, isClient]);
+
+    // Nếu chưa phải client, hiển thị một loading skeleton đơn giản
+    if (!isClient) {
+        return (
+            <div className="container mx-auto px-4 py-8">
+                <div className="w-full">
+                    <div className="h-8 bg-gray-200 w-1/3 mb-6 rounded-md"></div>
+                    <div className="h-64 bg-gray-100 rounded-md"></div>
                 </div>
-              )}
             </div>
-          </div>
+        );
+    }
+
+    return (
+        <div>
+            <h1 className="text-3xl font-bold mb-6">
+                {activeCategory ?
+                    searchParams.get('subcategory') ?
+                        (() => {
+                            const subcategoryId = searchParams.get('subcategory');
+                            const category = navigation?.find(item => item.name === 'Product' || item.href === '/products');
+                            const currentCategory = category?.submenu?.find(cat => cat.title === activeCategory);
+                            const subcategory = currentCategory?.items?.find(item => item.id === subcategoryId);
+
+                            return subcategory
+                                ? `${activeCategory} - ${subcategory.name}`
+                                : activeCategory;
+                        })()
+                        : activeCategory
+                    : ''
+                }
+            </h1>
+            <div className="mx-auto px-4 py-8 h-full">
+                {error ? (
+                    <div className="p-4 bg-red-50 text-red-700 rounded-md flex items-center gap-2">
+                        <AlertCircle size={20} />
+                        <span>Lỗi: {error}</span>
+                    </div>
+                ) : loadingProducts ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[1, 2, 3].map((item) => (
+                            <div key={item} className="bg-white rounded-lg shadow-sm p-4 h-80">
+                                <div className="h-48 bg-gray-200 animate-pulse mb-4"></div>
+                                <div className="h-6 bg-gray-200 animate-pulse mb-2 w-3/4"></div>
+                                <div className="h-4 bg-gray-200 animate-pulse mb-4 w-1/2"></div>
+                                <div className="h-8 bg-gray-200 animate-pulse w-1/3"></div>
+                            </div>
+                        ))}
+                    </div>
+                ) : products.length > 0 ? (
+                    <div
+                        className="items-center"
+                        onMouseEnter={() => setIsPaused(true)}
+                        onMouseLeave={() => setIsPaused(false)}
+                    >
+                        <div
+                            className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-500 ${isTransitioning ? 'opacity-0 transform translate-x-4 scale-98' : 'opacity-100 transform translate-x-0 scale-100'
+                                }`}
+                        >
+                            {currentProducts.map((product, index) => (
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                    isRepresentative={index === 0} // Ưu tiên sản phẩm đầu tiên
+                                    buttonType={searchParams.get('subcategory') ? 'viewDetail' : 'loadMore'}
+                                    onButtonClick={searchParams.get('subcategory')
+                                        ? () => {
+                                            router.push(`/products/${product.id}`);
+                                        }
+                                        : () => router.push(`/products?category=${encodeURIComponent(activeCategory || '')}&subcategory=${encodeURIComponent(product.id)}`)
+                                    }
+                                />
+                            ))}
+                        </div>
+
+                        {/* Pagination indicator với trạng thái hiện tại */}
+                        {totalPages > 1 && (
+                            <div className="flex justify-center mt-8">
+                                <div className="flex space-x-2">
+                                    {Array.from({ length: totalPages }).map((_, index) => (
+                                        <div
+                                            key={index}
+                                            className={`h-2 w-2 rounded-full cursor-pointer transition-all duration-300 transform hover:scale-125 ${index === currentPage ? 'bg-green-500 scale-110' : 'bg-gray-300'
+                                                }`}
+                                            onClick={() => handlePageChange(index)}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <div className="p-8 bg-gray-50 rounded-md text-center">
+                        <p className="text-gray-600 mb-2">Không có sản phẩm nào trong danh mục này</p>
+                        <p className="text-sm text-gray-500">Vui lòng chọn danh mục khác</p>
+                    </div>
+                )}
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
