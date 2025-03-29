@@ -78,7 +78,7 @@ export default function SolutionDetail({ params }: { params: { slug: string } })
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
                     <div>
                         <h2 className="text-[32px] font-bold mb-4 text-gray-800">{solution.title}</h2>
-                        <p className="text-[16px] text-gray-700 leading-relaxed break-words">
+                        <p className="text-[16px] text-gray-700 leading-relaxed text-pretty">
                             {solution.textContent}
                         </p>
                     </div>

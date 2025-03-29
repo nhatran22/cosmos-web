@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "rimraf .next && next build",
     "start": "next start",
     "lint": "next lint",
     "export": "next export",
@@ -96,6 +96,7 @@
     "@types/jest": "^29.5.2",
     "@types/supertest": "^6.0.0",
     "jest": "^29.5.0",
+    "rimraf": "^6.0.1",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",

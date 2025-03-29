@@ -12,7 +12,7 @@ export default function ProductsLayout({
   const isProductDetailPage = pathname.split('/').length > 2;
 
   return (
-    <div className="container mx-auto px-2 md:px-6 py-10">
+    <div className="container mx-auto">
       <div className="flex flex-col md:flex-row md:gap-10">
         {/* Sidebar - chỉ hiển thị ở trang danh sách sản phẩm, không hiển thị ở trang chi tiết */}
         {!isProductDetailPage && (

@@ -23,8 +23,13 @@ class CategoryAPI {
 
     // Lấy danh sách danh mục
     static async getCategories(): Promise<AdditionalHeader[]> {
-        const response = await privateAPIHttpServices.httpGetRequest<AdditionalHeader[]>(this.BASE_URL);
-        return response.data;
+        try {
+            const response = await privateAPIHttpServices.httpGetRequest<AdditionalHeader[]>(this.BASE_URL);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            throw error;
+        }
     }
 }
 

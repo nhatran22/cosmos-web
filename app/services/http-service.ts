@@ -56,7 +56,7 @@ class HttpService {
     private _axiosService: AxiosInstance;
 
     constructor(
-        authRequest = true,
+        authRequest = false,
         baseUrl = 'https://b8m9hzhr75.execute-api.ap-southeast-1.amazonaws.com/dev/',
     ) {
         this._axiosService = axios.create({
@@ -66,39 +66,6 @@ class HttpService {
                 "Content-Type": "application/json",
             },
         });
-
-        if (authRequest) this.requestMiddleware();
-    }
-
-    private static validateToken(token: string) {
-        if (!token) {
-            throw new ResponseError(401, "Token must be provided");
-        }
-    }
-
-    private requestMiddleware() {
-        this._axiosService.interceptors.request.use(
-            (config) => {
-                const token = localStorage.getItem('token');
-                if (token) {
-                    HttpService.validateToken(token);
-                    config.headers!.Authorization = `Bearer ${token}`;
-                }
-                return config;
-            },
-            (error: Error) => Promise.reject(error),
-        );
-
-        this._axiosService.interceptors.response.use(
-            (response) => response,
-            (error) => {
-                if (error.response?.status === 401) {
-                    localStorage.removeItem('token');
-                    window.location.href = '/login';
-                }
-                return Promise.reject(error);
-            }
-        );
     }
 
     public httpGetRequest<ResponseType = unknown, Config = unknown>(
@@ -182,13 +149,20 @@ class HttpService {
                 );
             }
 
-            throw new ResponseError(500, "An unexpected error occurred");
+            // Log chi tiết lỗi để dễ dàng gỡ lỗi
+            console.error('HTTP Service Error:', _err);
+
+            // Tạo thông báo lỗi chi tiết hơn nếu có thể
+            const errorMessage = _err instanceof Error
+                ? `An unexpected error occurred: ${_err.message}`
+                : "An unexpected error occurred";
+
+            throw new ResponseError(500, errorMessage);
         }
     }
 }
-
 // Export instances for different use cases
-const publicAPIHttpServices = new HttpService(false);
+const publicAPIHttpServices = new HttpService();
 const privateAPIHttpServices = new HttpService();
 
 export {

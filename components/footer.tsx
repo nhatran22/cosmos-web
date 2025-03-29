@@ -82,7 +82,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="bg-gray-100 py-6 text-center text-gray-400">
-        <p>&copy; {new Date().getFullYear()} Cosmos Web. All rights reserved.</p>
+        <p>&copy; Copyright ©{new Date().getFullYear()} by COSMOS RF TECHNOLOGIES LP.All Rights Reserved | 45B West Wilmost st. - Richmond Hill City - Ontario - Canada.</p>
       </div>
     </footer>
   );

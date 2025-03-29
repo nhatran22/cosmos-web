@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Home, ChevronRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useCategories } from '@/app/contexts/CategoriesContext';
 import { setSolutionCategoryEvent } from './SolutionSidebar';
 
@@ -31,79 +31,81 @@ interface BreadcrumbData {
 }
 
 export default function Breadcrumb() {
+    // Đặt tất cả hooks ở đầu component theo thứ tự nhất quán
     const pathname = usePathname();
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const [breadcrumbData, setBreadcrumbData] = useState<BreadcrumbData | null>(null);
+    const searchParamsHook = useSearchParams();
+    const memoizedPathname = useMemo(() => pathname, [pathname]); // Hook #4
+    const [searchParamsValue, setSearchParamsValue] = useState<URLSearchParams | null>(null); // Hook #5
+    const [breadcrumbData, setBreadcrumbData] = useState<BreadcrumbData | null>(null); // Hook #6
+    const { navigation } = useCategories(); // Hook #7
 
-    // Đọc breadcrumb data từ sessionStorage
+    // Hook #8 - luôn gọi useEffect ở vị trí này, đặt điều kiện bên trong
     useEffect(() => {
-        const handleStorageChange = () => {
-            try {
-                const data = sessionStorage.getItem('breadcrumbData');
-                if (data) {
-                    setBreadcrumbData(JSON.parse(data));
+        // Điều kiện sẽ kiểm tra bên trong useEffect
+        if (pathname !== '/') {
+            // Logic xử lý breadcrumb data
+            const handleStorageChange = () => {
+                try {
+                    const data = sessionStorage.getItem('breadcrumbData');
+                    if (data) {
+                        setBreadcrumbData(JSON.parse(data));
+                    }
+                } catch (error) {
+                    console.error('Error parsing breadcrumb data:', error);
                 }
-            } catch (error) {
-                console.error('Error parsing breadcrumb data:', error);
-            }
-        };
+            };
 
-        // Hàm xử lý khi có custom event breadcrumbUpdate
-        const handleBreadcrumbUpdate = () => {
+            // Hàm xử lý khi có custom event breadcrumbUpdate
+            const handleBreadcrumbUpdate = () => {
+                handleStorageChange();
+            };
+
+            // Khởi tạo data
             handleStorageChange();
-        };
 
-        // Đọc dữ liệu khi component được tải
-        handleStorageChange();
+            // Đăng ký event listeners
+            window.addEventListener('storage', handleStorageChange);
+            window.addEventListener('breadcrumbUpdate', handleBreadcrumbUpdate);
 
-        // Lắng nghe sự kiện storage thay đổi (cho các tab khác)
-        window.addEventListener('storage', handleStorageChange);
+            // Cleanup function
+            return () => {
+                window.removeEventListener('storage', handleStorageChange);
+                window.removeEventListener('breadcrumbUpdate', handleBreadcrumbUpdate);
+            };
+        }
 
-        // Lắng nghe custom event breadcrumbUpdate từ các component khác
-        window.addEventListener('breadcrumbUpdate', handleBreadcrumbUpdate);
+        // Luôn trả về một cleanup function, ngay cả khi không cần thiết
+        return () => { };
+    }, [pathname]);
 
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-            window.removeEventListener('breadcrumbUpdate', handleBreadcrumbUpdate);
-        };
-    }, []);
+    // Hook #9 - useEffect thứ hai
+    useEffect(() => {
+        setSearchParamsValue(searchParamsHook);
+    }, [searchParamsHook]);
 
-    // Không hiện breadcrumb ở trang chủ
+    // Early return sau khi đã gọi tất cả hooks
     if (pathname === '/') return null;
 
-    const { navigation } = useCategories();
+    // Logic xử lý breadcrumb không đổi
     const paths = pathname.split('/').filter(Boolean);
     const isProductPage = pathname.startsWith('/products');
     const isSolutionPage = pathname.startsWith('/solutions');
     const isAboutPage = pathname.startsWith('/about');
     const isSubPage = paths.length > 1;
-    const isProductDetail = pathname.includes('/products/') && paths.length > 3; // Kiểm tra trang chi tiết sản phẩm format /products/[category]/[subcategory]/[productId]
+    const isProductDetail = pathname.includes('/products/') && paths.length > 3;
 
     // ===== CategoryTabs logic =====
-
-    // Kiểm tra xem đang ở trang sản phẩm cấp 3 hay không
     const isLevel3ProductPage = () => {
         const urlParts = pathname.split('/').filter(Boolean);
         return urlParts.length > 3 && urlParts[0] === 'products';
     };
 
-    // Kiểm tra xem một tab có đang active hay không
     const isTabActive = (tabId: string, href: string) => {
-        // // Kiểm tra nếu pathname khớp chính xác với href hoặc bắt đầu bằng href/
-        // const isPathActive = pathname === href || pathname.startsWith(`${href}/`);
-
-        // // Tìm thông tin danh mục từ URL
-        // const categoryInfo = findCategoryFromUrl(pathname);
-
-        // // Tab cũng là active nếu categoryId khớp với tabId
-        // const isCategoryMatch = categoryInfo?.id === tabId;
-
-        // return isPathActive || isCategoryMatch;
-        return true;
+        return true; // Logic giữ nguyên như trong code gốc
     };
 
-    // Tạo hiệu ứng ripple khi click
+    // Tạo hiệu ứng ripple khi click - không thay đổi
     const createRippleEffect = (e: React.MouseEvent, callback: () => void) => {
         const button = e.currentTarget;
         const ripple = document.createElement('span');
@@ -154,7 +156,7 @@ export default function Breadcrumb() {
         e.preventDefault();
     };
 
-    // Render CategoryTabs
+    // Giữ nguyên hàm render TabCategoryTabs
     const renderCategoryTabs = () => {
         // Chỉ hiển thị category tabs cho trang products và không phải trang chi tiết sản phẩm
         if (!isProductPage || isLevel3ProductPage()) return null;
@@ -298,9 +300,9 @@ export default function Breadcrumb() {
                         });
                     }
                 }
-            } else if (searchParams.has('category')) {
+            } else if (searchParamsValue && searchParamsValue.has('category')) {
                 // Lấy thông tin từ query params
-                const categoryName = searchParams.get('category');
+                const categoryName = searchParamsValue.get('category');
                 if (categoryName) {
                     // Cập nhật lại đường dẫn cho UPS Supply và ACM Series
                     let displayName = categoryName;
@@ -315,8 +317,8 @@ export default function Breadcrumb() {
                         href: `/products?category=${encodeURIComponent(categoryName)}`
                     });
 
-                    if (searchParams.has('subcategory')) {
-                        const subcategoryId = searchParams.get('subcategory');
+                    if (searchParamsValue.has('subcategory')) {
+                        const subcategoryId = searchParamsValue.get('subcategory');
                         if (subcategoryId) {
                             // Tìm subcategory để lấy tên hiển thị
                             const productNav = navigation.find(item => item.name === 'Product' || item.href === '/products');
@@ -384,7 +386,7 @@ export default function Breadcrumb() {
 
         // Tạo tabs nếu đang ở trang chính (không phải trang con)
         if (!isSubPage) {
-            const categoryParam = searchParams.get('category');
+            const categoryParam = searchParamsValue && searchParamsValue.get('category');
             const nav = navigation.find(item => item.name === 'Solution' || item.href === '/solutions');
 
             if (nav?.submenu) {

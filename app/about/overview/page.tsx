@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 
 export default function Overview() {
@@ -11,24 +9,25 @@ export default function Overview() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Shenzhen ACwatt Power Co., Ltd.
-            </h2>
             <div className="prose max-w-none text-gray-600 space-y-4">
               <p>
-                Shenzhen ACwatt Power Co., Ltd. (abbreviated as: Acwatt), with the mission of "For the green digital world", focusing on providing high-quality and reliable data center critical infrastructure integration solutions and new energy energy storage system solutions to global customers.
+                <span className='font-bold'>COSMOS RF</span> is a Canadian-based professional manufacturer specializing in high-performance, full-featured radio frequency (RF) products designed to mitigate unwanted interference in an increasingly crowded radio spectrum. As today’s higher data rates demand improved radio signal-to-noise ratios, COSMOS RF’s high-linearity RF components meet this critical need. Our innovative RF solutions address the evolving requirements of a wide range of applications, including indoor and outdoor cellular telecommunications systems, microwave systems, and more.
               </p>
+              <h3 className='font-bold'>Research and Designing</h3>
               <p>
-                The company has a professional team with independent production of key equipment and core technology, and has many leading core patented technologies in the industry. The product lines include industrial and commercial energy storage, uninterruptible power supply, intelligent modular data center, intelligent precision cooling and monitoring, etc.
+                Located in a leading hub for telecom research, development, and business, COSMOS RF is committed to delivering innovative and high-quality RF products to our clients. Our exceptional team of RF experts combines research expertise with industry experience. We also maintain extensive cooperative programs with scientific research institutes, universities, and centers in Canada and the United States to stay at the forefront of telecom technologies, particularly RF-related products. All COSMOS RF state-of-the-art products are designed and rigorously tested in our advanced laboratories before mass production.
               </p>
+              <h3 className='font-bold'>Production</h3>
               <p>
-                The company strictly adheres to the ISO quality and environmental management system, manages efficiently with strong CRM, ERP and MES systems, ensuring high-quality and efficient product delivery. The marketing network spans the globe, and the company strengthens operation management, promotes the construction of core channels, and provides strong support for partners.
+                To deliver exceptional value to our customers through high-quality yet affordable products, we have adopted a mass production strategy in China. Our carefully selected production partners are verified through long-term collaboration. We transfer our designs and expertise to these partners, who leverage their highly skilled personnel, advanced production lines, and sophisticated testing equipment to create outstanding products that meet the needs of customers worldwide. Furthermore, all COSMOS RF products undergo stringent quality control processes and are tested under extreme conditions to ensure the highest standards. This rigorous approach has earned COSMOS RF products a reputation for stability and reliability in projects deployed globally.
               </p>
+              <h3 className='font-bold'>Flexibility – Custom-Made for Local Markets</h3>
               <p>
-                ACwatt's also focuses on improving the comprehensive ability of technical support and service teams, increasing personnel allocation, providing customers with professional, customized, cost-effective, high reliable solutions and technical services.
+                With our robust design capabilities and large production base, we offer exceptional flexibility to meet the specific requirements of customers across diverse markets.
               </p>
+              <h3 className='font-bold'>Technical Support</h3>
               <p>
-                The company upholds its original intention and actively assumes social responsibilities, implements the corporate culture of "working together, creating and sharing", promotes the digitalization, low-carbonization, diversification transformation and upgrading of the energy industry, and contributes to the realization of global carbon neutrality in the global village!
+                Customers using COSMOS RF products benefit from technical support provided not only by our skilled in-house team but also by our partners and local distributors in various markets.
               </p>
             </div>
           </div>

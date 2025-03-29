@@ -1,4 +1,4 @@
-import { baseNavigation } from '@/data/navigation-data';
+import { baseNavigation } from "@/data/navigation-data";
 
 export async function generateStaticParams() {
     // Tìm menu Solutions

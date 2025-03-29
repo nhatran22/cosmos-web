@@ -40,15 +40,25 @@ class ProductAPI {
     private static readonly BASE_URL = '/products';
 
     static async getProductsList(categoryId: string): Promise<any[]> {
-        const response = await privateAPIHttpServices.httpGetRequest<any[]>(this.BASE_URL, {
-            categoryId: categoryId
-        });
-        return response.data;
+        try {
+            const response = await privateAPIHttpServices.httpGetRequest<any[]>(this.BASE_URL, {
+                categoryId: categoryId
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching products list:', error);
+            throw error;
+        }
     }
 
     static async getProductDetail(productId: string): Promise<IProduct> {
-        const response = await privateAPIHttpServices.httpGetRequest<IProduct>(`${this.BASE_URL}/${productId}`);
-        return response.data;
+        try {
+            const response = await privateAPIHttpServices.httpGetRequest<IProduct>(`${this.BASE_URL}/${productId}`);
+            return response.data;
+        } catch (error) {
+            console.error(`Error fetching product details for ID ${productId}:`, error);
+            throw error;
+        }
     }
 }
 

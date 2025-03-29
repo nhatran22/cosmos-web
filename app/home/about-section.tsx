@@ -15,7 +15,7 @@ export default function AboutSection() {
                     <h3 className="text-2xl font-medium text-center mb-8">For the green Digital World</h3>
 
                     <p className="text-gray-700 text-center mb-8 leading-relaxed">
-                        Coming Soon
+                        <span className="font-bold">COSMOS RF</span> is a Canadian-based professional manufacturer specializing in high-performance, full-featured radio frequency (RF) products designed to mitigate unwanted interference in an increasingly crowded radio spectrum. As today’s higher data rates demand improved radio signal-to-noise ratios, COSMOS RF’s high-linearity RF components meet this critical need.
                     </p>
 
                     <div className="text-center">

@@ -59,7 +59,9 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light">
           <CategoriesProvider>
             <Header />
-            <Breadcrumb />
+            <Suspense fallback={<div className="h-10 bg-gray-50"></div>}>
+              <Breadcrumb />
+            </Suspense>
             <main>
               <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">
                 <div className="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>

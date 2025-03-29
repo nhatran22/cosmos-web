@@ -4,10 +4,10 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCategories } from '@/app/contexts/CategoriesContext';
 import { useSearchParams } from 'next/navigation';
 import { RelatedProduct, Solution, Tab } from '@/app/interface/solutions';
 import { SOLUTIONS_DATA, TABS } from '@/data/solution-data';
+import { useCategories } from '../contexts/CategoriesContext';
 
 // Tách DataCenterSolutionItem thành component riêng
 const DataCenterSolutionItem = ({ solution }: { solution: Solution }) => (
@@ -149,7 +149,6 @@ export default function SolutionsPage() {
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
     const [solutions, setSolutions] = useState<Solution[]>([]);
     const [activeTab, setActiveTab] = useState<string>(TABS[0]?.id || '');
-    const { navigation } = useCategories();
 
     // Memoize categoryParam để tránh tính toán lại
     const categoryParam = useMemo(() => searchParams.get('category'), [searchParams]);
