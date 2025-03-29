@@ -1,14 +1,13 @@
-import { Suspense } from 'react';
 import { ProductAPI } from '@/app/services/api';
 import Image from 'next/image';
-import Link from 'next/link';
-import { ChevronLeft, Download, Phone } from 'lucide-react';
+import { Download, Phone } from 'lucide-react';
 import ProductIntroductionClient from './ProductIntroductionClient';
+import { PageProps } from '@/.next/types/app/page';
 
-interface ProductDetailPageProps {
-    params: {
+interface ProductDetailPageProps extends PageProps {
+    params: Promise<{
         productId: string;
-    };
+    }>;
 }
 
 // Thiết lập cấu hình dynamic cho route này
@@ -58,7 +57,8 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: ProductDetailPageProps) {
     try {
-        const product = await ProductAPI.getProductDetail(params.productId);
+        const { productId } = await params;
+        const product = await ProductAPI.getProductDetail(productId);
         return {
             title: `${product.name} | Cosmos`,
             description: product.description,
@@ -72,7 +72,8 @@ export async function generateMetadata({ params }: ProductDetailPageProps) {
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
-    const product = await ProductAPI.getProductDetail(params.productId);
+    const { productId } = await params;
+    const product = await ProductAPI.getProductDetail(productId);
 
     return (
         <div className="min-h-screen flex flex-col w-full">

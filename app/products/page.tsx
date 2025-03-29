@@ -3,20 +3,23 @@ import { ProductProvider } from './contexts/ProductContext';
 import ProductSidebar from '@/components/ProductSidebar';
 import ProductList from './components/ProductList';
 import { QueryClientProvider } from './providers/QueryClientProvider';
+import { PageProps } from '@/.next/types/app/page';
 
 export const metadata = {
     title: 'Products | Cosmos',
     description: 'Browse our selection of products',
 };
 
-interface ProductsPageProps {
-    searchParams: {
+interface ProductsPageProps extends PageProps {
+    searchParams: Promise<{
         category?: string;
         subcategory?: string;
-    };
+    }>;
 }
 
-export default function ProductsPage({ searchParams }: ProductsPageProps) {
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+    const params = await searchParams;
+
     return (
         <QueryClientProvider>
             <ProductProvider>
