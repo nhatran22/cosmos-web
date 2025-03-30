@@ -16,12 +16,25 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
     const [autoPlay, setAutoPlay] = useState(true);
     const router = useRouter();
 
+    // Log khi component được render
+    useEffect(() => {
+        console.log('[ProductSlider] Mounted with products:', {
+            count: products.length,
+            isParentCategory,
+            time: new Date().toISOString()
+        });
+        return () => {
+            console.log('[ProductSlider] Unmounted at:', new Date().toISOString());
+        };
+    }, [products.length, isParentCategory]);
+
     const productsPerPage = 3;
     const totalPages = Math.max(1, Math.ceil(products.length / productsPerPage));
 
     // Hàm chuyển trang
     const goToPage = useCallback((pageIndex: number) => {
         const newIndex = (pageIndex + totalPages) % totalPages;
+        console.log('[ProductSlider] Changing page to:', newIndex);
         setCurrentPage(newIndex);
     }, [totalPages]);
 
@@ -29,11 +42,15 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
     useEffect(() => {
         if (!autoPlay) return;
 
+        console.log('[ProductSlider] AutoPlay started');
         const interval = setInterval(() => {
             goToPage(currentPage + 1);
         }, 3000);
 
-        return () => clearInterval(interval);
+        return () => {
+            console.log('[ProductSlider] AutoPlay stopped');
+            clearInterval(interval);
+        };
     }, [autoPlay, currentPage, goToPage]);
 
     // Lấy sản phẩm của trang hiện tại
@@ -44,18 +61,35 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
 
     // Xử lý khi nhấn Load More hoặc View Detail
     const handleButtonClick = (product: IProduct) => {
+        console.log('[ProductSlider] Button clicked for product:', {
+            id: product.id,
+            name: product.name,
+            action: isParentCategory ? 'Load More' : 'View Detail'
+        });
+
         if (isParentCategory) {
             // Load More - redirect to subcategory
-            router.push(`/products?category=${encodeURIComponent(product.catalogue)}&subcategory=${encodeURIComponent(product.categoryId)}`);
+            const url = `/products?category=${encodeURIComponent(product.catalogue)}&subcategory=${encodeURIComponent(product.categoryId)}`;
+            console.log('[ProductSlider] Redirecting to:', url);
+            router.push(url);
         } else {
             // View Detail - redirect to product detail
-            router.push(`/products/${product.id}`);
+            const url = `/products/${product.id}`;
+            console.log('[ProductSlider] Redirecting to:', url);
+            router.push(url);
         }
     };
 
     // Dừng autoplay khi hover vào slider
-    const handleMouseEnter = () => setAutoPlay(false);
-    const handleMouseLeave = () => setAutoPlay(true);
+    const handleMouseEnter = () => {
+        console.log('[ProductSlider] Mouse entered, stopping autoplay');
+        setAutoPlay(false);
+    }
+
+    const handleMouseLeave = () => {
+        console.log('[ProductSlider] Mouse left, resuming autoplay');
+        setAutoPlay(true);
+    }
 
     return (
         <div
@@ -83,7 +117,11 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
                                     className="object-cover rounded-md hover:scale-105 transition-transform duration-300"
                                     onError={(e) => {
                                         const target = e.target as HTMLImageElement;
+                                        console.log('[ProductSlider] Image error loading:', target.src);
                                         target.src = '/images/placeholder.jpg';
+                                    }}
+                                    onLoad={() => {
+                                        console.log('[ProductSlider] Image loaded for product:', product.id);
                                     }}
                                 />
                             </div>
@@ -93,8 +131,8 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
                             <button
                                 onClick={() => handleButtonClick(product)}
                                 className={`px-4 py-2 rounded-md text-white transition-colors w-full text-center ${isParentCategory
-                                        ? 'bg-green-500 hover:bg-green-600'
-                                        : 'bg-blue-500 hover:bg-blue-600'
+                                    ? 'bg-green-500 hover:bg-green-600'
+                                    : 'bg-blue-500 hover:bg-blue-600'
                                     }`}
                             >
                                 {isParentCategory ? 'Load More' : 'View Detail'}
@@ -109,6 +147,7 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
                 <>
                     <button
                         onClick={() => {
+                            console.log('[ProductSlider] Previous page button clicked');
                             setAutoPlay(false);
                             goToPage(currentPage - 1);
                             setTimeout(() => setAutoPlay(true), 5000);
@@ -121,6 +160,7 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
 
                     <button
                         onClick={() => {
+                            console.log('[ProductSlider] Next page button clicked');
                             setAutoPlay(false);
                             goToPage(currentPage + 1);
                             setTimeout(() => setAutoPlay(true), 5000);
@@ -140,6 +180,7 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
                         <button
                             key={index}
                             onClick={() => {
+                                console.log('[ProductSlider] Dot pagination clicked for page:', index);
                                 setAutoPlay(false);
                                 goToPage(index);
                                 setTimeout(() => setAutoPlay(true), 5000);

@@ -25,7 +25,7 @@ export default function ProductSection() {
                         </div>
                         <div className="relative h-64">
                             <Image
-                                src="/product/ups-power-supply.png?height=300&width=500"
+                                src="/products/ups-power-supply.png?height=300&width=500"
                                 alt="UPS Power Supply"
                                 fill
                                 className="object-contain p-4"
@@ -46,14 +46,14 @@ export default function ProductSection() {
                             </div>
                             <div className="flex gap-x-4">
                                 <Image
-                                    src="/product/household-inverter/th-series.png"
+                                    src="/products/household-inverter/th-series.png"
                                     width={200}
                                     height={150}
                                     alt="Hybrid Inverter 1"
                                     className="object-contain"
                                 />
                                 <Image
-                                    src="/product/household-inverter/sh-series.png"
+                                    src="/products/household-inverter/sh-series.png"
                                     width={180}
                                     height={50}
                                     alt="Hybrid Inverter 2"
@@ -99,7 +99,7 @@ export default function ProductSection() {
                         <div className="flex justify-center items-center gap-x-10">
                             <div className="relative h-64">
                                 <Image
-                                    src="/product/modular/ac500.png"
+                                    src="/products/modular/ac500.png"
                                     height={400}
                                     width={300}
                                     alt="Modular Data Center"
@@ -121,7 +121,7 @@ export default function ProductSection() {
                         <div className="flex justify-center items-center gap-x-10">
                             <div className="relative h-64">
                                 <Image
-                                    src="/product/precision-cooling/ha-series.png"
+                                    src="/products/precision-cooling/ha-series.png"
                                     height={350}
                                     width={150}
                                     alt="Modular Data Center"
