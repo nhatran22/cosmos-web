@@ -64,7 +64,7 @@ export default function ProductSection() {
                         <div className="flex items-center gap-x-1 bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
                             <div className="pl-8">
                                 <Image
-                                    src="product/industrial-commercial/csh-series.png"
+                                    src="/products/industrial-commercial/csh-series.png"
                                     width={120}
                                     height={50}
                                     alt="Industrial Converter"
@@ -75,7 +75,7 @@ export default function ProductSection() {
                                 <h3 className="text-[26px] font-semibold text-green-500">Industrial and Commercial Hybrid Inverter</h3>
                                 <div className="flex justify-center gap-x-15">
                                     <Image
-                                        src="product/industrial-commercial/csr-series.png"
+                                        src="/products/industrial-commercial/csr-series.png"
                                         width={250}
                                         height={200}
                                         alt="Commercial Hybrid Converter"

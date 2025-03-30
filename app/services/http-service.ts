@@ -59,8 +59,6 @@ class HttpService {
         authRequest = false,
         baseUrl = 'https://b8m9hzhr75.execute-api.ap-southeast-1.amazonaws.com/dev/',
     ) {
-        console.log('[HttpService] Creating instance with baseUrl:', baseUrl);
-
         this._axiosService = axios.create({
             baseURL: baseUrl,
             timeout: 10000,
@@ -72,12 +70,6 @@ class HttpService {
         // Thêm interceptors để log các request và response
         this._axiosService.interceptors.request.use(
             (config) => {
-                console.log('[HttpService] Request:', {
-                    method: config.method?.toUpperCase(),
-                    url: config.url,
-                    params: config.params,
-                    time: new Date().toISOString(),
-                });
                 return config;
             },
             (error) => {
@@ -88,13 +80,6 @@ class HttpService {
 
         this._axiosService.interceptors.response.use(
             (response) => {
-                console.log('[HttpService] Response:', {
-                    status: response.status,
-                    url: response.config.url,
-                    dataType: typeof response.data,
-                    hasData: !!response.data,
-                    time: new Date().toISOString(),
-                });
                 return response;
             },
             (error) => {

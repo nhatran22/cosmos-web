@@ -135,15 +135,11 @@ const SolutionSidebar = () => {
     }, [pathname, searchParams]); // Thêm searchParams vào dependency
 
     const toggleCategory = (title: string) => {
-        // Log để debug
-        console.log('Toggle solution category clicked:', title, 'Current expanded:', expandedCategory, 'Animating:', animating);
-
         // Nếu đang animation thì dừng animation và reset trạng thái
         if (animating) {
             if (animationTimeout.current) {
                 clearTimeout(animationTimeout.current);
             }
-            console.log('Animation in progress, clearing and resetting');
         }
 
         // Start animation
@@ -167,15 +163,11 @@ const SolutionSidebar = () => {
 
             // Cập nhật URL để đồng bộ với tab navigation
             router.push(`/solutions?category=${encodeURIComponent(title)}`);
-
-            // Log thành công
-            console.log('Expanded solution category to:', title);
         }
 
         // Clear animation state after animation duration
         animationTimeout.current = setTimeout(() => {
             setAnimating(false);
-            console.log('Animation completed, animating set to false');
         }, 300); // Duration should match CSS transition time
     };
 

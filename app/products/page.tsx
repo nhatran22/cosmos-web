@@ -1,25 +1,14 @@
 import { Suspense } from 'react';
 import { ProductProvider } from './contexts/ProductContext';
-import ProductSidebar from '@/components/ProductSidebar';
 import ProductList from './components/ProductList';
 import { QueryClientProvider } from './providers/QueryClientProvider';
-import { PageProps } from '@/.next/types/app/page';
 
 export const metadata = {
     title: 'Products | Cosmos',
     description: 'Browse our selection of products',
 };
 
-interface ProductsPageProps extends PageProps {
-    searchParams: Promise<{
-        category?: string;
-        subcategory?: string;
-    }>;
-}
-
-export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-    const params = await searchParams;
-
+export default function ProductsPage() {
     return (
         <QueryClientProvider>
             <ProductProvider>
@@ -49,6 +38,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     );
 }
 
-// Cấu hình cho static export
-export const dynamic = 'force-static';
-export const revalidate = 3600; // Revalidate sau 1 giờ (nếu sử dụng ISR) 
+// Thay đổi cấu hình để hoạt động với static export
+export const dynamic = 'auto';  // Thay vì 'error'
+export const dynamicParams = false; // Không xử lý params động ở server
+export const generateStaticParams = () => []; // Static params trống
+export const revalidate = false; 

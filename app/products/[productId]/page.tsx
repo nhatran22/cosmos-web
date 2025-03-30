@@ -1,79 +1,64 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { ProductAPI } from '@/app/services/api';
+import { IProduct } from '@/app/services/api/product.api';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Download, Phone } from 'lucide-react';
 import ProductIntroductionClient from './ProductIntroductionClient';
-import { PageProps } from '@/.next/types/app/page';
 
-interface ProductDetailPageProps extends PageProps {
-    params: Promise<{
-        productId: string;
-    }>;
-}
+export default function ProductDetailPage() {
+    // Sử dụng useParams hook để lấy productId từ URL
+    const params = useParams();
+    const productId = params?.productId as string;
 
-// Thiết lập cấu hình dynamic cho route này
-// Chú ý: Với output: export, bạn cần chọn:
-// - 'auto' - sẽ render tĩnh các route được liệt kê trong generateStaticParams
-// - 'error' - sẽ báo lỗi nếu có route không được liệt kê trong generateStaticParams
-// - 'force-static' - tất cả các route sẽ được render tĩnh
-export const dynamicParams = false; // Không cho phép các tham số ngoài generateStaticParams
-export const dynamic = 'error'; // Báo lỗi nếu truy cập route không trong generateStaticParams
+    // State để lưu product data
+    const [product, setProduct] = useState<IProduct | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-// Hàm này sẽ được sử dụng khi output là 'export'
-export async function generateStaticParams() {
-    try {
-        // Cách 1: Hardcode các ID sản phẩm cụ thể cần thiết
-        const staticProductIds = [
-            '6c6acd4a-e7a3-4aad-a98e-bc18a2439c4f',
-            // Thêm các ID sản phẩm khác nếu cần
-        ];
+    // Fetch product data ở client-side
+    useEffect(() => {
+        async function fetchProductData() {
+            if (!productId) return;
 
-        // Trả về mảng các tham số
-        return staticProductIds.map(id => ({
-            productId: id
-        }));
-
-        /* 
-        // Cách 2: Lấy từ API (comment lại để tránh lỗi khi API không hoạt động)
-        const categoryId = ''; // Để lấy tất cả sản phẩm
-        const allProducts = await ProductAPI.getProductsList(categoryId);
-        
-        if (!allProducts || allProducts.length === 0) {
-            // Nếu API không trả về sản phẩm, sử dụng danh sách hardcode
-            return staticProductIds.map(id => ({ productId: id }));
+            try {
+                setLoading(true);
+                const data = await ProductAPI.getProductDetail(productId);
+                setProduct(data);
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching product:', err);
+                setError('Failed to load product data. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
         }
-        
-        return allProducts.map(product => ({
-            productId: product.id,
-        }));
-        */
-    } catch (error) {
-        console.error('Error generating static params:', error);
-        // Trong trường hợp lỗi, vẫn trả về ID cụ thể
-        return [
-            { productId: '6c6acd4a-e7a3-4aad-a98e-bc18a2439c4f' }
-        ];
-    }
-}
 
-export async function generateMetadata({ params }: ProductDetailPageProps) {
-    try {
-        const { productId } = await params;
-        const product = await ProductAPI.getProductDetail(productId);
-        return {
-            title: `${product.name} | Cosmos`,
-            description: product.description,
-        };
-    } catch (error) {
-        return {
-            title: 'Product Detail | Cosmos',
-            description: 'Product details',
-        };
-    }
-}
+        fetchProductData();
+    }, [productId]);
 
-export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
-    const { productId } = await params;
-    const product = await ProductAPI.getProductDetail(productId);
+    // Loading state
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin h-12 w-12 border-4 border-green-500 rounded-full border-t-transparent"></div>
+            </div>
+        );
+    }
+
+    // Error state
+    if (error || !product) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="bg-red-50 border border-red-200 text-red-700 p-6 rounded-lg max-w-md">
+                    <h2 className="text-xl font-semibold mb-3">Error</h2>
+                    <p>{error || 'Product not found'}</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex flex-col w-full">
@@ -274,4 +259,4 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             </section>
         </div>
     );
-} 
+}

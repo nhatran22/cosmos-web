@@ -23,9 +23,28 @@ jobs:
         run: npm install
       - name: Building source code
         run: npm run build
+      - name: Prepare for S3 deployment
+        run: |
+          # Tạo file error.html (copy từ index.html)
+          cp out/index.html out/error.html
+          # Tạo file _redirects
+          echo "/* /index.html 200" > out/_redirects
       - name: Deploy to S3
         run: |
-          aws s3 sync out/ s3://cosmos-fe/ --delete
+          # Upload HTML files với Content-Type đúng
+          aws s3 sync out/ s3://cosmos-fe/ --delete --content-type "text/html" --exclude "*" --include "*.html"
+          # Upload mọi file khác
+          aws s3 sync out/ s3://cosmos-fe/ --delete --exclude "*.html"
+          # Đảm bảo file _redirects có Content-Type đúng
+          aws s3 cp out/_redirects s3://cosmos-fe/_redirects --content-type "text/plain"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ inputs.AWS_REGION }}
+      - name: Configure S3 Website
+        run: |
+          # Cấu hình S3 Website Hosting
+          aws s3 website s3://cosmos-fe/ --index-document index.html --error-document error.html
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

@@ -26,7 +26,6 @@ const EXPANDED_CATEGORY_KEY = "product_expanded_category";
 // Create a custom event for category selection
 export const setCategoryEvent = (category: string | null, subcategory: string | null = null) => {
     if (typeof window !== 'undefined') {
-        console.log('[ProductSidebar] Dispatching categorySelected event:', { category, subcategory, time: new Date().toISOString() });
         const event = new CustomEvent('categorySelected', { detail: { category, subcategory } });
         window.dispatchEvent(event);
     }
@@ -203,7 +202,6 @@ const ProductSidebar = () => {
 
             // Kích hoạt sự kiện với null để xử lý việc đóng tab
             setCategoryEvent(null);
-            console.log('[ProductSidebar] Closing category:', title);
 
             // Xóa category khỏi URL khi đóng tab
             const params = new URLSearchParams(searchParams.toString());
@@ -218,7 +216,6 @@ const ProductSidebar = () => {
 
             // Mở category mới
             setExpandedCategory(title);
-            console.log('[ProductSidebar] Opening category:', title);
 
             // Kích hoạt sự kiện cập nhật danh sách sản phẩm
             setCategoryEvent(title);
@@ -239,7 +236,6 @@ const ProductSidebar = () => {
                 // Trigger breadcrumbUpdate event
                 const event = new CustomEvent('breadcrumbUpdate');
                 window.dispatchEvent(event);
-                console.log('[ProductSidebar] Triggered breadcrumbUpdate event with:', { title });
             } catch (e) {
                 console.error('Error interacting with sessionStorage:', e);
             }
@@ -249,19 +245,12 @@ const ProductSidebar = () => {
             params.set('category', title);
             params.delete('subcategory'); // Xóa subcategory khi chuyển sang category khác
             const newUrl = `/products?${params.toString()}`;
-            console.log('[ProductSidebar] Navigating to:', newUrl);
             router.push(newUrl, { scroll: false });
         }
     };
 
     const handleItemClick = (href: string, categoryTitle: string, item: ProductItemType) => {
         if (href) {
-            console.log('[ProductSidebar] Subcategory clicked:', {
-                categoryTitle,
-                subcategoryName: item.name,
-                subcategoryId: item.id
-            });
-
             // Tạo URL chính xác
             const correctHref = `/products?category=${encodeURIComponent(categoryTitle)}&subcategory=${encodeURIComponent(item.id || '')}`;
 
@@ -287,12 +276,10 @@ const ProductSidebar = () => {
                 // Trigger breadcrumbUpdate event
                 const event = new CustomEvent('breadcrumbUpdate');
                 window.dispatchEvent(event);
-                console.log('[ProductSidebar] Updated breadcrumb with subcategory:', item.name);
             } catch (e) {
                 console.error('Error interacting with sessionStorage:', e);
             }
 
-            console.log('[ProductSidebar] Navigating to subcategory:', correctHref);
             router.push(correctHref);
         }
     };

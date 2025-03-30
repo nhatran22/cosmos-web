@@ -18,13 +18,7 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
 
     // Log khi component được render
     useEffect(() => {
-        console.log('[ProductSlider] Mounted with products:', {
-            count: products.length,
-            isParentCategory,
-            time: new Date().toISOString()
-        });
         return () => {
-            console.log('[ProductSlider] Unmounted at:', new Date().toISOString());
         };
     }, [products.length, isParentCategory]);
 
@@ -34,7 +28,6 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
     // Hàm chuyển trang
     const goToPage = useCallback((pageIndex: number) => {
         const newIndex = (pageIndex + totalPages) % totalPages;
-        console.log('[ProductSlider] Changing page to:', newIndex);
         setCurrentPage(newIndex);
     }, [totalPages]);
 
@@ -42,13 +35,11 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
     useEffect(() => {
         if (!autoPlay) return;
 
-        console.log('[ProductSlider] AutoPlay started');
         const interval = setInterval(() => {
             goToPage(currentPage + 1);
         }, 3000);
 
         return () => {
-            console.log('[ProductSlider] AutoPlay stopped');
             clearInterval(interval);
         };
     }, [autoPlay, currentPage, goToPage]);
@@ -61,33 +52,23 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
 
     // Xử lý khi nhấn Load More hoặc View Detail
     const handleButtonClick = (product: IProduct) => {
-        console.log('[ProductSlider] Button clicked for product:', {
-            id: product.id,
-            name: product.name,
-            action: isParentCategory ? 'Load More' : 'View Detail'
-        });
-
         if (isParentCategory) {
             // Load More - redirect to subcategory
             const url = `/products?category=${encodeURIComponent(product.catalogue)}&subcategory=${encodeURIComponent(product.categoryId)}`;
-            console.log('[ProductSlider] Redirecting to:', url);
             router.push(url);
         } else {
             // View Detail - redirect to product detail
             const url = `/products/${product.id}`;
-            console.log('[ProductSlider] Redirecting to:', url);
             router.push(url);
         }
     };
 
     // Dừng autoplay khi hover vào slider
     const handleMouseEnter = () => {
-        console.log('[ProductSlider] Mouse entered, stopping autoplay');
         setAutoPlay(false);
     }
 
     const handleMouseLeave = () => {
-        console.log('[ProductSlider] Mouse left, resuming autoplay');
         setAutoPlay(true);
     }
 
@@ -117,11 +98,9 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
                                     className="object-cover rounded-md hover:scale-105 transition-transform duration-300"
                                     onError={(e) => {
                                         const target = e.target as HTMLImageElement;
-                                        console.log('[ProductSlider] Image error loading:', target.src);
                                         target.src = '/images/placeholder.jpg';
                                     }}
                                     onLoad={() => {
-                                        console.log('[ProductSlider] Image loaded for product:', product.id);
                                     }}
                                 />
                             </div>
@@ -147,7 +126,6 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
                 <>
                     <button
                         onClick={() => {
-                            console.log('[ProductSlider] Previous page button clicked');
                             setAutoPlay(false);
                             goToPage(currentPage - 1);
                             setTimeout(() => setAutoPlay(true), 5000);
@@ -160,7 +138,6 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
 
                     <button
                         onClick={() => {
-                            console.log('[ProductSlider] Next page button clicked');
                             setAutoPlay(false);
                             goToPage(currentPage + 1);
                             setTimeout(() => setAutoPlay(true), 5000);
@@ -180,7 +157,6 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
                         <button
                             key={index}
                             onClick={() => {
-                                console.log('[ProductSlider] Dot pagination clicked for page:', index);
                                 setAutoPlay(false);
                                 goToPage(index);
                                 setTimeout(() => setAutoPlay(true), 5000);

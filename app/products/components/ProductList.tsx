@@ -19,27 +19,14 @@ export default function ProductList() {
 
     // Log để debug
     useEffect(() => {
-        console.log('[ProductList] Mounted with params:', {
-            categoryParam,
-            subcategoryParam,
-            url: window.location.href,
-            time: new Date().toISOString()
-        });
-
         // Ghi lại tất cả các network requests
         const originalFetch = window.fetch;
         window.fetch = function (input: RequestInfo | URL, init?: RequestInit) {
             const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
-            console.log('[ProductList] Network request:', {
-                url,
-                method: init?.method || 'GET',
-                time: new Date().toISOString()
-            });
             return originalFetch(input, init);
         };
 
         return () => {
-            console.log('[ProductList] Unmounted at:', new Date().toISOString());
             // Restore original fetch
             window.fetch = originalFetch;
         };
@@ -70,7 +57,6 @@ export default function ProductList() {
                             if (subcategory) {
                                 setTitle(subcategory.name);
                                 setCategoryData(subcategory);
-                                console.log('[ProductList] Found subcategory:', subcategory);
                                 break;
                             }
                         }
@@ -83,7 +69,6 @@ export default function ProductList() {
                     if (category) {
                         setTitle(`${category.title} Products`);
                         setCategoryData(category);
-                        console.log('[ProductList] Found category:', category);
                     }
                 } else {
                     setTitle('All Products');
@@ -98,17 +83,11 @@ export default function ProductList() {
         queryKey: ['products', categoryId],
         queryFn: async () => {
             try {
-                console.log('[ProductList] Fetching products for category:', {
-                    categoryId,
-                    time: new Date().toISOString(),
-                    cache: !!cachedProducts.get(categoryId) ? 'Hit' : 'Miss'
-                });
                 const data = await ProductAPI.getProductsList(categoryId);
 
                 // Cache data
                 if (data) {
                     addCachedProducts(categoryId, data);
-                    console.log('[ProductList] Fetched data success, count:', data.length);
                 }
 
                 return data;
@@ -120,7 +99,6 @@ export default function ProductList() {
         // Sử dụng dữ liệu từ cache nếu có
         initialData: () => {
             const cached = categoryId ? cachedProducts.get(categoryId) : undefined;
-            console.log('[ProductList] Using cached data:', !!cached, 'for categoryId:', categoryId);
             return cached;
         },
         staleTime: 5 * 60 * 1000, // 5 phút
@@ -129,7 +107,6 @@ export default function ProductList() {
 
     // Hiển thị loading state
     if (isLoading) {
-        console.log('[ProductList] Rendering loading state');
         return (
             <div className="py-4">
                 <div className="h-8 bg-gray-200 rounded w-1/3 mb-6 animate-pulse"></div>
@@ -149,7 +126,6 @@ export default function ProductList() {
 
     // Hiển thị lỗi nếu có
     if (error) {
-        console.log('[ProductList] Rendering error state:', error);
         return (
             <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-md">
                 <h3 className="text-lg font-medium mb-2">Đã xảy ra lỗi</h3>
@@ -160,7 +136,6 @@ export default function ProductList() {
 
     // Hiển thị thông báo khi chưa chọn danh mục
     if (!categoryId) {
-        console.log('[ProductList] Rendering no category selected state');
         return (
             <div className="bg-gray-50 p-8 rounded-md text-center">
                 <h3 className="text-lg font-medium text-gray-600 mb-2">Vui lòng chọn danh mục</h3>
@@ -173,7 +148,6 @@ export default function ProductList() {
 
     // Hiển thị thông báo nếu không có sản phẩm
     if (!products || products.length === 0) {
-        console.log('[ProductList] Rendering no products state');
         return (
             <div className="bg-gray-50 p-8 rounded-md text-center">
                 <h3 className="text-lg font-medium text-gray-600 mb-2">Không có sản phẩm</h3>
@@ -185,7 +159,6 @@ export default function ProductList() {
     }
 
     // Hiển thị danh sách sản phẩm
-    console.log('[ProductList] Rendering products:', products.length);
     return (
         <div className="py-4">
             <h2 className="text-2xl font-semibold mb-6">{title}</h2>
