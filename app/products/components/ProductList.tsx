@@ -1,12 +1,13 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { ProductAPI } from '@/app/services/api';
 import { useProduct } from '../contexts/ProductContext';
 import { useCategories } from '@/app/contexts/CategoriesContext';
 import ProductSlider from './ProductSlider';
 import { useState, useEffect } from 'react';
+import { IProductListItem } from '@/app/interface/product';
 
 export default function ProductList() {
     const searchParams = useSearchParams();
@@ -16,6 +17,12 @@ export default function ProductList() {
     // Lấy thông tin category và subcategory từ URL
     const categoryParam = searchParams.get('category');
     const subcategoryParam = searchParams.get('subcategory');
+
+    // Xác định có phải đang ở tab cha không (có category nhưng không có subcategory)
+    const isParentCategory = !!categoryParam && !subcategoryParam;
+
+    // Xác định categoryId để fetch data
+    const categoryId = subcategoryParam || categoryParam || '';
 
     // Log để debug
     useEffect(() => {
@@ -31,10 +38,6 @@ export default function ProductList() {
             window.fetch = originalFetch;
         };
     }, [categoryParam, subcategoryParam]);
-
-    // Xác định categoryId để fetch data
-    const categoryId = subcategoryParam || categoryParam || '';
-    const isParentCategory = !!categoryParam && !subcategoryParam;
 
     // State để lưu trữ title
     const [title, setTitle] = useState<string>('');
@@ -78,19 +81,74 @@ export default function ProductList() {
         }
     }, [categoryParam, subcategoryParam, navigation]);
 
+    // Xử lý sự kiện từ ProductSidebar
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const handleCategorySelected = (event: CustomEvent) => {
+            const { category, isSubcategory, isParentCategory } = event.detail;
+
+            if (isParentCategory) {
+                const data = navigation.find(item => item.name === 'Products')?.submenu?.find(item => item.title === category);
+                const allProducts = data?.items?.map((item) => {
+                    return {
+                        id: item.id!,
+                        name: item.fullName,
+                        catalogue: category,
+                        image: item.image,
+                    } as IProductListItem;
+                });
+                addCachedProducts(category, allProducts!);
+            } else if (isSubcategory) {
+                console.log(1);
+            }
+        };
+
+        // Đăng ký event listener
+        window.addEventListener('categorySelected', handleCategorySelected as EventListener);
+
+        return () => {
+            window.removeEventListener('categorySelected', handleCategorySelected as EventListener);
+        };
+    }, [navigation, addCachedProducts]);
+
     // Fetch sản phẩm bằng React Query
     const { data: products, isLoading, error } = useQuery({
         queryKey: ['products', categoryId],
         queryFn: async () => {
             try {
-                const data = await ProductAPI.getProductsList(categoryId);
+                // Nếu đang ở tab cha, kiểm tra cache trước
+                if (isParentCategory && categoryParam) {
+                    const cachedParentProducts = cachedProducts.get(categoryParam);
+                    if (cachedParentProducts && cachedParentProducts.length > 0) {
+                        return cachedParentProducts;
+                    }
+                } else {
+                    // Nếu không có trong cache hoặc không phải tab cha, fetch từ API
+                    const data = await ProductAPI.getProductsList(categoryId);
 
-                // Cache data
-                if (data) {
-                    addCachedProducts(categoryId, data);
+                    // Cache data
+                    if (data) {
+                        const getProductName = (id: string) => {
+                            const data = navigation.find(item => item.name === 'Products')?.submenu?.find(item => item.title === categoryParam)?.items?.find(item => item.id === subcategoryParam);
+                            return data?.fullName;
+                        }
+                        const productData = data.map((item) => {
+                            return {
+                                id: item.id!,
+                                name: getProductName(item.id!),
+                                image: item.image,
+                                description: item.name,
+                            } as IProductListItem;
+                        })
+
+                        addCachedProducts(categoryId, productData);
+                        return productData;
+                    } else {
+                        return data;
+                    }
                 }
 
-                return data;
             } catch (error) {
                 console.error('[ProductList] Error fetching products:', error);
                 throw error;
@@ -98,11 +156,22 @@ export default function ProductList() {
         },
         // Sử dụng dữ liệu từ cache nếu có
         initialData: () => {
+            // Nếu đang ở tab cha, kiểm tra cache cho categoryParam
+            if (isParentCategory && categoryParam) {
+                const cachedParentProducts = cachedProducts.get(categoryParam);
+                if (cachedParentProducts && cachedParentProducts.length > 0) {
+                    return cachedParentProducts;
+                }
+            }
+
+            // Nếu không, kiểm tra cache thông thường
             const cached = categoryId ? cachedProducts.get(categoryId) : undefined;
             return cached;
         },
         staleTime: 5 * 60 * 1000, // 5 phút
-        enabled: !!categoryId // Chỉ fetch khi có categoryId
+        // Kích hoạt query trong mọi trường hợp, kể cả khi không có categoryId
+        // Điều này cho phép hiển thị dữ liệu từ cache cho tab cha 
+        enabled: !isParentCategory ? !!categoryId : true
     });
 
     // Hiển thị loading state
@@ -120,28 +189,6 @@ export default function ProductList() {
                         </div>
                     ))}
                 </div>
-            </div>
-        );
-    }
-
-    // Hiển thị lỗi nếu có
-    if (error) {
-        return (
-            <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-md">
-                <h3 className="text-lg font-medium mb-2">Đã xảy ra lỗi</h3>
-                <p>Không thể tải danh sách sản phẩm. Vui lòng thử lại sau.</p>
-            </div>
-        );
-    }
-
-    // Hiển thị thông báo khi chưa chọn danh mục
-    if (!categoryId) {
-        return (
-            <div className="bg-gray-50 p-8 rounded-md text-center">
-                <h3 className="text-lg font-medium text-gray-600 mb-2">Vui lòng chọn danh mục</h3>
-                <p className="text-gray-500">
-                    Hãy chọn một danh mục sản phẩm từ menu bên trái để xem sản phẩm.
-                </p>
             </div>
         );
     }

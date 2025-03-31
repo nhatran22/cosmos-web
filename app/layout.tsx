@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
-import { FloatingIconsWrapper } from '@/components/ClientWrappers';
+import { FloatingIconsWrapper, ZaloChatWrapper } from '@/components/ClientWrappers';
 import PerformanceInitializer from '@/app/utils/performance-init';
 import { CategoriesProvider } from '@/app/contexts/CategoriesContext';
 import { Toaster } from '@/components/ui/toaster';
@@ -71,6 +71,7 @@ export default function RootLayout({
             </main>
             <Footer />
             <FloatingIconsWrapper />
+            <ZaloChatWrapper />
             <PerformanceInitializer />
           </CategoriesProvider>
         </ThemeProvider>

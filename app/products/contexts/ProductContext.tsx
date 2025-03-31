@@ -1,11 +1,11 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { IProduct } from '@/app/services/api';
+import { IProductListItem } from '@/app/interface/product';
 
 interface ProductContextType {
-    cachedProducts: Map<string, IProduct[]>;
-    addCachedProducts: (categoryId: string, products: IProduct[]) => void;
+    cachedProducts: Map<string, IProductListItem[]>;
+    addCachedProducts: (categoryId: string, products: IProductListItem[]) => void;
     clearCache: () => void;
 }
 
@@ -16,9 +16,9 @@ const ProductContext = createContext<ProductContextType>({
 });
 
 export function ProductProvider({ children }: { children: ReactNode }) {
-    const [cachedProducts, setCachedProducts] = useState<Map<string, IProduct[]>>(new Map());
+    const [cachedProducts, setCachedProducts] = useState<Map<string, IProductListItem[]>>(new Map());
 
-    const addCachedProducts = useCallback((categoryId: string, products: IProduct[]) => {
+    const addCachedProducts = useCallback((categoryId: string, products: IProductListItem[]) => {
         setCachedProducts(prev => {
             const newMap = new Map(prev);
             newMap.set(categoryId, products);

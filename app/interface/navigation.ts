@@ -18,6 +18,7 @@ export interface SubItem {
     name: string;
     href: string;
     fullName?: string;
+    image?: string;
 }
 
 export interface AdditionalHeader {

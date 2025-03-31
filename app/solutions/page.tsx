@@ -5,9 +5,8 @@ import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { RelatedProduct, Solution, Tab } from '@/app/interface/solutions';
+import { RelatedProduct, Solution } from '@/app/interface/solutions';
 import { SOLUTIONS_DATA, TABS } from '@/data/solution-data';
-import { useCategories } from '../contexts/CategoriesContext';
 
 // Tách DataCenterSolutionItem thành component riêng
 const DataCenterSolutionItem = ({ solution }: { solution: Solution }) => (
@@ -157,14 +156,6 @@ export default function SolutionsPage() {
         return currentTab?.category === 'Data Center Critical Infrastructure';
     }, [activeTab]);
 
-    // Xử lý thay đổi tab
-    const handleTabChange = (tabId: string) => {
-        setActiveTab(tabId);
-        const selectedTab = TABS.find(tab => tab.id === tabId);
-        if (selectedTab) {
-            setActiveCategory(selectedTab.category);
-        }
-    };
 
     // Sử dụng useMemo để tối ưu việc lọc giải pháp
     const filteredSolutions = useMemo(() => {

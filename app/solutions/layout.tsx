@@ -12,10 +12,6 @@ export default function SolutionsLayout({
     // Kiểm tra xem có phải trang chính không - xử lý cả trường hợp có dấu / ở cuối
     const isMainSolutionPage = pathname === '/solutions' || pathname === '/solutions/';
 
-    console.log(pathname);
-    // Kiểm tra xem có phải trang chi tiết không (đường dẫn có nhiều hơn 2 phần)
-    const isSolutionDetailPage = pathname.split('/').length > 2;
-
     return (
         <div className="bg-gray-50 min-h-screen">
             <div className="container mx-auto px-4 py-8 pb-24">

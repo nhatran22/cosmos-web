@@ -26,7 +26,14 @@ const EXPANDED_CATEGORY_KEY = "product_expanded_category";
 // Create a custom event for category selection
 export const setCategoryEvent = (category: string | null, subcategory: string | null = null) => {
     if (typeof window !== 'undefined') {
-        const event = new CustomEvent('categorySelected', { detail: { category, subcategory } });
+        // Tạo event chứa thông tin chi tiết về category và subcategory
+        const event = new CustomEvent('categorySelected', {
+            detail: {
+                category,
+                subcategory,
+                isParentCategory: category !== null && subcategory === null
+            }
+        });
         window.dispatchEvent(event);
     }
 };
@@ -101,7 +108,7 @@ const ProductSidebar = () => {
     const [isMounted, setIsMounted] = useState(false);
     const [animating, setAnimating] = useState(false);
 
-    const { navigation, loading } = useCategories();
+    const { navigation } = useCategories();
 
     // Reference to track animation timeouts
     const animationTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -293,31 +300,6 @@ const ProductSidebar = () => {
                         <div className="w-full h-14 bg-gray-200 rounded-md animate-pulse"></div>
                     </div>
                 ))}
-            </div>
-        );
-    }
-
-    // Hiển thị loading icon khi đang tải
-    if (loading) {
-        return (
-            <div className="w-full h-60 flex flex-col items-center justify-center">
-                <Loader2 className="w-10 h-10 text-green-600 animate-spin mb-2" />
-                <p className="text-gray-600 text-sm">Đang tải danh mục...</p>
-            </div>
-        );
-    }
-
-    // Nếu không có categories nhưng đã tải xong, hiển thị thông báo
-    if (categories.length === 0 && !loading) {
-        return (
-            <div className="w-full p-4 bg-gray-50 rounded-md">
-                <p className="text-gray-500 text-center">Không có danh mục sản phẩm</p>
-                <button
-                    onClick={() => window.location.reload()}
-                    className="mt-2 w-full py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
-                >
-                    Tải lại trang
-                </button>
             </div>
         );
     }

@@ -35,10 +35,8 @@ export interface IPerformanceCharacteristic {
 export interface IProductListItem {
     id: string;
     name: string;
-    href?: string;
+    catalogue?: string;
     image?: string;
-    subcategoryName?: string;
-    shortDescription?: string;
     description?: string;
 }
 

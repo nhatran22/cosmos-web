@@ -7,4 +7,9 @@ const FloatingIconsWrapper = dynamic(() => import('@/components/FloatingIcons'),
     ssr: false
 });
 
-export { FloatingIconsWrapper }; 
+// Client wrapper cho ZaloChat để tránh lỗi hydration
+const ZaloChatWrapper = dynamic(() => import('@/components/ZaloChat'), {
+    ssr: false
+});
+
+export { FloatingIconsWrapper, ZaloChatWrapper }; 

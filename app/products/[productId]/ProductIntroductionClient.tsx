@@ -79,13 +79,7 @@ export default function ProductIntroductionClient({ product }: ProductIntroducti
                                         </div>
                                     </div>
                                     <div className="md:w-2/3 md:pl-8">
-                                        <h3 className="text-xl font-semibold text-green-600 mb-3">Power Range</h3>
                                         <p className="text-gray-700 mb-3">{product.powerRange}</p>
-                                        <p className="text-gray-600">
-                                            UPS có dải công suất rộng để đáp ứng các nhu cầu từ văn phòng nhỏ đến trung tâm
-                                            dữ liệu lớn. Dải công suất từ 50kVA đến 600kVA giúp bạn linh hoạt lựa chọn
-                                            giải pháp phù hợp nhất với hệ thống hiện tại.
-                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -107,13 +101,7 @@ export default function ProductIntroductionClient({ product }: ProductIntroducti
                                         </div>
                                     </div>
                                     <div className="md:w-2/3 md:pl-8">
-                                        <h3 className="text-xl font-semibold text-blue-600 mb-3">Working Way</h3>
                                         <p className="text-gray-700 mb-3">{product.workingWay}</p>
-                                        <p className="text-gray-600">
-                                            UPS online double-conversion chuyển đổi điện AC thành DC và ngược lại, loại bỏ
-                                            hoàn toàn các sự cố điện như sụt áp, xung điện và nhiễu. Công nghệ này cung cấp
-                                            nguồn điện sạch liên tục và bảo vệ thiết bị nhạy cảm một cách tối ưu.
-                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -135,13 +123,7 @@ export default function ProductIntroductionClient({ product }: ProductIntroducti
                                         </div>
                                     </div>
                                     <div className="md:w-2/3 md:pl-8">
-                                        <h3 className="text-xl font-semibold text-purple-600 mb-3">Application Areas</h3>
                                         <p className="text-gray-700 mb-3">{product.suitableArea}</p>
-                                        <p className="text-gray-600">
-                                            Dòng UPS này thích hợp cho nhiều lĩnh vực từ trung tâm dữ liệu, cơ sở hạ tầng
-                                            viễn thông, ngành y tế, ngân hàng tài chính đến các ứng dụng công nghiệp.
-                                            Độ tin cậy cao và khả năng mở rộng giúp bảo vệ các hệ thống quan trọng.
-                                        </p>
                                     </div>
                                 </div>
                             </div>
