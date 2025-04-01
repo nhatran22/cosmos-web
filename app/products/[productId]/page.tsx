@@ -221,29 +221,13 @@ export default function ProductDetailPage() {
                             <hr className="border-t border-white/20 mt-6" />
                         </div>
 
-                        <div className="space-y-2">
-                            <h3 className="text-xl mb-4">Installation method</h3>
-                            <p>Tower</p>
-                            <hr className="border-t border-white/20 mt-6" />
-                        </div>
-
-                        <div className="space-y-2">
-                            <h3 className="text-xl mb-4">Device-level protection</h3>
-                            <p>Extreme reliability, more adaptable</p>
-                            <hr className="border-t border-white/20 mt-6" />
-                        </div>
-
-                        <div className="space-y-2">
-                            <h3 className="text-xl mb-4">Large smart color touch screen</h3>
-                            <p>Friendly man-machine interface</p>
-                            <hr className="border-t border-white/20 mt-6" />
-                        </div>
-
-                        <div className="space-y-2">
-                            <h3 className="text-xl mb-4">High power density</h3>
-                            <p>Easy installation and maintenance</p>
-                            <hr className="border-t border-white/20 mt-6" />
-                        </div>
+                        {product.performanceCharacteristics?.map((char, index) => (
+                            <div key={index} className="space-y-2">
+                                <h3 className="text-xl mb-4">{char.title}</h3>
+                                <p>{char.description}</p>
+                                <hr className="border-t border-white/20 mt-6" />
+                            </div>
+                        ))}
 
                         <div className="md:col-span-2 mt-8">
                             <h3 className="text-xl mb-4">Application area:</h3>
