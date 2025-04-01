@@ -23,19 +23,50 @@ interface ProductCategory {
 // Các key cho sessionStorage
 const EXPANDED_CATEGORY_KEY = "product_expanded_category";
 
-// Create a custom event for category selection
-export const setCategoryEvent = (category: string | null, subcategory: string | null = null) => {
+// Hàm event để đồng bộ giữa ProductSidebar và breadcrumb
+export function setProductCategoryEvent(category: string | null, subcategory: string | null = null) {
+    // Chuẩn hóa category và subcategory
+    const normalizedCategory = category ? decodeURIComponent(String(category)).replace(/\+/g, ' ') : null;
+    const normalizedSubcategory = subcategory ? decodeURIComponent(String(subcategory)).replace(/\+/g, ' ') : null;
+
     if (typeof window !== 'undefined') {
-        // Tạo event chứa thông tin chi tiết về category và subcategory
-        const event = new CustomEvent('categorySelected', {
-            detail: {
-                category,
-                subcategory,
-                isParentCategory: category !== null && subcategory === null
-            }
-        });
-        window.dispatchEvent(event);
+        // Tạo breadcrumb data
+        const breadcrumbData: any = {
+            category: normalizedCategory ? {
+                name: normalizedCategory,
+                href: `/products?category=${encodeURIComponent(normalizedCategory)}`
+            } : null,
+            showSubcategory: !!normalizedSubcategory,
+            subcategory: normalizedSubcategory ? {
+                name: normalizedSubcategory,
+                href: `/products?category=${encodeURIComponent(normalizedCategory!)}&subcategory=${normalizedSubcategory.replace(/ /g, '%20')}`
+            } : null,
+            product: null
+        };
+
+        // Lưu vào sessionStorage để đồng bộ với breadcrumb
+        try {
+            sessionStorage.setItem('breadcrumbData', JSON.stringify(breadcrumbData));
+
+            // Kích hoạt sự kiện breadcrumbUpdate
+            const updateEvent = new CustomEvent('breadcrumbUpdate');
+            window.dispatchEvent(updateEvent);
+
+            // Kích hoạt sự kiện categorySelected cho ProductList
+            const categoryEvent = new CustomEvent('categorySelected', {
+                detail: { category: normalizedCategory, subcategory: normalizedSubcategory }
+            });
+            window.dispatchEvent(categoryEvent);
+        } catch (e) {
+            console.error('Error interacting with sessionStorage:', e);
+        }
     }
+}
+
+// Create a custom event for category selection
+export const setCategoryEvent = (category: string | null) => {
+    // Gọi hàm setProductCategoryEvent với subcategory = null
+    setProductCategoryEvent(category, null);
 };
 
 const ProductCategoryItem = ({
@@ -104,6 +135,7 @@ const ProductSidebar = () => {
     const router = useRouter();
     const [categories, setCategories] = useState<ProductCategory[]>([]);
     const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+    const [expandedSubcategory, setExpandedSubcategory] = useState<string | null>(null);
     const [previouslyExpanded, setPreviouslyExpanded] = useState<string | null>(null);
     const [isMounted, setIsMounted] = useState(false);
     const [animating, setAnimating] = useState(false);
@@ -149,8 +181,12 @@ const ProductSidebar = () => {
     useEffect(() => {
         if (!navigation || navigation.length === 0) return;
 
-        // Find the product navigation item
-        const productNav = navigation.find(item => item.name === 'Product' || item.href === '/products');
+        // Find the product navigation item - trường hợp này có thể là 'Products' hoặc 'Product'
+        const productNav = navigation.find(item =>
+            item.name === 'Products' ||
+            item.name === 'Product' ||
+            item.href === '/products'
+        );
 
         if (productNav?.submenu) {
             // Set categories from submenu, ensuring fullName is included
@@ -208,7 +244,10 @@ const ProductSidebar = () => {
             setExpandedCategory(null);
 
             // Kích hoạt sự kiện với null để xử lý việc đóng tab
-            setCategoryEvent(null);
+            setProductCategoryEvent(null, null);
+            window.dispatchEvent(new CustomEvent('categorySelected', {
+                detail: { category: null, subcategory: null }
+            }));
 
             // Xóa category khỏi URL khi đóng tab
             const params = new URLSearchParams(searchParams.toString());
@@ -224,72 +263,103 @@ const ProductSidebar = () => {
             // Mở category mới
             setExpandedCategory(title);
 
-            // Kích hoạt sự kiện cập nhật danh sách sản phẩm
-            setCategoryEvent(title);
+            // Kích hoạt cả hai sự kiện để đảm bảo xử lý nhất quán
+            setProductCategoryEvent(title, null);
+            window.dispatchEvent(new CustomEvent('categorySelected', {
+                detail: { category: title, subcategory: null }
+            }));
 
-            // Cập nhật breadcrumb để hiển thị đúng "Home > Product > UPS Supply" hoặc "Home > Product > ACM Series"
-            const breadcrumbData = {
-                category: {
-                    name: title, // Tên tab như "UPS Supply" hoặc "ACM Series"
-                    href: `/products?category=${encodeURIComponent(title)}`
-                },
-                showSubcategory: false,
-                subcategory: null,
-                product: null
-            };
+            // Sử dụng cách mã hóa URL thủ công thay vì URLSearchParams để đảm bảo %20 thay vì +
+            const categoryParam = encodeURIComponent(title);
+            const newUrl = `/products?category=${categoryParam}`;
 
-            try {
-                sessionStorage.setItem('breadcrumbData', JSON.stringify(breadcrumbData));
-                // Trigger breadcrumbUpdate event
-                const event = new CustomEvent('breadcrumbUpdate');
-                window.dispatchEvent(event);
-            } catch (e) {
-                console.error('Error interacting with sessionStorage:', e);
-            }
-
-            // Cập nhật URL với category được chọn và xóa subcategory nếu có
-            const params = new URLSearchParams(searchParams.toString());
-            params.set('category', title);
-            params.delete('subcategory'); // Xóa subcategory khi chuyển sang category khác
-            const newUrl = `/products?${params.toString()}`;
             router.push(newUrl, { scroll: false });
         }
     };
 
-    const handleItemClick = (href: string, categoryTitle: string, item: ProductItemType) => {
+    // Xử lý khi click vào một subcategory item
+    const handleItemClick = (href: string, categoryTitle: string, item: any) => {
+        if (animationTimeout.current) {
+            clearTimeout(animationTimeout.current);
+        }
+
+        setAnimating(true);
+        animationTimeout.current = setTimeout(() => {
+            setAnimating(false);
+        }, 500);
+
         if (href) {
+            // Mã hóa đúng cách với %20 thay vì +
+            const categoryParam = categoryTitle.replace(/ /g, '%20');
+            // Sử dụng tên subcategory thay vì ID
+            const subcategoryParam = (item.name || '').replace(/ /g, '%20');
+
             // Tạo URL chính xác
-            const correctHref = `/products?category=${encodeURIComponent(categoryTitle)}&subcategory=${encodeURIComponent(item.id || '')}`;
+            const correctHref = `/products?category=${categoryParam}&subcategory=${subcategoryParam}`;
 
             // Kích hoạt sự kiện cập nhật danh sách sản phẩm với cả category và subcategory
-            setCategoryEvent(categoryTitle, item.id || '');
-
-            // Cập nhật breadcrumb với subcategory được chọn
-            const breadcrumbData = {
-                category: {
-                    name: categoryTitle,
-                    href: `/products?category=${encodeURIComponent(categoryTitle)}`
-                },
-                showSubcategory: true,
-                subcategory: {
-                    name: item.name,
-                    href: correctHref
-                },
-                product: null
-            };
-
-            try {
-                sessionStorage.setItem('breadcrumbData', JSON.stringify(breadcrumbData));
-                // Trigger breadcrumbUpdate event
-                const event = new CustomEvent('breadcrumbUpdate');
-                window.dispatchEvent(event);
-            } catch (e) {
-                console.error('Error interacting with sessionStorage:', e);
-            }
+            // Truyền tên subcategory thay vì ID
+            setProductCategoryEvent(categoryTitle, item.name || '');
 
             router.push(correctHref);
         }
     };
+
+    // Hàm xử lý sự kiện khi một category được chọn từ breadcrumb
+    const handleProductCategorySelected = (event: Event) => {
+        const customEvent = event as CustomEvent;
+        if (customEvent.detail) {
+            const { category, subcategory } = customEvent.detail;
+
+            // Chuẩn hóa category và subcategory để đảm bảo nhất quán
+            const normalizedCategory = category ? decodeURIComponent(String(category)).replace(/\+/g, ' ') : null;
+            const normalizedSubcategory = subcategory ? decodeURIComponent(String(subcategory)).replace(/\+/g, ' ') : null;
+
+            // Cập nhật state
+            if (normalizedCategory) {
+                setExpandedCategory(normalizedCategory);
+                // Nếu có subcategory, mở rộng nó
+                if (normalizedSubcategory) {
+                    setExpandedSubcategory(normalizedSubcategory);
+                } else {
+                    setExpandedSubcategory(null);
+                }
+            }
+
+            // Cập nhật URL mà không reload trang
+            const url = new URL(window.location.href);
+            const params = new URLSearchParams(url.search);
+
+            if (normalizedCategory) {
+                // Mã hóa category với %20 cho URL
+                const categoryParam = encodeURIComponent(normalizedCategory);
+                params.set('category', categoryParam);
+
+                if (normalizedSubcategory) {
+                    // Mã hóa subcategory với %20 cho URL
+                    const subcategoryParam = normalizedSubcategory.replace(/ /g, '%20');
+                    params.set('subcategory', subcategoryParam);
+                } else {
+                    params.delete('subcategory');
+                }
+            }
+
+            url.search = params.toString();
+            window.history.pushState({}, '', url.toString());
+        }
+    };
+
+    // Lắng nghe sự kiện từ breadcrumb khi tab được click
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        // Đăng ký lắng nghe sự kiện
+        window.addEventListener('productCategorySelected', handleProductCategorySelected as EventListener);
+
+        return () => {
+            window.removeEventListener('productCategorySelected', handleProductCategorySelected as EventListener);
+        };
+    }, []);
 
     // Nếu chưa mount ở client, hiển thị skeleton
     if (!isMounted) {
@@ -309,7 +379,10 @@ const ProductSidebar = () => {
             {categories.map((category, index) => {
                 const isExpanded = expandedCategory === category.title;
                 const wasExpanded = previouslyExpanded === category.title && expandedCategory !== category.title;
-                const activeSubcategory = searchParams.get('subcategory');
+                // Nếu activeSubcategory là tên, chúng ta cần tìm theo tên thay vì ID
+                const activeSubcategoryParam = searchParams.get('subcategory');
+                const activeSubcategory = activeSubcategoryParam ?
+                    decodeURIComponent(activeSubcategoryParam).replace(/\+/g, ' ') : null;
 
                 return (
                     <div key={index} className="mb-3">
@@ -339,11 +412,12 @@ const ProductSidebar = () => {
                                     <div className="bg-[#F6F6F6] rounded-md">
                                         {category.items.map((item) => {
                                             // Kiểm tra xem item có phải là subcategory đang active không
-                                            const isActive = activeSubcategory === item.id;
+                                            // So sánh tên subcategory thay vì ID
+                                            const isActive = activeSubcategory === item.name;
 
                                             return (
                                                 <div
-                                                    key={item.id}
+                                                    key={item.id || item.name}
                                                     className={`px-4 py-3 cursor-pointer transition-all duration-300 ${isActive
                                                         ? 'text-green-600 font-medium bg-white shadow-md border-l-4 border-green-600'
                                                         : 'text-gray-700 hover:bg-white hover:shadow-sm hover:text-green-600 hover:border-l-2 hover:border-green-300'}`}

@@ -90,13 +90,7 @@ export const recordPerformanceMetrics = () => {
         const domContentLoaded = timing.domContentLoadedEventEnd - timing.fetchStart;
         const fullLoadTime = timing.loadEventEnd - timing.fetchStart;
 
-        console.log({
-            DNS: `${Math.round(dnsTime)}ms`,
-            TCP: `${Math.round(tcpTime)}ms`,
-            TTFB: `${Math.round(ttfb)}ms`,
-            DOMContentLoaded: `${Math.round(domContentLoaded)}ms`,
-            FullLoadTime: `${Math.round(fullLoadTime)}ms`,
-        });
+        // Log đã bị xóa để tối ưu hóa
     }
 };
 
@@ -108,7 +102,7 @@ export const calculateLCP = () => {
         new PerformanceObserver((entryList) => {
             const entries = entryList.getEntries();
             const lastEntry = entries[entries.length - 1];
-            console.log(`LCP: ${Math.round(lastEntry.startTime)}ms`);
+            // Log đã bị xóa để tối ưu hóa
         }).observe({ type: 'largest-contentful-paint', buffered: true });
     } catch (e) {
         console.error('LCP calculation error:', e);
@@ -133,7 +127,7 @@ export const registerServiceWorker = () => {
     window.addEventListener('load', async () => {
         try {
             const registration = await navigator.serviceWorker.register('/service-worker.js');
-            console.log('ServiceWorker đã đăng ký thành công:', registration.scope);
+            // Log đã bị xóa để tối ưu hóa
         } catch (error) {
             console.error('Đăng ký ServiceWorker thất bại:', error);
         }

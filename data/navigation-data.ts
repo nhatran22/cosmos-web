@@ -31,14 +31,14 @@ export const baseNavigation: NavBar[] = [
         submenu: [
             {
                 title: 'Data Center Critical Infrastructure',
-                href: '/solutions',
+                href: `/solutions?category=${encodeURIComponent('Data Center Critical Infrastructure')}`,
                 items: [
                     { name: 'Intelligent Micro Module System Solution', href: '/solutions' },
                 ]
             },
             {
                 title: 'New Energy Storage System',
-                href: '/solutions',
+                href: `/solutions?category=${encodeURIComponent('New Energy Storage System')}`,
                 items: [
                     { name: 'Household Storage PCS System Solution', href: '/solutions/household-storage' },
                     { name: 'Industrial and Commercial Storage PCS System Solution', href: '/solutions/commercial-storage' },

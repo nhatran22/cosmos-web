@@ -39,6 +39,41 @@ export default function Breadcrumb() {
     const [searchParamsValue, setSearchParamsValue] = useState<URLSearchParams | null>(null); // Hook #5
     const [breadcrumbData, setBreadcrumbData] = useState<BreadcrumbData | null>(null); // Hook #6
     const { navigation } = useCategories(); // Hook #7
+    const [shouldRender, setShouldRender] = useState<boolean>(pathname !== '/'); // Hook để kiểm soát việc render
+
+    // Kiểm tra xem active tab có phải là tab Products không
+    const isProductTab = pathname?.startsWith('/products');
+
+    // Ở đây chúng ta chuẩn hóa category khi lấy từ URL
+    const categoryParamRaw = searchParamsHook?.get("category");
+    const categoryParam = categoryParamRaw ? decodeURIComponent(categoryParamRaw).replace(/\+/g, ' ') : null;
+
+    // Tương tự, chuẩn hóa subcategory khi lấy từ URL
+    const subcategoryParamRaw = searchParamsHook?.get("subcategory");
+    const subcategoryParam = subcategoryParamRaw ? decodeURIComponent(subcategoryParamRaw).replace(/\+/g, ' ') : null;
+
+    // Tìm tên subcategory từ navigation dựa trên tên
+    const findSubcategoryName = useCallback((category: string, subcategory: string) => {
+        const productNavItem = navigation.find(item =>
+            item.name === 'Products' ||
+            item.name === 'Product' ||
+            item.href === '/products'
+        );
+
+        if (productNavItem?.submenu) {
+            const foundCategory = productNavItem.submenu.find(cat => cat.title === category);
+            if (foundCategory?.items) {
+                const foundSubcategory = foundCategory.items.find(item => item.name === subcategory);
+                if (foundSubcategory) {
+                    return {
+                        name: foundSubcategory.name,
+                        id: foundSubcategory.id
+                    };
+                }
+            }
+        }
+        return { name: subcategory, id: null };
+    }, [navigation]);
 
     // Hook #8 - luôn gọi useEffect ở vị trí này, đặt điều kiện bên trong
     useEffect(() => {
@@ -84,8 +119,50 @@ export default function Breadcrumb() {
         setSearchParamsValue(searchParamsHook);
     }, [searchParamsHook]);
 
-    // Early return sau khi đã gọi tất cả hooks
-    if (pathname === '/') return null;
+    // Cập nhật shouldRender khi pathname thay đổi
+    useEffect(() => {
+        setShouldRender(pathname !== '/');
+    }, [pathname]);
+
+    // Thiết lập breadcrumb data dựa trên URL hiện tại
+    useEffect(() => {
+        if (isProductTab) {
+            try {
+                if (categoryParam) {
+                    // Subcategory có thể là tên hoặc ID, tìm subcategory trong navigation
+                    let subcategoryId = null;
+                    let subcategoryName = subcategoryParam || '';
+
+                    if (subcategoryParam) {
+                        const subcategoryInfo = findSubcategoryName(categoryParam, subcategoryParam);
+                        subcategoryId = subcategoryInfo.id;
+                        subcategoryName = subcategoryInfo.name || subcategoryParam; // Fallback nếu name null
+                    }
+
+                    // Sử dụng đường dẫn với tên danh mục
+                    setBreadcrumbData({
+                        category: {
+                            name: categoryParam,
+                            href: `/products?category=${categoryParam.replace(/ /g, '%20')}`
+                        },
+                        showSubcategory: !!subcategoryParam,
+                        subcategory: subcategoryParam ? {
+                            name: subcategoryName, // Hiển thị tên subcategory 
+                            href: `/products?category=${categoryParam.replace(/ /g, '%20')}&subcategory=${subcategoryParam.replace(/ /g, '%20')}`
+                        } : null,
+                        product: null
+                    });
+                }
+            } catch (e) {
+                console.error('Error setting breadcrumbData from URL:', e);
+            }
+        }
+    }, [categoryParam, subcategoryParam, isProductTab, findSubcategoryName]);
+
+    // Thay vì early return, sử dụng điều kiện render
+    if (!shouldRender) {
+        return null;
+    }
 
     // Logic xử lý breadcrumb không đổi
     const paths = pathname.split('/').filter(Boolean);
@@ -93,7 +170,7 @@ export default function Breadcrumb() {
     const isSolutionPage = pathname.startsWith('/solutions');
     const isAboutPage = pathname.startsWith('/about');
     const isSubPage = paths.length > 1;
-    const isProductDetail = pathname.includes('/products/') && paths.length > 3;
+    const isProductDetail = pathname.includes('products') && paths.length === 2;
 
     // ===== CategoryTabs logic =====
     const isLevel3ProductPage = () => {
@@ -154,32 +231,75 @@ export default function Breadcrumb() {
     // Xử lý khi click vào tab
     const handleCategoryTabClick = (e: React.MouseEvent<HTMLAnchorElement>, tabId: string, href: string) => {
         e.preventDefault();
+        // Tạo hiệu ứng ripple khi click
+        createRippleEffect(e, () => {
+            // Cập nhật tab và redirect
+            const params = new URLSearchParams(searchParamsValue?.toString() || '');
+            params.delete('subcategory'); // Xóa subcategory khi chuyển tab
+
+            // Mã hóa URL thủ công để sử dụng %20 thay vì +
+            const categoryParam = tabId.replace(/ /g, '%20');
+
+            // Gọi event để đồng bộ với ProductSidebar
+            if (typeof window !== 'undefined') {
+                try {
+                    // Import động để tránh dependency cycle
+                    const { setProductCategoryEvent } = require('./ProductSidebar');
+                    // Sử dụng tên danh mục thay vì ID
+                    setProductCategoryEvent(tabId, null);
+                } catch (error) {
+                    console.error('Error importing setProductCategoryEvent:', error);
+                }
+            }
+
+            // Chuyển trang với URL đã được mã hóa thủ công
+            router.push(`/products?category=${categoryParam}`);
+        });
     };
 
     // Giữ nguyên hàm render TabCategoryTabs
     const renderCategoryTabs = () => {
-        // Chỉ hiển thị category tabs cho trang products và không phải trang chi tiết sản phẩm
-        if (!isProductPage || isLevel3ProductPage()) return null;
+        // Không hiển thị tabs trong trang chi tiết sản phẩm
+        if (isProductDetail) return null;
 
-        const tabNavigationData = navigation.find(item => item.name === 'Products')?.submenu;
+        // Chỉ hiển thị tabs trong trang danh sách sản phẩm
+        // pathname phải bắt đầu bằng '/products' và không được có đường dẫn con
+        const isProductListPage = pathname.includes('/products');
+        if (isProductListPage) {
+            // Lấy category từ URL và chuẩn hóa
+            const categoryParamRaw = searchParamsValue?.get('category');
+            const categoryParam = categoryParamRaw ? decodeURIComponent(categoryParamRaw).replace(/\+/g, ' ') : null;
 
-        return (
-            <div className="ml-auto">
-                <div className="container mx-auto px-4">
-                    <div className="flex items-center space-x-1">
-                        {tabNavigationData?.map((tab) => {
-                            return (
-                                <div key={tab.title}>
-                                    {renderTab(tab.title, isTabActive(tab.title, tab.href!), (e) => {
-                                        handleCategoryTabClick(e as unknown as React.MouseEvent<HTMLAnchorElement>, tab.title, tab.href!);
-                                    })}
-                                </div>
-                            );
-                        })}
+            const productNavItem = navigation.find(item => item.name === 'Products' || item.name === 'Product');
+            const tabNavigationData = productNavItem?.submenu;
+
+            if (!tabNavigationData) return null;
+
+            return (
+                <div className="ml-auto">
+                    <div className="container mx-auto px-4">
+                        <div className="flex items-center space-x-1">
+                            {tabNavigationData.map((tab, index) => {
+                                // Kiểm tra tab nào đang active, sử dụng giá trị đã chuẩn hóa
+                                const isActive = categoryParam === tab.title || (!categoryParam && index === 0);
+
+                                return (
+                                    <div key={tab.title}>
+                                        {renderTab(
+                                            tab.title,
+                                            isActive,
+                                            (e) => handleCategoryTabClick(e as unknown as React.MouseEvent<HTMLAnchorElement>, tab.title, tab.href || '/products')
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
-            </div>
-        );
+            );
+        }
+
+        return null;
     };
 
     // Tạo tab với CSS chung
@@ -318,18 +438,37 @@ export default function Breadcrumb() {
                     });
 
                     if (searchParamsValue.has('subcategory')) {
-                        const subcategoryId = searchParamsValue.get('subcategory');
-                        if (subcategoryId) {
+                        const subcategoryParam = searchParamsValue.get('subcategory');
+                        if (subcategoryParam) {
                             // Tìm subcategory để lấy tên hiển thị
-                            const productNav = navigation.find(item => item.name === 'Product' || item.href === '/products');
+                            const productNav = navigation.find(item =>
+                                item.name === 'Products' ||
+                                item.name === 'Product' ||
+                                item.href === '/products'
+                            );
+
                             if (productNav?.submenu) {
                                 const category = productNav.submenu.find(cat => cat.title === categoryName);
                                 if (category?.items) {
-                                    const subcategory = category.items.find(item => item.id === subcategoryId);
+                                    // Subcategory có thể là tên hoặc id, thử cả hai cách
+                                    let subcategory = category.items.find(item => item.id === subcategoryParam);
+                                    if (!subcategory) {
+                                        // Nếu không tìm thấy bằng ID, thử tìm bằng tên
+                                        subcategory = category.items.find(item => item.name === decodeURIComponent(subcategoryParam).replace(/\+/g, ' '));
+                                    }
+
                                     if (subcategory) {
+                                        // Sử dụng tên để hiển thị nhưng ID để tạo URL
+                                        const subcategoryId = subcategory.id || subcategoryParam;
                                         breadcrumbItems.push({
                                             name: subcategory.name,
                                             href: `/products?category=${encodeURIComponent(categoryName)}&subcategory=${encodeURIComponent(subcategoryId)}`
+                                        });
+                                    } else {
+                                        // Fallback nếu không tìm thấy
+                                        breadcrumbItems.push({
+                                            name: decodeURIComponent(subcategoryParam).replace(/\+/g, ' '),
+                                            href: `/products?category=${encodeURIComponent(categoryName)}&subcategory=${encodeURIComponent(subcategoryParam)}`
                                         });
                                     }
                                 }

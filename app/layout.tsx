@@ -7,7 +7,7 @@ import { Suspense } from 'react';
 import { FloatingIconsWrapper, ZaloChatWrapper } from '@/components/ClientWrappers';
 import PerformanceInitializer from '@/app/utils/performance-init';
 import { CategoriesProvider } from '@/app/contexts/CategoriesContext';
-import { Toaster } from '@/components/ui/toaster';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 // Dynamic imports for performance
 const Header = dynamic(() => import('@/components/header'), {
@@ -67,6 +67,7 @@ export default function RootLayout({
                 <div className="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
               </div>}>
                 {children}
+                <SpeedInsights />
               </Suspense>
             </main>
             <Footer />

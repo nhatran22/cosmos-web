@@ -25,7 +25,7 @@ export function mapHeaderNavigation(baseHeader: NavBar[], additionalHeader: Addi
 
   // Thêm các danh mục sản phẩm vào submenu của Product
   additionalHeader.sort((a, b) => b.subCategory.length - a.subCategory.length).forEach(header => {
-    const subMenuHref = `/products/${header.name.toLowerCase().replace(/\s+/g, '-')}`;
+    const subMenuHref = `/products/?category=${encodeURIComponent(header.name)}`;
     combinedData[productIndex].submenu?.push({
       id: header.id,
       title: header.name,
@@ -40,8 +40,6 @@ export function mapHeaderNavigation(baseHeader: NavBar[], additionalHeader: Addi
       }))
     });
   });
-
-  console.log(combinedData);
 
   return combinedData;
 }

@@ -18,9 +18,7 @@ export default function PerformanceInitializer() {
         try {
             const observer = new PerformanceObserver((list) => {
                 const entries = list.getEntries();
-                entries.forEach(entry => {
-                    console.log('[Performance]', entry.name, Math.round(entry.startTime), 'ms');
-                });
+                entries.forEach(entry => { });
             });
             observer.observe({ type: 'largest-contentful-paint', buffered: true });
             observer.observe({ type: 'first-input', buffered: true });

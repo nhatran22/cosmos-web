@@ -162,7 +162,7 @@ const SolutionSidebar = () => {
             setSolutionCategoryEvent(title);
 
             // Cập nhật URL để đồng bộ với tab navigation
-            router.push(`/solutions?category=${encodeURIComponent(title)}`);
+            router.push(`/solutions?category=${title}`);
         }
 
         // Clear animation state after animation duration

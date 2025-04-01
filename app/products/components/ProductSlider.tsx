@@ -48,11 +48,13 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
         (currentPage * productsPerPage) + productsPerPage
     );
 
-    // Xử lý khi nhấn Load More hoặc View Detail - xóa console.log
+    // Xử lý khi nhấn Load More hoặc View Detail
     const handleButtonClick = (product: IProductListItem) => {
         if (isParentCategory) {
             // Load More - redirect to subcategory
-            const url = `/products?category=${encodeURIComponent(product.catalogue!)}&subcategory=${encodeURIComponent(product.id)}`;
+            // Sử dụng tên sản phẩm thay vì ID
+            const subcategoryName = product.name;
+            const url = `/products?category=${product.catalogue!}&subcategory=${product.id}`;
             router.push(url);
         } else {
             // View Detail - redirect to product detail

@@ -38,6 +38,7 @@ export interface IProductListItem {
     catalogue?: string;
     image?: string;
     description?: string;
+    originalItem?: any;
 }
 
 export interface ProductDetail {

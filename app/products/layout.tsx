@@ -10,7 +10,6 @@ export default function ProductsLayout({
 }) {
   const pathname = usePathname();
 
-  console.log(pathname);
   // Kiểm tra xem có phải trang chi tiết không (đường dẫn có nhiều hơn 2 phần)
   const isProductDetailPage = pathname.split('/').length > 2;
   // Kiểm tra xem có phải trang chính không - xử lý cả trường hợp có dấu / ở cuối

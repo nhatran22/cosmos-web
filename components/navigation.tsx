@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useCategories } from '@/app/contexts/CategoriesContext';
+import { useRouter } from 'next/navigation';
+import { cloneElement } from 'react';
 
 const Navigation = () => {
     const { navigation } = useCategories();
@@ -16,6 +18,7 @@ const Navigation = () => {
     const [scrolled, setScrolled] = useState(false);
     const pathname = usePathname();
     const isHomePage = pathname === "/";
+    const router = useRouter();
 
     const toggleSection = (sectionName: string) => {
         setExpandedSections(prev =>
@@ -39,6 +42,11 @@ const Navigation = () => {
             window.removeEventListener("scroll", handleScroll);
         };
     }, []);
+
+    // Kiểm tra xem một item có phải là Product navigation item hay không
+    const isProductNavItem = (item: any) => {
+        return item.name === 'Products' || item.name === 'Product' || item.href === '/products';
+    };
 
     return (
         <header
@@ -82,17 +90,30 @@ const Navigation = () => {
                     )}>
                         {navigation.map((item) => (
                             <div key={item.name} className="relative group">
-                                <Link
-                                    href={item.href || '/'}
-                                    className={cn(
-                                        "px-3 py-2 text-[16px] font-medium border-b-2 border-transparent hover:border-current transition-colors duration-300",
-                                        isHomePage || scrolled
-                                            ? "text-gray-700 hover:text-green-600"
-                                            : "text-gray-700 hover:text-white"
-                                    )}
-                                >
-                                    {item.name}
-                                </Link>
+                                {item.submenu ? (
+                                    <div
+                                        className={cn(
+                                            "px-3 py-2 text-[16px] font-medium border-b-2 border-transparent hover:border-current transition-colors duration-300 cursor-default",
+                                            isHomePage || scrolled
+                                                ? "text-gray-700 hover:text-green-600"
+                                                : "text-gray-700 hover:text-white"
+                                        )}
+                                    >
+                                        {item.name}
+                                    </div>
+                                ) : (
+                                    <Link
+                                        href={item.href || '/'}
+                                        className={cn(
+                                            "px-3 py-2 text-[16px] font-medium border-b-2 border-transparent hover:border-current transition-colors duration-300",
+                                            isHomePage || scrolled
+                                                ? "text-gray-700 hover:text-green-600"
+                                                : "text-gray-700 hover:text-white"
+                                        )}
+                                    >
+                                        {item.name}
+                                    </Link>
+                                )}
 
                                 {item.submenu && (
                                     <div
@@ -108,7 +129,39 @@ const Navigation = () => {
                                                     <div key={section.title}>
                                                         {section.items ? (
                                                             <Link
-                                                                href={section.href || '/'}
+                                                                href={isProductNavItem(item)
+                                                                    ? `/products?category=${encodeURIComponent(section.title)}`
+                                                                    : section.href || '/'}
+                                                                onClick={(e) => {
+                                                                    if (isProductNavItem(item)) {
+                                                                        // Khi click vào tab cha như "UPS Power Supply"
+                                                                        try {
+                                                                            const { setProductCategoryEvent } = require('./ProductSidebar');
+                                                                            // Kích hoạt cả hai sự kiện để đảm bảo xử lý nhất quán
+                                                                            setProductCategoryEvent(section.title, null);
+                                                                            // Kích hoạt sự kiện productCategorySelected để cập nhật UI
+                                                                            const productCategoryEvent = new CustomEvent('productCategorySelected', {
+                                                                                detail: { category: section.title, subcategory: null },
+                                                                                bubbles: true,
+                                                                                composed: true
+                                                                            });
+                                                                            window.dispatchEvent(productCategoryEvent);
+                                                                            // Kích hoạt sự kiện categorySelected để cập nhật danh sách sản phẩm
+                                                                            const categoryEvent = new CustomEvent('categorySelected', {
+                                                                                detail: { category: section.title, subcategory: null },
+                                                                                bubbles: true,
+                                                                                composed: true
+                                                                            });
+                                                                            window.dispatchEvent(categoryEvent);
+                                                                            e.preventDefault();
+                                                                            router.push(`/products?category=${encodeURIComponent(section.title)}`);
+                                                                        } catch (error) {
+                                                                            console.error('Error importing setProductCategoryEvent:', error);
+                                                                        }
+                                                                    } else {
+                                                                        // Xử lý cho các tab cha khác (Solution, Service Support)
+                                                                    }
+                                                                }}
                                                             >
                                                                 <h3 className="font-semibold text-gray-900 pb-2 text-green-600 text-ellipsis overflow-hidden whitespace-nowrap hover:underline">
                                                                     {section.title}
@@ -126,8 +179,22 @@ const Navigation = () => {
                                                             {section.items?.map((subItem) => (
                                                                 <li key={subItem.name}>
                                                                     <Link
-                                                                        href={subItem.href || '/'}
+                                                                        href={isProductNavItem(item)
+                                                                            ? `/products?category=${encodeURIComponent(section.title)}&subcategory=${(subItem.name || '').replace(/ /g, '%20')}`
+                                                                            : subItem.href || '/'}
                                                                         className="text-sm text-gray-600 hover:text-green-600 block transition-colors duration-200 hover:underline"
+                                                                        onClick={(e) => {
+                                                                            if (isProductNavItem(item)) {
+                                                                                // Đồng bộ với ProductSidebar
+                                                                                try {
+                                                                                    const { setProductCategoryEvent } = require('./ProductSidebar');
+                                                                                    // Truyền tên subcategory thay vì id
+                                                                                    setProductCategoryEvent(section.title, subItem.name || null);
+                                                                                } catch (error) {
+                                                                                    console.error('Error importing setProductCategoryEvent:', error);
+                                                                                }
+                                                                            }
+                                                                        }}
                                                                     >
                                                                         {subItem.name}
                                                                     </Link>
@@ -171,25 +238,34 @@ const Navigation = () => {
                         <div className="container mx-auto px-4 py-4">
                             {navigation.map((item) => (
                                 <div key={item.name} className="border-b">
-                                    <button
-                                        onClick={() => toggleSection(item.name)}
-                                        className="flex items-center justify-between w-full px-4 py-3 text-left"
-                                    >
-                                        <span className="text-gray-900 font-medium">{item.name}</span>
-                                        {item.submenu && (
+                                    {item.submenu ? (
+                                        <button
+                                            onClick={() => toggleSection(item.name)}
+                                            className="flex items-center justify-between w-full px-4 py-3 text-left"
+                                        >
+                                            <span className="text-gray-900 font-medium">{item.name}</span>
                                             <ChevronRight
                                                 className={`h-5 w-5 transform transition-transform ${expandedSections.includes(item.name) ? 'rotate-90' : ''}`}
                                             />
-                                        )}
-                                    </button>
+                                        </button>
+                                    ) : (
+                                        <Link
+                                            href={item.href || '/'}
+                                            className="flex items-center justify-between w-full px-4 py-3 text-left"
+                                        >
+                                            <span className="text-gray-900 font-medium">{item.name}</span>
+                                        </Link>
+                                    )}
 
                                     {item.submenu && expandedSections.includes(item.name) && (
                                         <div className="bg-gray-50">
                                             {item.submenu.map((section) => (
                                                 <div key={section.title} className="px-4 py-2">
-                                                    <h3 className="text-sm font-semibold text-gray-900 mb-2">
-                                                        {section.title}
-                                                    </h3>
+                                                    <Link href={section.href || '/'}>
+                                                        <h3 className="text-sm font-semibold text-gray-900 mb-2 hover:text-green-600">
+                                                            {section.title}
+                                                        </h3>
+                                                    </Link>
                                                     <ul className="space-y-1">
                                                         {section.items?.map((subItem) => (
                                                             <li key={subItem.name}>
