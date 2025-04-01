@@ -214,9 +214,9 @@ export default function ProductList() {
                 if (data?.length) {
                     const productData = data.map(item => ({
                         id: item.id!,
-                        name: item.name,
+                        name: title,
                         image: item.image,
-                        description: item.description || item.name,
+                        description: item.name,
                     } as IProductListItem));
                     addCachedProducts(effectiveId, productData);
                     return productData;

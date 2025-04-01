@@ -70,7 +70,7 @@ export default function ProductIntroductionClient({ product }: ProductIntroducti
                                     <div className="md:w-1/3 flex justify-center mb-6 md:mb-0">
                                         <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center">
                                             <Image
-                                                src="/images/power-icon.svg"
+                                                src="/icons/power-icon.svg"
                                                 alt="Power Range Icon"
                                                 width={56}
                                                 height={56}
@@ -92,7 +92,7 @@ export default function ProductIntroductionClient({ product }: ProductIntroducti
                                     <div className="md:w-1/3 flex justify-center mb-6 md:mb-0">
                                         <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center">
                                             <Image
-                                                src="/images/working-icon.svg"
+                                                src="/icons/working-icon.svg"
                                                 alt="Working Way Icon"
                                                 width={56}
                                                 height={56}
@@ -114,7 +114,7 @@ export default function ProductIntroductionClient({ product }: ProductIntroducti
                                     <div className="md:w-1/3 flex justify-center mb-6 md:mb-0">
                                         <div className="w-24 h-24 bg-purple-50 rounded-full flex items-center justify-center">
                                             <Image
-                                                src="/images/application-icon.svg"
+                                                src="/icons/application-icon.svg"
                                                 alt="Application Areas Icon"
                                                 width={56}
                                                 height={56}
