@@ -64,30 +64,26 @@ export default function ProductDetailPage() {
         <div className="min-h-screen flex flex-col w-full">
             {/* Phần 1: Hero Section */}
             <section className="relative w-full bg-gradient-to-br from-blue-950 via-blue-900 to-red-900 text-white">
-                <div className="container mx-auto px-4 py-16 md:py-24 flex flex-col md:flex-row items-center justify-between">
-                    <div className="md:w-1/2 mb-8 md:mb-0 pr-0 md:pr-8">
+                <div className="container mx-auto px-4 md:pb-24 flex flex-col md:flex-row items-center justify-between">
+                    <div className="md:w-2/3 mb-8 md:mb-0 pr-0 md:pr-8">
                         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
                             {product.name}
                         </h1>
                         <div className="flex flex-wrap gap-3 mb-6">
-                            <span className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
-                                {product.powerRange}
-                            </span>
-                            <span className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
-                                online double-conversion
-                            </span>
-                            <span className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
-                                high efficency ≥96%
-                            </span>
+                            {product.performanceCharacteristics?.map((char, index) => (
+                                <span key={index} className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
+                                    {char.title}
+                                </span>
+                            ))}
                         </div>
                     </div>
-                    <div className="md:w-1/2 relative h-[300px] md:h-[400px]">
+                    <div className="md:w-1/3 relative h-[300px] md:h-[400px] justify-items-center">
                         <Image
-                            src={product.image || '/images/placeholder.jpg'}
+                            src={product.image}
                             alt={product.name}
-                            fill
+                            width={400}
+                            height={400}
                             className="object-contain"
-                            sizes="(max-width: 768px) 100vw, 50vw"
                             priority
                         />
                     </div>
@@ -191,8 +187,18 @@ export default function ProductDetailPage() {
             </section>
 
             {/* Phần 5: Technical Parameters */}
-            <section className="py-16 bg-black text-white">
-                <div className="container mx-auto px-4">
+            <section className="flex flex-row items-center gap-y-4 py-16 bg-black text-white">
+                <div className="w-1/3 relative justify-items-center">
+                    <Image
+                        src={product.image}
+                        alt={product.name}
+                        width={400}
+                        height={500}
+                        className="object-contain"
+                        priority
+                    />
+                </div>
+                <div className="w-2/3 container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-16">Technical Parameters</h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -211,7 +217,7 @@ export default function ProductDetailPage() {
 
                         <div className="space-y-2">
                             <h3 className="text-xl mb-4">Working way</h3>
-                            <p>3/3, online double conversion</p>
+                            <p>{product.workingWay}</p>
                             <hr className="border-t border-white/20 mt-6" />
                         </div>
 
@@ -240,8 +246,8 @@ export default function ProductDetailPage() {
                         </div>
 
                         <div className="md:col-span-2 mt-8">
-                            <h3 className="text-xl mb-4">Application scenario:</h3>
-                            <p className="text-sm md:text-base">government, finance, telecommunications, education, transportation, meteorology, radio and television, industrial and commercial taxation, medical and health, energy and power and other industries.</p>
+                            <h3 className="text-xl mb-4">Application area:</h3>
+                            <p className="text-sm md:text-base">{product.suitableArea}</p>
                         </div>
                     </div>
 

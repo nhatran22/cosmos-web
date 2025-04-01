@@ -26,13 +26,13 @@ export default function SolutionSection() {
                         {/* Hoverable square block (2) */}
                         <div className="absolute inset-0 flex items-center justify-center">
                             <Link
-                                href="/solution/data-center"
+                                href="/solutions?category=Data%20Center%20Critical%20Infrastructure"
                                 className="group relative w-[298px] h-[305px] border border-white flex flex-col items-center justify-center text-white bg-black/30 transition-all duration-300 hover:bg-black/30 hover:border-transparent hover:shadow-lg hover:transform hover:translate-y-[-3px]"
                             >
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center flex-col w-full gap-y-5">
                                     <div className="w-[66px] h-[71px] flex justify-center items-center border border-white transition-all duration-300">
                                         <Image
-                                            src="/data-icon.png"
+                                            src="/icons/data-icon.png"
                                             height={46}
                                             width={46}
                                             alt="Data Icon"
@@ -62,13 +62,13 @@ export default function SolutionSection() {
                         {/* Hoverable square block (2) */}
                         <div className="absolute inset-0 flex items-center justify-center">
                             <Link
-                                href="/solution/data-center"
+                                href="/solutions?category=New%20Energy%20Storage%20System"
                                 className="group relative w-[298px] h-[305px] border border-white flex flex-col items-center justify-center text-white bg-black/30 transition-all duration-300 hover:bg-black/30 hover:border-transparent hover:shadow-lg hover:transform hover:translate-y-[-3px]"
                             >
                                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center flex-col w-full gap-y-5">
                                     <div className="w-[66px] h-[71px] flex justify-center items-center border border-white transition-all duration-300">
                                         <Image
-                                            src="/energy-icon.png"
+                                            src="/icons/energy-icon.png"
                                             height={46}
                                             width={46}
                                             alt="Energy Icon"
