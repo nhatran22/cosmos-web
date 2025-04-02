@@ -63,32 +63,53 @@ export default function ProductDetailPage() {
     return (
         <div className="min-h-screen flex flex-col w-full">
             {/* Phần 1: Hero Section */}
-            <section className="relative w-full bg-gradient-to-br from-blue-950 via-blue-900 to-red-900 text-white">
-                <div className="container mx-auto px-4 md:pb-24 flex flex-col md:flex-row items-center justify-between">
-                    <div className="md:w-2/3 mb-8 md:mb-0 pr-0 md:pr-8">
-                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                            {product.name}
-                        </h1>
-                        <div className="flex flex-wrap gap-3 mb-6">
-                            {product.performanceCharacteristics?.map((char, index) => (
-                                <span key={index} className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
-                                    {char.title}
-                                </span>
-                            ))}
+            <section className="relative w-full min-h-[600px] bg-gradient-to-br from-blue-950 via-blue-900 to-red-900 text-white overflow-hidden py-16 lg:py-24">
+                {/* Background Pattern */}
+                <div className="absolute inset-0">
+                    <div className="absolute inset-0 bg-[url('/images/wave-pattern.svg')] bg-repeat opacity-10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"></div>
+                </div>
+
+                <div className="container mx-auto px-4 relative">
+                    <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+                        {/* Content Left */}
+                        <div className="w-full lg:w-8/12 space-y-8">
+                            <div className="space-y-6">
+                                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                                    {product.name}
+                                </h1>
+                            </div>
+
+                            <div className="flex flex-wrap gap-3">
+                                {product.performanceCharacteristics?.map((char, index) => (
+                                    <span
+                                        key={index}
+                                        className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm
+                                        border border-white/20 hover:bg-white/20 transition-colors
+                                        flex items-center"
+                                    >
+                                        <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                        {char.title}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Product Image Right */}
+                        <div className="w-full lg:w-4/12 relative">
+                            <div className="relative h-[400px] lg:h-[500px] w-full">
+                                <div className="absolute inset-0 bg-gradient-to-b from-blue-500/20 to-transparent rounded-full blur-3xl transform -translate-y-1/2"></div>
+                                <Image
+                                    src={product.image}
+                                    alt={product.name}
+                                    fill
+                                    className="object-contain z-10 hover:scale-105 transition-transform duration-500"
+                                    priority
+                                />
+                            </div>
                         </div>
                     </div>
-                    <div className="md:w-1/3 relative h-[300px] md:h-[400px] justify-items-center">
-                        <Image
-                            src={product.image}
-                            alt={product.name}
-                            width={400}
-                            height={400}
-                            className="object-contain"
-                            priority
-                        />
-                    </div>
                 </div>
-                <div className="absolute inset-0 bg-[url('/images/wave-pattern.svg')] bg-no-repeat bg-cover opacity-15 mix-blend-overlay"></div>
             </section>
 
             {/* Phần 2: Product Introduction */}
@@ -164,27 +185,29 @@ export default function ProductDetailPage() {
             </section>
 
             {/* Phần 4: Power Module Diagram */}
-            <section className="py-16 bg-white">
-                <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold text-center mb-16 text-gray-800">Power Module Diagram</h2>
+            {product.diagrams[0].title && product.diagrams[0].description && (
+                <section className="py-16 bg-white">
+                    <div className="container mx-auto px-4">
+                        <h2 className="text-3xl font-bold text-center mb-16 text-gray-800">Power Module Diagram</h2>
 
-                    <div className="flex justify-center">
-                        {product.diagrams && product.diagrams.length > 0 ? (
-                            <Image
-                                src={product.diagrams[0].image}
-                                alt="Power Module Diagram"
-                                height={400}
-                                width={400}
-                                className="object-contain"
-                            />
-                        ) : (
-                            <div className="bg-gray-100 rounded-lg p-8 text-center max-w-2xl w-full">
-                                <p className="text-gray-500">No diagram available</p>
-                            </div>
-                        )}
+                        <div className="flex justify-center">
+                            {product.diagrams && product.diagrams.length > 0 ? (
+                                <Image
+                                    src={product.diagrams[0].image}
+                                    alt="Power Module Diagram"
+                                    height={400}
+                                    width={400}
+                                    className="object-contain"
+                                />
+                            ) : (
+                                <div className="bg-gray-100 rounded-lg p-8 text-center max-w-2xl w-full">
+                                    <p className="text-gray-500">No diagram available</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
 
             {/* Phần 5: Technical Parameters */}
             <section className="flex flex-row items-center gap-y-4 py-16 bg-black text-white">

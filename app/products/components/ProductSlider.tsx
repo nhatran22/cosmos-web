@@ -8,45 +8,38 @@ import { IProductListItem } from '@/app/interface/product';
 interface ProductSliderProps {
     products: IProductListItem[];
     isParentCategory: boolean;
+    onTabClose?: () => void;
 }
 
-export default function ProductSlider({ products, isParentCategory }: ProductSliderProps) {
+export default function ProductSlider({ products, isParentCategory, onTabClose }: ProductSliderProps) {
+    const [currentProducts, setCurrentProducts] = useState<IProductListItem[]>(products);
     const [currentPage, setCurrentPage] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
     const router = useRouter();
     const [isTransitioning, setIsTransitioning] = useState(false);
     const productsPerPage = 3;
-    const totalPages = Math.ceil(products.length / productsPerPage);
+    const totalPages = Math.ceil(currentProducts.length / productsPerPage);
 
-    // Memoize handlePageChange để tối ưu hiệu suất
-    const handlePageChange = useCallback((newPage: number) => {
-        if (isTransitioning) return;
-
-        setIsTransitioning(true);
-        setTimeout(() => {
-            setCurrentPage(newPage);
-            setTimeout(() => {
-                setIsTransitioning(false);
-            }, 300);
-        }, 300);
-    }, [isTransitioning]);
-
-    // Auto-rotate - sửa lại thời gian thành 3000ms (3 giây)
+    // Reset products khi props.products thay đổi
     useEffect(() => {
-        if (isPaused || totalPages <= 1) return; // Không cần auto-rotate nếu chỉ có 1 trang
+        setCurrentProducts(products);
+    }, [products]);
 
-        const timer = setInterval(() => {
-            handlePageChange((currentPage + 1) % totalPages);
-        }, 3000);
+    // Xử lý khi tab đóng
+    useEffect(() => {
+        if (onTabClose) {
+            // Đăng ký event listener
+            const handleTabClose = () => {
+                setCurrentProducts([]);
+                onTabClose();
+            };
 
-        return () => clearInterval(timer);
-    }, [currentPage, totalPages, handlePageChange, isPaused]);
-
-    // Lấy sản phẩm của trang hiện tại
-    const currentProducts = products.slice(
-        currentPage * productsPerPage,
-        (currentPage * productsPerPage) + productsPerPage
-    );
+            return () => {
+                // Cleanup khi component unmount
+                setCurrentProducts([]);
+            };
+        }
+    }, [onTabClose]);
 
     // Xử lý khi nhấn Load More hoặc View Detail
     const handleButtonClick = (product: IProductListItem) => {
@@ -64,30 +57,39 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
     };
 
     return (
-        <div
-            className="relative pl-20"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-        >
+        <div className="relative w-full">
             <div
-                className={`grid grid-cols-1 md:grid-cols-3 gap-6 transition-all duration-500 ${isTransitioning ? 'opacity-0 transform translate-x-4' : 'opacity-100 transform translate-x-0'}`}
+                className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-500 ${isTransitioning ? 'opacity-0 transform translate-x-4' : 'opacity-100 transform translate-x-0'
+                    }`}
             >
                 {currentProducts.map(product => (
                     <div
                         key={product.id}
-                        className="bg-white p-4 rounded-lg shadow-md transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
+                        className="bg-white p-6 rounded-lg shadow-md transition-transform duration-300 hover:shadow-lg hover:-translate-y-1 aspect-[3/4]"
                     >
-                        <div className="relative h-48 mb-4 overflow-hidden rounded-md justify-center">
-                            <Image
-                                src={product.image!}
-                                alt={product.name || product.description!}
-                                width={200}
-                                height={150}
-                                className="object-cover rounded-md hover:scale-105 transition-transform duration-300"
-                            />
+                        <div className="relative w-full h-[300px] mb-4 overflow-hidden rounded-md bg-gray-50">
+                            <div className="relative w-full h-full flex items-center justify-center p-6">
+                                <Image
+                                    src={product.image!}
+                                    alt={product.name || product.description!}
+                                    fill
+                                    className="object-contain rounded-md hover:scale-105 transition-transform duration-300"
+                                    sizes={isParentCategory
+                                        ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                                        : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                    }
+                                    style={{ objectFit: 'contain', minWidth: '85%', minHeight: '85%' }}
+                                    priority
+                                />
+                            </div>
                         </div>
                         <h3 className="text-lg font-semibold mb-2 line-clamp-1">{product.name}</h3>
-                        {product.description && (<p className="text-gray-600 text-sm line-clamp-2 mb-4 h-10">{product.description}</p>)}
+                        {!product.catalogue && (
+                            <p className={`text-gray-600 text-sm line-clamp-2 mb-4 ${isParentCategory ? 'h-8' : 'h-10'
+                                }`}>
+                                {product.description}
+                            </p>
+                        )}
 
                         <button
                             onClick={() => handleButtonClick(product)}
@@ -101,22 +103,6 @@ export default function ProductSlider({ products, isParentCategory }: ProductSli
                     </div>
                 ))}
             </div>
-
-            {/* Pagination indicator với trạng thái hiện tại */}
-            {totalPages >= 2 && (
-                <div className="flex justify-center mt-8">
-                    <div className="flex space-x-2">
-                        {Array.from({ length: totalPages }).map((_, index) => (
-                            <div
-                                key={index}
-                                className={`h-2 w-2 rounded-full cursor-pointer transition-all duration-300 transform hover:scale-125 ${index === currentPage ? 'bg-green-500 scale-110' : 'bg-gray-300'
-                                    }`}
-                                onClick={() => handlePageChange(index)}
-                            />
-                        ))}
-                    </div>
-                </div>
-            )}
         </div>
     );
 } 
