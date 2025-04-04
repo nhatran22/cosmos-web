@@ -11,9 +11,10 @@ interface Product {
 
 interface ProductIntroductionClientProps {
     product: Product;
+    productName: string;
 }
 
-export default function ProductIntroductionClient({ product }: ProductIntroductionClientProps) {
+export default function ProductIntroductionClient({ product, productName }: ProductIntroductionClientProps) {
     const [activeTab, setActiveTab] = useState<'power-range' | 'working-way' | 'application-areas'>('power-range');
 
     return (
@@ -32,7 +33,8 @@ export default function ProductIntroductionClient({ product }: ProductIntroducti
                                 ? 'text-green-600 border-green-500'
                                 : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
                                 }`}>
-                                Power Range
+                                {productName.includes('Precision Cooling') ? 'Cooling Range' : 'Power Range'}
+
                             </div>
                         </div>
 
@@ -44,7 +46,7 @@ export default function ProductIntroductionClient({ product }: ProductIntroducti
                                 ? 'text-blue-600 border-blue-500'
                                 : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
                                 }`}>
-                                Working Way
+                                {productName.includes('Hybrid Inverter') ? 'Grid System' : 'Working Way'}
                             </div>
                         </div>
 

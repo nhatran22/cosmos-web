@@ -75,13 +75,16 @@ export default function ProductDetailPage() {
                         {/* Content Left */}
                         <div className="w-full lg:w-8/12 space-y-8">
                             <div className="space-y-6">
+                                {product.name.includes('Precision Cooling') && (
+                                    <h1 className="text-xl font-normal leading-tight">Intelligent Temperature Control</h1>
+                                )}
                                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
                                     {product.name}
                                 </h1>
                             </div>
 
                             <div className="flex flex-wrap gap-3">
-                                {product.performanceCharacteristics?.map((char, index) => (
+                                {product.performanceCharacteristics?.filter(char => char.title).map((char, index) => (
                                     <span
                                         key={index}
                                         className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm
@@ -92,6 +95,28 @@ export default function ProductDetailPage() {
                                         {char.title}
                                     </span>
                                 ))}
+                                {product.name.includes('Hybrid Inverter') && (
+                                    <>
+                                        <span
+                                            key={product.powerRange}
+                                            className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm
+                                            border border-white/20 hover:bg-white/20 transition-colors
+                                            flex items-center"
+                                        >
+                                            <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                            {product.powerRange}
+                                        </span>
+                                        <span
+                                            key={product.workingWay}
+                                            className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full text-sm
+                                            border border-white/20 hover:bg-white/20 transition-colors
+                                            flex items-center"
+                                        >
+                                            <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                                            {product.workingWay}
+                                        </span>
+                                    </>
+                                )}
                             </div>
                         </div>
 
@@ -113,7 +138,7 @@ export default function ProductDetailPage() {
             </section>
 
             {/* Phần 2: Product Introduction */}
-            <ProductIntroductionClient product={product} />
+            <ProductIntroductionClient product={product} productName={product.name} />
 
             {/* Phần 3: Performance Characteristics */}
             <section className="py-16 bg-gray-50">
@@ -121,44 +146,21 @@ export default function ProductDetailPage() {
                     <h2 className="text-3xl font-bold text-center mb-16 text-gray-800">Performance Characteristics</h2>
 
                     {product.performanceCharacteristics?.length > 0 ? (
-                        <>
-                            {/* Top row - always 3 items */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-12">
-                                {product.performanceCharacteristics.slice(0, 3).map((char, index) => (
-                                    <div
-                                        key={`top-${index}`}
-                                        className="bg-white rounded-lg p-6 lg:p-8 shadow-sm flex flex-col items-center transition-all hover:shadow-md"
-                                    >
-                                        {char.icon && (
-                                            <div className="w-16 h-16 mb-4 flex items-center justify-center">
-                                                <Image
-                                                    src={char.icon}
-                                                    alt={char.title || 'Feature icon'}
-                                                    width={64}
-                                                    height={64}
-                                                    className="object-contain"
-                                                />
-                                            </div>
-                                        )}
-                                        <h3 className="text-lg font-semibold mb-2">{char.title}</h3>
-                                        <p className="text-gray-600 text-center">-</p>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Bottom row - up to 2 items if they exist */}
-                            {product.performanceCharacteristics.length > 3 && (
-                                <div className="flex justify-center">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl w-full">
-                                        {product.performanceCharacteristics.slice(3, 5).map((char, index) => (
+                        <div className="max-w-6xl mx-auto">
+                            {/* Trường hợp có chính xác 4 tính năng - hiển thị 2 hàng, mỗi hàng 2 tính năng */}
+                            {product.performanceCharacteristics.length === 4 ? (
+                                <>
+                                    {/* Hàng 1: 2 tính năng đầu tiên */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-8">
+                                        {product.performanceCharacteristics.slice(0, 2).map((char, index) => (
                                             <div
-                                                key={`bottom-${index}`}
-                                                className={`${index % 2 === 0 ? 'bg-white' : 'bg-green-50'} rounded-lg p-6 lg:p-8 shadow-sm flex flex-col items-center transition-all hover:shadow-md`}
+                                                key={`row1-${index}`}
+                                                className="bg-white rounded-lg py-6 lg:py-6 shadow-sm flex flex-row gap-x-4 items-center transition-all hover:shadow-md"
                                             >
                                                 {char.icon && (
-                                                    <div className="w-16 h-16 mb-4 flex items-center justify-center">
+                                                    <div className="w-32 h-16 mb-4 flex items-center justify-center">
                                                         <Image
-                                                            src={char.icon}
+                                                            src={`/icons/${char.icon}`}
                                                             alt={char.title || 'Feature icon'}
                                                             width={64}
                                                             height={64}
@@ -166,14 +168,128 @@ export default function ProductDetailPage() {
                                                         />
                                                     </div>
                                                 )}
-                                                <h3 className="text-lg font-semibold mb-2">{char.title}</h3>
-                                                <p className="text-gray-600 text-center">-</p>
+                                                {char.title && char.description && (
+                                                    <div className="flex flex-col gap-y-2 justify-items-start">
+                                                        <h3 className="text-base font-semibold mb-2">{char.title}</h3>
+                                                        <p className="text-gray-600 text-sm">{char.description}</p>
+                                                    </div>
+                                                )}
+                                                {!char.title && char.description && (
+                                                    <h3 className="text-base font-semibold mb-2">{char.description}</h3>
+                                                )}
                                             </div>
                                         ))}
                                     </div>
-                                </div>
+
+                                    {/* Hàng 2: 2 tính năng tiếp theo */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                                        {product.performanceCharacteristics.slice(2, 4).map((char, index) => (
+                                            <div
+                                                key={`row2-${index}`}
+                                                className="bg-white rounded-lg py-6 lg:py-6 shadow-sm flex flex-row gap-x-4 items-center transition-all hover:shadow-md"
+                                            >
+                                                {char.icon && (
+                                                    <div className="w-32 h-16 mb-4 flex items-center justify-center">
+                                                        <Image
+                                                            src={`/icons/${char.icon}`}
+                                                            alt={char.title || 'Feature icon'}
+                                                            width={64}
+                                                            height={64}
+                                                            className="object-contain"
+                                                        />
+                                                    </div>
+                                                )}
+                                                {char.title && char.description && (
+                                                    <div className="flex flex-col gap-y-2 justify-items-start">
+                                                        <h3 className="text-base font-semibold mb-2">{char.title}</h3>
+                                                        <p className="text-gray-600 text-sm">{char.description}</p>
+                                                    </div>
+                                                )}
+                                                {!char.title && char.description && (
+                                                    <h3 className="text-base font-semibold mb-2">{char.description}</h3>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    {/* Trường hợp có nhiều hơn 4 tính năng hoặc ít hơn 4 - mỗi hàng 3 tính năng */}
+                                    {/* Chia thành các hàng đầy đủ (có 3 tính năng) */}
+                                    {Array.from({ length: Math.floor(product.performanceCharacteristics.length / 3) }).map((_, rowIndex) => (
+                                        <div key={`full-row-${rowIndex}`} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-8">
+                                            {product.performanceCharacteristics.slice(rowIndex * 3, rowIndex * 3 + 3).map((char, index) => (
+                                                <div
+                                                    key={`item-${rowIndex}-${index}`}
+                                                    className="bg-white rounded-lg py-6 lg:py-6 shadow-sm flex flex-row gap-x-4 items-center transition-all hover:shadow-md"
+                                                >
+                                                    {char.icon && (
+                                                        <div className="w-32 h-16 mb-4 flex items-center justify-center">
+                                                            <Image
+                                                                src={`/icons/${char.icon}`}
+                                                                alt={char.title || 'Feature icon'}
+                                                                width={64}
+                                                                height={64}
+                                                                className="object-contain"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    {char.title && char.description && (
+                                                        <div className="flex flex-col gap-y-2 justify-items-start">
+                                                            <h3 className="text-base font-semibold mb-2">{char.title}</h3>
+                                                            <p className="text-gray-600 text-sm">{char.description}</p>
+                                                        </div>
+                                                    )}
+                                                    {!char.title && char.description && (
+                                                        <h3 className="text-base font-semibold mb-2">{char.description}</h3>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ))}
+
+                                    {/* Hàng cuối cùng nếu còn thừa các tính năng (ít hơn 3) - đặt ở giữa */}
+                                    {product.performanceCharacteristics.length % 3 > 0 && (
+                                        <div className="flex justify-center">
+                                            <div className={`grid grid-cols-1 ${product.performanceCharacteristics.length % 3 === 1
+                                                    ? 'md:grid-cols-1 max-w-md'
+                                                    : 'md:grid-cols-2 max-w-4xl'
+                                                } gap-6 lg:gap-8`}>
+                                                {product.performanceCharacteristics
+                                                    .slice(Math.floor(product.performanceCharacteristics.length / 3) * 3)
+                                                    .map((char, index) => (
+                                                        <div
+                                                            key={`last-row-${index}`}
+                                                            className="bg-white rounded-lg py-6 lg:py-6 shadow-sm flex flex-row gap-x-4 items-center transition-all hover:shadow-md"
+                                                        >
+                                                            {char.icon && (
+                                                                <div className="w-32 h-16 mb-4 flex items-center justify-center">
+                                                                    <Image
+                                                                        src={`/icons/${char.icon}`}
+                                                                        alt={char.title || 'Feature icon'}
+                                                                        width={64}
+                                                                        height={64}
+                                                                        className="object-contain"
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                            {char.title && char.description && (
+                                                                <div className="flex flex-col gap-y-2 justify-items-start">
+                                                                    <h3 className="text-base font-semibold mb-2">{char.title}</h3>
+                                                                    <p className="text-gray-600 text-sm">{char.description}</p>
+                                                                </div>
+                                                            )}
+                                                            {!char.title && char.description && (
+                                                                <h3 className="text-base font-semibold mb-2">{char.description}</h3>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
                             )}
-                        </>
+                        </div>
                     ) : (
                         <div className="flex justify-center">
                             <div className="bg-white rounded-lg p-8 shadow-sm text-center max-w-lg w-full">
@@ -188,15 +304,15 @@ export default function ProductDetailPage() {
             {product.diagrams[0].title && product.diagrams[0].description && (
                 <section className="py-16 bg-white">
                     <div className="container mx-auto px-4">
-                        <h2 className="text-3xl font-bold text-center mb-16 text-gray-800">Power Module Diagram</h2>
+                        <h2 className="text-3xl font-bold text-center mb-16 text-gray-800">{product.diagrams[0].title}</h2>
 
                         <div className="flex justify-center">
                             {product.diagrams && product.diagrams.length > 0 ? (
                                 <Image
                                     src={product.diagrams[0].image}
-                                    alt="Power Module Diagram"
-                                    height={400}
-                                    width={400}
+                                    alt={product.diagrams[0].title}
+                                    height={300}
+                                    width={200}
                                     className="object-contain"
                                 />
                             ) : (
@@ -233,7 +349,7 @@ export default function ProductDetailPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <h3 className="text-xl mb-4">Power</h3>
+                            <h3 className="text-xl mb-4">{product.name.includes('Precision Cooling') ? 'Cooling Range' : 'Power'}</h3>
                             <p>{product.powerRange}</p>
                             <hr className="border-t border-white/20 mt-6" />
                         </div>
@@ -254,7 +370,7 @@ export default function ProductDetailPage() {
 
                         <div className="md:col-span-2 mt-8">
                             <h3 className="text-xl mb-4">Application area:</h3>
-                            <p className="text-sm md:text-base">{product.suitableArea}</p>
+                            <p className="text-sm md:text-base">{product.description}</p>
                         </div>
                     </div>
 
