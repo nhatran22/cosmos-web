@@ -43,7 +43,7 @@ const Navigation = () => {
         };
     }, []);
 
-    // Kiểm tra xem một item có phải là Product navigation item hay không
+    // Check if an item is a Product navigation item
     const isProductNavItem = (item: any) => {
         return item.name === 'Products' || item.name === 'Product' || item.href === '/products';
     };
@@ -134,19 +134,19 @@ const Navigation = () => {
                                                                     : section.href || '/'}
                                                                 onClick={(e) => {
                                                                     if (isProductNavItem(item)) {
-                                                                        // Khi click vào tab cha như "UPS Power Supply"
+                                                                        // When clicking on a parent tab like "UPS Power Supply"
                                                                         try {
                                                                             const { setProductCategoryEvent } = require('./ProductSidebar');
-                                                                            // Kích hoạt cả hai sự kiện để đảm bảo xử lý nhất quán
+                                                                            // Trigger both events to ensure consistent handling
                                                                             setProductCategoryEvent(section.title, null);
-                                                                            // Kích hoạt sự kiện productCategorySelected để cập nhật UI
+                                                                            // Trigger productCategorySelected event to update UI
                                                                             const productCategoryEvent = new CustomEvent('productCategorySelected', {
                                                                                 detail: { category: section.title, subcategory: null },
                                                                                 bubbles: true,
                                                                                 composed: true
                                                                             });
                                                                             window.dispatchEvent(productCategoryEvent);
-                                                                            // Kích hoạt sự kiện categorySelected để cập nhật danh sách sản phẩm
+                                                                            // Trigger categorySelected event to update product list
                                                                             const categoryEvent = new CustomEvent('categorySelected', {
                                                                                 detail: { category: section.title, subcategory: null },
                                                                                 bubbles: true,
@@ -159,7 +159,7 @@ const Navigation = () => {
                                                                             console.error('Error importing setProductCategoryEvent:', error);
                                                                         }
                                                                     } else {
-                                                                        // Xử lý cho các tab cha khác (Solution, Service Support)
+                                                                        // Handle other parent tabs (Solution, Service Support)
                                                                     }
                                                                 }}
                                                             >
@@ -185,10 +185,10 @@ const Navigation = () => {
                                                                         className="text-sm text-gray-600 hover:text-green-600 block transition-colors duration-200 hover:underline"
                                                                         onClick={(e) => {
                                                                             if (isProductNavItem(item)) {
-                                                                                // Đồng bộ với ProductSidebar
+                                                                                // Sync with ProductSidebar
                                                                                 try {
                                                                                     const { setProductCategoryEvent } = require('./ProductSidebar');
-                                                                                    // Truyền tên subcategory thay vì id
+                                                                                    // Pass subcategory name instead of id
                                                                                     setProductCategoryEvent(section.title, subItem.name || null);
                                                                                 } catch (error) {
                                                                                     console.error('Error importing setProductCategoryEvent:', error);
@@ -261,7 +261,43 @@ const Navigation = () => {
                                         <div className="bg-gray-50">
                                             {item.submenu.map((section) => (
                                                 <div key={section.title} className="px-4 py-2">
-                                                    <Link href={section.href || '/'}>
+                                                    <Link
+                                                        href={isProductNavItem(item)
+                                                            ? `/products?category=${encodeURIComponent(section.title)}`
+                                                            : section.href || '/'}
+                                                        onClick={(e) => {
+                                                            if (isProductNavItem(item)) {
+                                                                // When clicking on a parent tab like "UPS Power Supply"
+                                                                try {
+                                                                    const { setProductCategoryEvent } = require('./ProductSidebar');
+                                                                    // Trigger both events to ensure consistent handling
+                                                                    setProductCategoryEvent(section.title, null);
+                                                                    // Trigger productCategorySelected event to update UI
+                                                                    const productCategoryEvent = new CustomEvent('productCategorySelected', {
+                                                                        detail: { category: section.title, subcategory: null },
+                                                                        bubbles: true,
+                                                                        composed: true
+                                                                    });
+                                                                    window.dispatchEvent(productCategoryEvent);
+                                                                    // Trigger categorySelected event to update product list
+                                                                    const categoryEvent = new CustomEvent('categorySelected', {
+                                                                        detail: { category: section.title, subcategory: null },
+                                                                        bubbles: true,
+                                                                        composed: true
+                                                                    });
+                                                                    window.dispatchEvent(categoryEvent);
+                                                                    e.preventDefault();
+                                                                    router.push(`/products?category=${encodeURIComponent(section.title)}`);
+                                                                    // Close mobile menu after selection
+                                                                    setIsOpen(false);
+                                                                } catch (error) {
+                                                                    console.error('Error importing setProductCategoryEvent:', error);
+                                                                }
+                                                            } else {
+                                                                // Handle other parent tabs (Solution, Service Support)
+                                                            }
+                                                        }}
+                                                    >
                                                         <h3 className="text-sm font-semibold text-gray-900 mb-2 hover:text-green-600">
                                                             {section.title}
                                                         </h3>
@@ -270,8 +306,36 @@ const Navigation = () => {
                                                         {section.items?.map((subItem) => (
                                                             <li key={subItem.name}>
                                                                 <Link
-                                                                    href={subItem.href || '/'}
+                                                                    href={isProductNavItem(item)
+                                                                        ? `/products?category=${encodeURIComponent(section.title)}&subcategory=${(subItem.name || '').replace(/ /g, '%20')}`
+                                                                        : subItem.href || '/'}
                                                                     className="block py-2 text-sm text-gray-600 hover:text-green-600"
+                                                                    onClick={(e) => {
+                                                                        if (isProductNavItem(item)) {
+                                                                            // Sync with ProductSidebar
+                                                                            try {
+                                                                                const { setProductCategoryEvent } = require('./ProductSidebar');
+                                                                                // Pass subcategory name instead of id
+                                                                                setProductCategoryEvent(section.title, subItem.name || null);
+
+                                                                                // Trigger events for consistent handling
+                                                                                const productCategoryEvent = new CustomEvent('productCategorySelected', {
+                                                                                    detail: {
+                                                                                        category: section.title,
+                                                                                        subcategory: subItem.name || null
+                                                                                    },
+                                                                                    bubbles: true,
+                                                                                    composed: true
+                                                                                });
+                                                                                window.dispatchEvent(productCategoryEvent);
+
+                                                                                // Close mobile menu after selection
+                                                                                setIsOpen(false);
+                                                                            } catch (error) {
+                                                                                console.error('Error importing setProductCategoryEvent:', error);
+                                                                            }
+                                                                        }
+                                                                    }}
                                                                 >
                                                                     {subItem.name}
                                                                 </Link>

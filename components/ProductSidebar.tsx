@@ -397,7 +397,7 @@ const ProductSidebar = () => {
                                 toggleCategory(category.title);
                             }}
                         >
-                            <div className={`font-medium transition-colors duration-300 ${isExpanded ? 'text-green-600' : 'text-gray-700 hover:text-green-600'}`}>
+                            <div className={`text-start font-medium transition-colors duration-300 ${isExpanded ? 'text-green-600' : 'text-gray-700 hover:text-green-600'}`}>
                                 {category.title}
                             </div>
                             <ChevronRight

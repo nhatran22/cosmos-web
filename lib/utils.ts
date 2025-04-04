@@ -34,7 +34,7 @@ export function mapHeaderNavigation(baseHeader: NavBar[], additionalHeader: Addi
       items: header.subCategory.map(category => ({
         id: category.id,
         name: category.name,
-        href: `${subMenuHref}/${category.name.toLowerCase().replace(/\s+/g, '-')}`,
+        href: `${subMenuHref}?subcategory=${encodeURIComponent(category.name)}`,
         fullName: category.description,
         image: category.image
       }))

@@ -8,7 +8,7 @@ const relatedProducts = [
         description: 'is widely used in government, finance, communications, education, transportation, meteorology, radio and television, industrial and commercial taxation, medical and health, energy and power and other industries.',
         features: ['15 ~ 120kVA', 'Rack Modular UPS'],
         image: '/products/acm-series-15.png',
-        href: '/products/inverter-5kw',
+        href: '/products/cb628a80-95be-4622-9df6-b76e87bb7ea6/',
     },
     {
         id: 'acm-50',
@@ -17,7 +17,7 @@ const relatedProducts = [
         description: 'is widely used in government, finance, communications, education, transportation, meteorology, radio and television, industrial and commercial taxation, medical and health, energy and power and other industries.',
         features: ['50 ~ 600kVA', 'Modular UPS'],
         image: '/products/acm-series-50.png',
-        href: '/products/battery-10kwh',
+        href: '/products/6c6acd4a-e7a3-4aad-a98e-bc18a2439c4f/',
     },
     {
         id: 'ha-series',
@@ -26,7 +26,7 @@ const relatedProducts = [
         description: 'Application site Data center, computer room, networkroom, Server room, switch room, communication basestation.',
         features: ['In-Row', 'Precision Cooling'],
         image: '/products/precision-cooling.png',
-        href: '/products/battery-10kwh',
+        href: '/products/3eead92d-c45b-4077-80c6-1a43d155303d/',
     },
     {
         id: 'act-10',
@@ -35,7 +35,7 @@ const relatedProducts = [
         description: 'is widely used in government, finance, communications, education, transportation, meteorology, radio and television, industrial and commercial taxation, medical and health, energy and power and other industries.',
         features: ['10 ~ 40kVA', 'Three Phase Rack UPS'],
         image: '/products/act-series-10.png',
-        href: '/products/battery-10kwh',
+        href: '/products/131055bc-e0f3-471c-b379-9f2d92f1814d/',
     }
 ]
 // Danh sách tabs
@@ -70,8 +70,8 @@ export const SOLUTIONS_DATA: Record<string, Solution[]> = {
             id: 'residential-storage',
             name: "Household Energy Storage",
             title: 'Household Hybrid Inverter',
-            description: 'ACwatt household energy storage solutions include "energy storage converter energy storage battery" as complete solution, with a variety of energy storage converter and battery products, suitable for new optical storage power station, the original household grid system transformation or no (weak) grid areas. Acwatt household energy storage solution realizes a higher proportion of green electricity for self-use and reduces electricity',
-            textContent: 'ACwatt household energy storage solutions include "energy storage converter energy storage battery" complete solution, with a variety of energy storage converter and battery products, suitable for new optical storage power station, the original household grid-connected system transformation or no (weak) grid areas. Aichen digital energy household energy storage solution realizes a higher proportion of green electricity for self-use and reduces electricity expenses. At the same time, UPS uninterruptible power supply function can be provided to ensure that key equipment is not powered off. Users can easily grasp the power consumption situation through Aichen Digital Cloud Monitoring and enjoy a zero-carbon home.',
+            description: 'COSMOS RF household energy storage solutions include "energy storage converter energy storage battery" as complete solution, with a variety of energy storage converter and battery products, suitable for new optical storage power station, the original household grid system transformation or no (weak) grid areas. Acwatt household energy storage solution realizes a higher proportion of green electricity for self-use and reduces electricity',
+            textContent: 'COSMOS RF household energy storage solutions include "energy storage converter energy storage battery" complete solution, with a variety of energy storage converter and battery products, suitable for new optical storage power station, the original household grid-connected system transformation or no (weak) grid areas. Aichen digital energy household energy storage solution realizes a higher proportion of green electricity for self-use and reduces electricity expenses. At the same time, UPS uninterruptible power supply function can be provided to ensure that key equipment is not powered off. Users can easily grasp the power consumption situation through Aichen Digital Cloud Monitoring and enjoy a zero-carbon home.',
             image: '/solutions/household-storage.png',
             representiveImage: '/products/hybrid-inverter-1.png',
             href: '/solutions/household-storage',
@@ -82,8 +82,8 @@ export const SOLUTIONS_DATA: Record<string, Solution[]> = {
             id: 'commercial-storage',
             name: "Industrial Solution",
             title: 'Industrial and Commercial Hybrid Inverter',
-            description: 'ACwatt industrial and commercial roofs include not only standard industrial and commercial roofs such as factory roofs, supermarkets and office buildings, but also party and government organs (courts, government buildings, etc.), roofs of public buildings (schools, hospitals, stations, etc.) and some application scenarios of "photovoltaic energy storage". The industrial and commercial roof area is large, the electricity consumption of users is large and the electricity price is relatively high. The return on',
-            textContent: 'ACwatt industrial and commercial roofs include not only standard industrial and commercial roofs such as factory roofs, supermarkets and office buildings, but also party and government organs (courts, government buildings, etc.), roofs of public buildings (schools, hospitals, stations, etc.) and some application scenarios of "photovoltaic energy storage". The industrial and commercial roof area is large, the electricity consumption of users is large and the electricity price is relatively high. The return on investment is more considerable, the effect of energy saving and emission reduction, green environmental protection. ACwatt industrial and commercial solutions bring "higher income, lower investment, safe and reliable, intelligent operation and maintenance" etc value, covering the application of the above-mentioned industrial and commercial scenarios.',
+            description: 'COSMOS RF industrial and commercial roofs include not only standard industrial and commercial roofs such as factory roofs, supermarkets and office buildings, but also party and government organs (courts, government buildings, etc.), roofs of public buildings (schools, hospitals, stations, etc.) and some application scenarios of "photovoltaic energy storage". The industrial and commercial roof area is large, the electricity consumption of users is large and the electricity price is relatively high. The return on',
+            textContent: 'COSMOS RF industrial and commercial roofs include not only standard industrial and commercial roofs such as factory roofs, supermarkets and office buildings, but also party and government organs (courts, government buildings, etc.), roofs of public buildings (schools, hospitals, stations, etc.) and some application scenarios of "photovoltaic energy storage". The industrial and commercial roof area is large, the electricity consumption of users is large and the electricity price is relatively high. The return on investment is more considerable, the effect of energy saving and emission reduction, green environmental protection. COSMOS RF industrial and commercial solutions bring "higher income, lower investment, safe and reliable, intelligent operation and maintenance" etc value, covering the application of the above-mentioned industrial and commercial scenarios.',
             image: '/solutions/commercial-storage.png',
             representiveImage: '/products/industrial-converter.png',
             href: '/solutions/commercial-storage',

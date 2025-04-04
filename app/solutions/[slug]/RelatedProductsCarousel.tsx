@@ -70,7 +70,7 @@ export function RelatedProductsCarousel({ products }: { products: RelatedProduct
                                 </div>
                                 <p className="text-gray-600 text-[12px] mb-4 flex-1">{product.description}</p>
                                 <a
-                                    href={`/products/${product.slug}`}
+                                    href={`${product.href}`}
                                     className="text-blue-600 hover:underline font-medium inline-flex items-center mt-auto"
                                 >
                                     Learn more →

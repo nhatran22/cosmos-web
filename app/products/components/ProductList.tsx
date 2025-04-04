@@ -52,7 +52,7 @@ const hasValidSubmenu = (productNavItem: NavigationItem | undefined): boolean =>
 
 export default function ProductList() {
     const searchParams = useSearchParams();
-    const { cachedProducts, addCachedProducts } = useProduct();
+    const { cachedProducts, addCachedProducts, activeParentTab, setActiveParentTab } = useProduct();
     const { categories, navigation } = useCategories();
 
     // URL params
@@ -70,7 +70,7 @@ export default function ProductList() {
     const isParentCategory = !!normalizedCategoryParam && !subcategoryParam;
     const categoryId = subcategoryParam || normalizedCategoryParam || '';
 
-    // Update title và categoryData
+    // Update title and categoryData
     useEffect(() => {
         if (!categories?.length) return;
 
@@ -119,6 +119,9 @@ export default function ProductList() {
             const normalizedSubcategory = normalizeParam(subcategory);
 
             if (normalizedCategory && !normalizedSubcategory) {
+                // Update activeParentTab when selecting parent tab
+                setActiveParentTab(normalizedCategory);
+
                 const productNavItem = findProductNavItem(navigation);
                 if (!hasValidSubmenu(productNavItem)) return;
 
@@ -140,7 +143,7 @@ export default function ProductList() {
         }
 
         return () => window.removeEventListener('productCategorySelected', handleProductCategorySelected as EventListener, true);
-    }, [navigation, addCachedProducts, normalizedCategoryParam, categories]);
+    }, [navigation, addCachedProducts, normalizedCategoryParam, categories, setActiveParentTab]);
 
     // Handle sidebar category selection
     useEffect(() => {
@@ -152,6 +155,9 @@ export default function ProductList() {
             const normalizedSubcategory = normalizeParam(subcategory);
 
             if (normalizedCategory && !normalizedSubcategory) {
+                // Update activeParentTab when selecting parent tab from sidebar
+                setActiveParentTab(normalizedCategory);
+
                 const productNavItem = findProductNavItem(navigation);
                 if (!hasValidSubmenu(productNavItem)) return;
 
@@ -166,7 +172,7 @@ export default function ProductList() {
 
         window.addEventListener('categorySelected', handleCategorySelected as EventListener);
         return () => window.removeEventListener('categorySelected', handleCategorySelected as EventListener);
-    }, [navigation, addCachedProducts, categories]);
+    }, [navigation, addCachedProducts, categories, setActiveParentTab]);
 
     // Update effectiveId
     useEffect(() => {
@@ -186,11 +192,17 @@ export default function ProductList() {
         setEffectiveId(categoryId);
     }, [subcategoryParam, categoryId, navigation, normalizedCategoryParam]);
 
-    // Fetch products
+    // Fetch products with modified logic
     const { data: products, isLoading, error } = useQuery({
-        queryKey: ['products', effectiveId, normalizedCategoryParam, categories],
+        queryKey: ['products', effectiveId, normalizedCategoryParam, categories, activeParentTab],
         queryFn: async () => {
             try {
+                // If there's no activeParentTab and no normalizedCategoryParam,
+                // we are on the main product page with no parent tab selected
+                if (!activeParentTab && !normalizedCategoryParam && !subcategoryParam) {
+                    return []; // Return empty array to display blank page
+                }
+
                 if (isParentCategory && normalizedCategoryParam) {
                     const cachedParentProducts = cachedProducts.get(normalizedCategoryParam);
                     if (cachedParentProducts?.length) return cachedParentProducts;
@@ -237,6 +249,33 @@ export default function ProductList() {
         staleTime: 5 * 60 * 1000,
         enabled: !!categories
     });
+
+    // Display UI when no tab is selected
+    if (products?.length === 0 && !isLoading && !activeParentTab && !normalizedCategoryParam && !subcategoryParam) {
+        return (
+            <div className="w-full py-12 text-center">
+                <h1 className="text-2xl font-semibold mb-6">{title || 'Products'}</h1>
+                <div className="bg-blue-50 p-6 rounded-lg max-w-2xl mx-auto">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-12 w-12 text-blue-500 mx-auto mb-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                    </svg>
+                    <p className="text-lg mb-2 font-medium text-blue-700">Please select a product category</p>
+                    <p className="text-blue-600">Choose a product category from the left menu to view corresponding products.</p>
+                </div>
+            </div>
+        );
+    }
 
     // Loading state
     if (isLoading) {

@@ -7,7 +7,6 @@ import { Suspense } from 'react';
 import { FloatingIconsWrapper, ZaloChatWrapper } from '@/components/ClientWrappers';
 import PerformanceInitializer from '@/app/utils/performance-init';
 import { CategoriesProvider } from '@/app/contexts/CategoriesContext';
-import { SpeedInsights } from "@vercel/speed-insights/next"
 
 // Dynamic imports for performance
 const Header = dynamic(() => import('@/components/header'), {
@@ -38,14 +37,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Preload quan trọng */}
-        <link
-          rel="preload"
-          href="/fonts/inter.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
         <link
           rel="preload"
           href="/other/background.png"
@@ -67,12 +58,11 @@ export default function RootLayout({
                 <div className="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
               </div>}>
                 {children}
-                <SpeedInsights />
               </Suspense>
             </main>
             <Footer />
             <FloatingIconsWrapper />
-            <ZaloChatWrapper />
+            {/* <ZaloChatWrapper /> */}
             <PerformanceInitializer />
           </CategoriesProvider>
         </ThemeProvider>
