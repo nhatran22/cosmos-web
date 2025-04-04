@@ -154,7 +154,7 @@ export default function SupportPage() {
             <section className="relative bg-gradient-to-r from-blue-900 to-indigo-900 text-white py-16 md:py-24 overflow-hidden">
                 <div className="absolute inset-0">
                     <Image
-                        src="/images/support-banner.svg"
+                        src="/other/support-banner.svg"
                         alt="Support Background"
                         fill
                         className="object-cover"
