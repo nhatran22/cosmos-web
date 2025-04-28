@@ -12,4 +12,9 @@ const ZaloChatWrapper = dynamic(() => import('@/components/ZaloChat'), {
     ssr: false
 });
 
-export { FloatingIconsWrapper, ZaloChatWrapper }; 
+// Client wrapper cho ScrollToTop
+const ScrollToTopWrapper = dynamic(() => import('@/app/utils/scroll-top'), {
+    ssr: false
+});
+
+export { FloatingIconsWrapper, ZaloChatWrapper, ScrollToTopWrapper }; 

@@ -47,11 +47,11 @@ export default function ProductSlider({ products, isParentCategory, onTabClose }
             // Load More - redirect to subcategory
             // Sử dụng tên sản phẩm thay vì ID
             const subcategoryName = product.name;
-            const url = `/products?category=${product.catalogue!}&subcategory=${product.id}`;
+            const url = `/products?category=${encodeURIComponent(product.catalogue || '')}&subcategory=${encodeURIComponent(product.id)}`;
             router.push(url);
         } else {
             // View Detail - redirect to product detail
-            const url = `/products/${product.id}`;
+            const url = `/products/${encodeURIComponent(product.id)}`;
             router.push(url);
         }
     };
@@ -59,33 +59,29 @@ export default function ProductSlider({ products, isParentCategory, onTabClose }
     return (
         <div className="relative w-full">
             <div
-                className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-500 ${isTransitioning ? 'opacity-0 transform translate-x-4' : 'opacity-100 transform translate-x-0'
+                className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 transition-all duration-500 ${isTransitioning ? 'opacity-0 transform translate-x-4' : 'opacity-100 transform translate-x-0'
                     }`}
             >
                 {currentProducts.map(product => (
                     <div
                         key={product.id}
-                        className="bg-white p-6 rounded-lg shadow-md transition-transform duration-300 hover:shadow-lg hover:-translate-y-1 aspect-[3/4]"
+                        className="bg-white p-3 sm:p-4 md:p-6 rounded-lg shadow-md transition-transform duration-300 hover:shadow-lg hover:-translate-y-1 h-full flex flex-col"
                     >
-                        <div className="relative w-full h-[300px] mb-4 overflow-hidden rounded-md bg-gray-50">
-                            <div className="relative w-full h-full flex items-center justify-center p-6">
+                        <div className="relative w-full h-[150px] sm:h-[200px] md:h-[250px] mb-3 md:mb-4 overflow-hidden rounded-md bg-gray-50">
+                            <div className="relative w-full h-full flex items-center justify-center p-3 md:p-6">
                                 <Image
-                                    src={product.image!}
-                                    alt={product.name || product.description!}
+                                    src={product.image || '/images/placeholder.png'}
+                                    alt={product.name || product.description || 'Product image'}
                                     fill
                                     className="object-contain rounded-md hover:scale-105 transition-transform duration-300"
-                                    sizes={isParentCategory
-                                        ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                                        : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                    }
-                                    style={{ objectFit: 'contain', minWidth: '85%', minHeight: '85%' }}
+                                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                     priority
                                 />
                             </div>
                         </div>
-                        <h3 className="text-lg font-semibold mb-2 line-clamp-1">{product.name}</h3>
+                        <h3 className="text-base sm:text-lg font-semibold mb-2 line-clamp-1">{product.name}</h3>
                         {!product.catalogue && (
-                            <p className={`text-gray-600 text-sm line-clamp-2 mb-4 ${isParentCategory ? 'h-8' : 'h-10'
+                            <p className={`text-gray-600 text-xs sm:text-sm line-clamp-2 mb-3 md:mb-4 ${isParentCategory ? 'h-6 sm:h-8' : 'h-8 sm:h-10'
                                 }`}>
                                 {product.description}
                             </p>
@@ -93,9 +89,9 @@ export default function ProductSlider({ products, isParentCategory, onTabClose }
 
                         <button
                             onClick={() => handleButtonClick(product)}
-                            className={`px-4 py-2 rounded-md text-white transition-colors w-full text-center ${isParentCategory
-                                ? 'bg-green-500 hover:bg-green-600'
-                                : 'bg-blue-500 hover:bg-blue-600'
+                            className={`mt-auto px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-white transition-colors w-full text-center text-xs sm:text-sm ${isParentCategory
+                                    ? 'bg-green-500 hover:bg-green-600'
+                                    : 'bg-blue-500 hover:bg-blue-600'
                                 }`}
                         >
                             {isParentCategory ? 'Load More' : 'View Detail'}

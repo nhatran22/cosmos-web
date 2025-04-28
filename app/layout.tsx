@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
-import { FloatingIconsWrapper, ZaloChatWrapper } from '@/components/ClientWrappers';
+import { FloatingIconsWrapper, ZaloChatWrapper, ScrollToTopWrapper } from '@/components/ClientWrappers';
 import PerformanceInitializer from '@/app/utils/performance-init';
 import { CategoriesProvider } from '@/app/contexts/CategoriesContext';
 
@@ -42,13 +42,14 @@ export default function RootLayout({
           href="/other/background.png"
           as="image"
         />
-        {/* Preconnect tới origins quan trọng */}
+        {/* Preconnect to important origins */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light">
           <CategoriesProvider>
+            <ScrollToTopWrapper />
             <Header />
             <Suspense fallback={<div className="h-10 bg-gray-50"></div>}>
               <Breadcrumb />

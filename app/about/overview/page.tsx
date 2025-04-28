@@ -8,30 +8,26 @@ export const metadata: Metadata = {
 
 const AboutContent = () => (
   <div className="prose max-w-none text-gray-600 space-y-4">
-    <p>
-      <span className='font-bold'>COSMOS RF</span> is a Canadian-based professional manufacturer specializing in high-performance, full-featured radio frequency (RF) products designed to mitigate unwanted interference in an increasingly crowded radio spectrum. As today's higher data rates demand improved radio signal-to-noise ratios, COSMOS RF's high-linearity RF components meet this critical need. Our innovative RF solutions address the evolving requirements of a wide range of applications, including indoor and outdoor cellular telecommunications systems, microwave systems, and more.
+    <p className="text-sm md:text-base">
+      <span className='font-bold'>Cosmos RF Inc.</span> is a Canada-based high-tech enterprise with a global vision, committed to providing cutting-edge digital infrastructure integration solutions and energy storage system solutions for industrial and commercial applications. With the mission of "Innovating for a Sustainable Digital Future," Cosmos RF focuses on delivering reliable, scalable, and environmentally responsible systems to support the evolving demands of smart energy and digital transformation across the globe.
     </p>
-    <h3 className='font-bold'>Research and Designing</h3>
-    <p>
-      Located in a leading hub for telecom research, development, and business, COSMOS RF is committed to delivering innovative and high-quality RF products to our clients. Our exceptional team of RF experts combines research expertise with industry experience. We also maintain extensive cooperative programs with scientific research institutes, universities, and centers in Canada and the United States to stay at the forefront of telecom technologies, particularly RF-related products. All COSMOS RF state-of-the-art products are designed and rigorously tested in our advanced laboratories before mass production.
+    <p className="text-sm md:text-base">
+      Our company possesses a seasoned professional team, and we combine strong R&D capability with strategic global partnerships. Cosmos RF holds multiple core technologies and patents in intelligent power management, energy efficiency, and data infrastructure design. Our core solutions include modular data center infrastructure, smart power backup systems, intelligent monitoring & cooling systems, and advanced commercial energy storage systems.
     </p>
-    <h3 className='font-bold'>Production</h3>
-    <p>
-      To deliver exceptional value to our customers through high-quality yet affordable products, we have adopted a mass production strategy in China. Our carefully selected production partners are verified through long-term collaboration. We transfer our designs and expertise to these partners, who leverage their highly skilled personnel, advanced production lines, and sophisticated testing equipment to create outstanding products that meet the needs of customers worldwide. Furthermore, all COSMOS RF products undergo stringent quality control processes and are tested under extreme conditions to ensure the highest standards. This rigorous approach has earned COSMOS RF products a reputation for stability and reliability in projects deployed globally.
+    <p className="text-sm md:text-base">
+      To ensure optimal quality and efficiency, Cosmos RF follows international quality standards, including ISO 9001 and ISO 14001, and operates a robust management framework supported by CRM, ERP, and MES systems. Our global supply chain and marketing network allow us to respond quickly and effectively to the needs of our partners in North America, Europe, and Asia-Pacific.
     </p>
-    <h3 className='font-bold'>Flexibility – Custom-Made for Local Markets</h3>
-    <p>
-      With our robust design capabilities and large production base, we offer exceptional flexibility to meet the specific requirements of customers across diverse markets.
+    <p className="text-sm md:text-base">
+      We pride ourselves on delivering professional, customized, and cost-effective solutions, backed by strong technical support and a global service team. Through continuous investment in innovation and sustainability, Cosmos RF is committed to enabling a smarter, greener, and more connected future.
     </p>
-    <h3 className='font-bold'>Technical Support</h3>
-    <p>
-      Customers using COSMOS RF products benefit from technical support provided not only by our skilled in-house team but also by our partners and local distributors in various markets.
+    <p className="text-sm md:text-base">
+      Upholding a corporate culture of "co-creation, collaboration, and shared value," we actively embrace our social responsibility, contribute to carbon neutrality goals, and promote the development of a low-carbon, diversified, and digital energy industry.
     </p>
   </div>
 );
 
 const AboutImage = () => (
-  <div className="relative h-[600px] rounded-lg overflow-hidden shadow-xl">
+  <div className="relative h-[300px] md:h-[600px] rounded-lg overflow-hidden shadow-xl mt-6 md:mt-0">
     <Image
       src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2940&auto=format&fit=crop"
       alt="Corporate Building"
@@ -46,10 +42,11 @@ export default function Overview() {
   return (
     <div>
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-6">About Us</h1>
+      <div className="container mx-auto px-4 py-6 md:py-8">
+        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-6">About Us</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">Cosmos RF Inc.</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12">
           <AboutContent />
           <AboutImage />
         </div>

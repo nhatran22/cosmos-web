@@ -11,21 +11,21 @@ import { SOLUTIONS_DATA, TABS } from '@/data/solution-data';
 // Tách DataCenterSolutionItem thành component riêng
 const DataCenterSolutionItem = ({ solution }: { solution: Solution }) => (
     <>
-        <div className="relative md:h-auto">
+        <div className="relative w-full h-[200px] md:h-[400px]">
             <Image
                 src={solution.image}
                 alt={solution.title || ''}
                 className="object-cover"
-                width={800}
-                height={500}
+                fill
+                sizes="(max-width: 768px) 100vw, 800px"
                 loading="lazy"
             />
         </div>
-        <div className="p-6 w-full flex flex-col justify-center">
-            <h3 className="text-2xl font-semibold mb-4 text-green-600">
+        <div className="p-4 md:p-6 w-full flex flex-col justify-center">
+            <h3 className="text-xl md:text-2xl font-semibold mb-2 md:mb-4 text-green-600">
                 {solution.title}
             </h3>
-            <p className="text-gray-600 mb-6 text-[12px] leading-relaxed">
+            <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base leading-relaxed">
                 {solution.description}
             </p>
         </div>
@@ -36,11 +36,11 @@ const DataCenterSolutionItem = ({ solution }: { solution: Solution }) => (
 const StandardSolutionItem = ({ solution }: { solution: Solution }) => (
     <>
         {/* Phần bên trái: Thông tin và nút Load More */}
-        <div className="p-6 md:w-1/2 flex flex-col w-[550px] justify-center">
-            <h3 className="text-2xl font-semibold mb-4 text-green-600">
+        <div className="p-4 md:p-6 w-full md:w-1/2 flex flex-col justify-center">
+            <h3 className="text-xl md:text-2xl font-semibold mb-2 md:mb-4 text-green-600">
                 {solution.title}
             </h3>
-            <p className="text-gray-600 mb-6 text-[12px] leading-relaxed">
+            <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base leading-relaxed">
                 {solution.description}
             </p>
             <Link
@@ -53,13 +53,13 @@ const StandardSolutionItem = ({ solution }: { solution: Solution }) => (
         </div>
 
         {/* Phần bên phải: Hình ảnh */}
-        <div className="md:w-1/2 relative h-64 md:h-auto flex-1">
+        <div className="w-full md:w-1/2 relative h-[200px] md:h-[300px]">
             <Image
                 src={solution.image}
                 alt={solution.title || ''}
                 className="object-cover"
-                width={450}
-                height={200}
+                fill
+                sizes="(max-width: 768px) 100vw, 450px"
                 loading="lazy"
             />
         </div>
@@ -68,7 +68,7 @@ const StandardSolutionItem = ({ solution }: { solution: Solution }) => (
 
 // SolutionItem component sử dụng các components con
 const SolutionItem = ({ solution, isDataSolutionPage }: { solution: Solution, isDataSolutionPage: boolean }) => (
-    <div className={`flex ${isDataSolutionPage ? 'flex-col' : 'flex-row'} items-center gap-6 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-all duration-300`}>
+    <div className={`flex flex-col ${isDataSolutionPage ? '' : 'md:flex-row'} items-center gap-4 md:gap-6 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-all duration-300`}>
         {isDataSolutionPage ? (
             <DataCenterSolutionItem solution={solution} />
         ) : (
@@ -79,19 +79,19 @@ const SolutionItem = ({ solution, isDataSolutionPage }: { solution: Solution, is
 
 // Component LoadingState tách riêng
 const LoadingState = () => (
-    <div className="mb-24 px-6">
-        <h1 className="text-3xl font-bold mb-10 text-gray-800">Loading Solutions...</h1>
+    <div className="mb-16 md:mb-24 px-4 md:px-6">
+        <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-10 text-gray-800">Loading Solutions...</h1>
         {[1, 2, 3].map((item) => (
-            <div key={item} className="mb-10 h-64 animate-pulse bg-gray-100 rounded-lg"></div>
+            <div key={item} className="mb-6 md:mb-10 h-40 md:h-64 animate-pulse bg-gray-100 rounded-lg"></div>
         ))}
     </div>
 );
 
 // Component EmptyState tách riêng
 const EmptyState = () => (
-    <div className="mb-24 px-6">
-        <h1 className="text-3xl font-bold mb-10 text-gray-800">Solutions</h1>
-        <div className="bg-gray-100 p-8 rounded-lg text-center">
+    <div className="mb-16 md:mb-24 px-4 md:px-6">
+        <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-10 text-gray-800">Solutions</h1>
+        <div className="bg-gray-100 p-4 md:p-8 rounded-lg text-center">
             <p className="text-gray-600">No solutions available in this category.</p>
         </div>
     </div>
@@ -102,16 +102,16 @@ const RelatedProducts = React.memo(({ products }: { products?: RelatedProduct[] 
     if (!products || products.length === 0) return null;
 
     return (
-        <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-            <h4 className="text-xl font-semibold mb-4 text-gray-800">Sản phẩm liên quan</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="mt-6 md:mt-8 p-4 md:p-6 bg-gray-50 rounded-lg">
+            <h4 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-gray-800">Sản phẩm liên quan</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                 {products.map(product => (
                     <Link
                         key={product.id}
                         href={product.href || '#'}
-                        className="flex flex-col bg-white rounded-lg shadow-sm p-4 transition-all hover:shadow-md"
+                        className="flex flex-col bg-white rounded-lg shadow-sm p-3 md:p-4 transition-all hover:shadow-md"
                     >
-                        <div className="h-40 mb-3 relative">
+                        <div className="h-32 md:h-40 mb-2 md:mb-3 relative">
                             <Image
                                 src={product.image}
                                 alt={product.title}
@@ -120,9 +120,9 @@ const RelatedProducts = React.memo(({ products }: { products?: RelatedProduct[] 
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             />
                         </div>
-                        <h5 className="font-medium text-green-600">{product.title}</h5>
+                        <h5 className="font-medium text-green-600 text-sm md:text-base">{product.title}</h5>
                         {product.features && (
-                            <div className="flex flex-wrap gap-1 my-2">
+                            <div className="flex flex-wrap gap-1 my-1 md:my-2">
                                 {product.features.slice(0, 2).map((feature: string, index: number) => (
                                     <span key={index} className="inline-block bg-gray-100 rounded-full px-2 py-1 text-xs font-semibold text-gray-700">
                                         {feature}
@@ -131,7 +131,7 @@ const RelatedProducts = React.memo(({ products }: { products?: RelatedProduct[] 
                             </div>
                         )}
                         {product.description && (
-                            <p className="text-gray-600 text-sm mt-1 line-clamp-2">{product.description}</p>
+                            <p className="text-gray-600 text-xs md:text-sm mt-1 line-clamp-2">{product.description}</p>
                         )}
                     </Link>
                 ))}
@@ -232,12 +232,12 @@ export default function SolutionsPage() {
     }
 
     return (
-        <div className="mb-24 px-6">
-            <h1 className="text-3xl font-bold mb-10 text-gray-800">
+        <div className="mb-16 md:mb-24 px-4 md:px-6">
+            <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-10 text-gray-800">
                 {activeCategory + ' Solutions'}
             </h1>
 
-            <div className="space-y-12">
+            <div className="space-y-6 md:space-y-12">
                 {filteredSolutions.map((solution) => (
                     <SolutionItem
                         key={solution.id}

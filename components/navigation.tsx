@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { useCategories } from '@/app/contexts/CategoriesContext';
 import { useRouter } from 'next/navigation';
 import { cloneElement } from 'react';
+import { createPortal } from 'react-dom';
 
 const Navigation = () => {
     const { navigation } = useCategories();
@@ -48,36 +49,108 @@ const Navigation = () => {
         return item.name === 'Products' || item.name === 'Product' || item.href === '/products';
     };
 
+    // Render mobile menu bằng portal để tránh bị che bởi header bo góc
+    const mobileMenu = isOpen && typeof window !== 'undefined'
+        ? createPortal(
+            <div className="lg:hidden fixed inset-x-0 top-16 md:top-20 bottom-0 left-0 right-0 bg-white border-t overflow-y-auto z-[999]">
+                <div className="container mx-auto px-4 py-4">
+                    {navigation.map((item) => (
+                        <div key={item.name} className="border-b">
+                            {item.submenu ? (
+                                <button
+                                    onClick={() => toggleSection(item.name)}
+                                    className="flex items-center justify-between w-full px-4 py-3 text-left"
+                                >
+                                    <span className="text-base text-gray-900 font-medium">{item.name}</span>
+                                    <ChevronRight
+                                        className={`h-5 w-5 transform transition-transform ${expandedSections.includes(item.name) ? 'rotate-90' : ''}`}
+                                    />
+                                </button>
+                            ) : (
+                                <Link
+                                    href={item.href || '/'}
+                                    className="block px-4 py-3 text-base text-gray-900 font-medium"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    {item.name}
+                                </Link>
+                            )}
+
+                            {item.submenu && expandedSections.includes(item.name) && (
+                                <div className="pl-4 pb-3">
+                                    {item.submenu.map((section) => (
+                                        <div key={section.title} className="mb-4">
+                                            <Link
+                                                href={isProductNavItem(item)
+                                                    ? `/products?category=${encodeURIComponent(section.title)}`
+                                                    : section.href || (section.title === 'Our Company'
+                                                        ? '/about/overview'
+                                                        : section.title === 'Join Us'
+                                                            ? '/about/join-us'
+                                                            : '/')}
+                                                className="block px-4 py-2 font-medium text-green-600 text-sm hover:underline"
+                                                onClick={() => setIsOpen(false)}
+                                            >
+                                                {section.title}
+                                            </Link>
+                                            {section.items && (
+                                                <ul className="space-y-1 pl-4">
+                                                    {section.items.map((subItem) => (
+                                                        <li key={subItem.name}>
+                                                            <Link
+                                                                href={isProductNavItem(item)
+                                                                    ? `/products?category=${encodeURIComponent(section.title)}&subcategory=${encodeURIComponent(subItem.name || '')}`
+                                                                    : subItem.href || '/'}
+                                                                className="block px-4 py-2 text-sm text-gray-700"
+                                                                onClick={() => setIsOpen(false)}
+                                                            >
+                                                                {subItem.name}
+                                                            </Link>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>,
+            document.body
+        ) : null;
+
     return (
         <header
             className={cn(
-                "fixed top-0 left-0 right-0 z-50",
-                isHomePage ? "" : "flex justify-center",
+                "fixed top-0 left-0 right-0 z-[100]",
+                isHomePage ? "" : "flex justify-center w-full",
                 isHomePage || scrolled ? "" : "py-2"
             )}
         >
             <div
                 className={cn(
-                    "px-4 sm:px-6 lg:px-20",
+                    "w-full px-4 sm:px-6 lg:px-8 relative",
                     isHomePage
-                        ? "w-full bg-white shadow-md"
+                        ? "bg-white shadow-md"
                         : scrolled
-                            ? "w-full bg-white shadow-md transition-colors duration-300"
-                            : "max-w-[80%] w-[1340px] bg-[#EEE]/60 bg-opacity-40 backdrop-blur-sm rounded-2xl",
+                            ? "bg-white shadow-md transition-colors duration-300"
+                            : "w-[95%] md:max-w-[90%] lg:max-w-[80%] bg-[#EEE]/60 bg-opacity-40 backdrop-blur-sm rounded-2xl",
                 )}
             >
                 <div className={cn(
-                    "flex h-20 items-center",
+                    "flex h-16 md:h-20 items-center",
                     (!isHomePage && !scrolled) ? "justify-between" : "justify-between"
                 )}>
                     <div className="flex-shrink-0">
                         <Link href="/">
                             <Image
                                 src="/other/cosmos-web-logo.png"
-                                width={350}
-                                height={100}
+                                width={200}
+                                height={60}
                                 alt="Cosmos Logo"
-                                className="object-cover"
+                                className="object-contain h-8 md:h-12 w-auto"
                                 priority
                             />
                         </Link>
@@ -231,127 +304,8 @@ const Navigation = () => {
                         </Button>
                     </div>
                 </div>
-
-                {/* Mobile Navigation */}
-                {isOpen && (
-                    <div className="lg:hidden fixed inset-x-0 top-20 bottom-0 bg-white border-t overflow-y-auto">
-                        <div className="container mx-auto px-4 py-4">
-                            {navigation.map((item) => (
-                                <div key={item.name} className="border-b">
-                                    {item.submenu ? (
-                                        <button
-                                            onClick={() => toggleSection(item.name)}
-                                            className="flex items-center justify-between w-full px-4 py-3 text-left"
-                                        >
-                                            <span className="text-gray-900 font-medium">{item.name}</span>
-                                            <ChevronRight
-                                                className={`h-5 w-5 transform transition-transform ${expandedSections.includes(item.name) ? 'rotate-90' : ''}`}
-                                            />
-                                        </button>
-                                    ) : (
-                                        <Link
-                                            href={item.href || '/'}
-                                            className="flex items-center justify-between w-full px-4 py-3 text-left"
-                                        >
-                                            <span className="text-gray-900 font-medium">{item.name}</span>
-                                        </Link>
-                                    )}
-
-                                    {item.submenu && expandedSections.includes(item.name) && (
-                                        <div className="bg-gray-50">
-                                            {item.submenu.map((section) => (
-                                                <div key={section.title} className="px-4 py-2">
-                                                    <Link
-                                                        href={isProductNavItem(item)
-                                                            ? `/products?category=${encodeURIComponent(section.title)}`
-                                                            : section.href || '/'}
-                                                        onClick={(e) => {
-                                                            if (isProductNavItem(item)) {
-                                                                // When clicking on a parent tab like "UPS Power Supply"
-                                                                try {
-                                                                    const { setProductCategoryEvent } = require('./ProductSidebar');
-                                                                    // Trigger both events to ensure consistent handling
-                                                                    setProductCategoryEvent(section.title, null);
-                                                                    // Trigger productCategorySelected event to update UI
-                                                                    const productCategoryEvent = new CustomEvent('productCategorySelected', {
-                                                                        detail: { category: section.title, subcategory: null },
-                                                                        bubbles: true,
-                                                                        composed: true
-                                                                    });
-                                                                    window.dispatchEvent(productCategoryEvent);
-                                                                    // Trigger categorySelected event to update product list
-                                                                    const categoryEvent = new CustomEvent('categorySelected', {
-                                                                        detail: { category: section.title, subcategory: null },
-                                                                        bubbles: true,
-                                                                        composed: true
-                                                                    });
-                                                                    window.dispatchEvent(categoryEvent);
-                                                                    e.preventDefault();
-                                                                    router.push(`/products?category=${encodeURIComponent(section.title)}`);
-                                                                    // Close mobile menu after selection
-                                                                    setIsOpen(false);
-                                                                } catch (error) {
-                                                                    console.error('Error importing setProductCategoryEvent:', error);
-                                                                }
-                                                            } else {
-                                                                // Handle other parent tabs (Solution, Service Support)
-                                                            }
-                                                        }}
-                                                    >
-                                                        <h3 className="text-sm font-semibold text-gray-900 mb-2 hover:text-green-600">
-                                                            {section.title}
-                                                        </h3>
-                                                    </Link>
-                                                    <ul className="space-y-1">
-                                                        {section.items?.map((subItem) => (
-                                                            <li key={subItem.name}>
-                                                                <Link
-                                                                    href={isProductNavItem(item)
-                                                                        ? `/products?category=${encodeURIComponent(section.title)}&subcategory=${(subItem.name || '').replace(/ /g, '%20')}`
-                                                                        : subItem.href || '/'}
-                                                                    className="block py-2 text-sm text-gray-600 hover:text-green-600"
-                                                                    onClick={(e) => {
-                                                                        if (isProductNavItem(item)) {
-                                                                            // Sync with ProductSidebar
-                                                                            try {
-                                                                                const { setProductCategoryEvent } = require('./ProductSidebar');
-                                                                                // Pass subcategory name instead of id
-                                                                                setProductCategoryEvent(section.title, subItem.name || null);
-
-                                                                                // Trigger events for consistent handling
-                                                                                const productCategoryEvent = new CustomEvent('productCategorySelected', {
-                                                                                    detail: {
-                                                                                        category: section.title,
-                                                                                        subcategory: subItem.name || null
-                                                                                    },
-                                                                                    bubbles: true,
-                                                                                    composed: true
-                                                                                });
-                                                                                window.dispatchEvent(productCategoryEvent);
-
-                                                                                // Close mobile menu after selection
-                                                                                setIsOpen(false);
-                                                                            } catch (error) {
-                                                                                console.error('Error importing setProductCategoryEvent:', error);
-                                                                            }
-                                                                        }
-                                                                    }}
-                                                                >
-                                                                    {subItem.name}
-                                                                </Link>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
             </div>
+            {mobileMenu}
         </header>
     );
 };

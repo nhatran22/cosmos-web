@@ -606,28 +606,53 @@ export default function Breadcrumb() {
     // Hiển thị breadcrumb và tabs
     return (
         <>
-            <div className="flex justify-between items-center px-20 py-3">
-                <div className="bg-gray-100 py-3 rounded-md">
-                    <div className="container mx-auto px-4">
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            {breadcrumbItems.map((item, index) => (
-                                <div key={index} className="flex items-center">
-                                    {index > 0 && (
-                                        <ChevronRight className="h-4 w-4 text-gray-400 mx-2" />
-                                    )}
-                                    <Link
-                                        href={item.href}
-                                        className={`flex items-center hover:text-green-600 transition-colors ${index === breadcrumbItems.length - 1 ? 'font-medium text-green-600' : ''}`}
-                                    >
-                                        {item.icon && <span className="mr-1">{item.icon}</span>}
-                                        {item.name}
-                                    </Link>
-                                </div>
-                            ))}
+            {/* Breadcrumb cho desktop */}
+            <div className="hidden md:block">
+                <div className="flex justify-between items-center px-4 lg:px-20 py-3">
+                    <div className="bg-gray-100 py-3 rounded-md">
+                        <div className="container mx-auto px-4">
+                            <div className="flex items-center space-x-2 text-sm text-gray-600">
+                                {breadcrumbItems.map((item, index) => (
+                                    <div key={index} className="flex items-center">
+                                        {index > 0 && (
+                                            <ChevronRight className="h-4 w-4 text-gray-400 mx-2" />
+                                        )}
+                                        <Link
+                                            href={item.href}
+                                            className={`flex items-center hover:text-green-600 transition-colors ${index === breadcrumbItems.length - 1 ? 'font-medium text-green-600' : ''}`}
+                                        >
+                                            {item.icon && <span className="mr-1">{item.icon}</span>}
+                                            {item.name}
+                                        </Link>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
+                    {isProductPage ? renderCategoryTabs() : tabsToRender}
                 </div>
-                {isProductPage ? renderCategoryTabs() : tabsToRender}
+            </div>
+
+            {/* Breadcrumb cho mobile: chỉ hiện router, không hiện tab */}
+            <div className="md:hidden px-2 py-2">
+                <div className="bg-gray-100 py-2 rounded-md">
+                    <div className="flex items-center space-x-2 text-xs text-gray-600 px-2 overflow-x-auto">
+                        {breadcrumbItems.map((item, index) => (
+                            <div key={index} className="flex items-center">
+                                {index > 0 && (
+                                    <ChevronRight className="h-3 w-3 text-gray-400 mx-1" />
+                                )}
+                                <Link
+                                    href={item.href}
+                                    className={`flex items-center hover:text-green-600 transition-colors ${index === breadcrumbItems.length - 1 ? 'font-medium text-green-600' : ''}`}
+                                >
+                                    {item.icon && <span className="mr-1">{item.icon}</span>}
+                                    {item.name}
+                                </Link>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
         </>
     );

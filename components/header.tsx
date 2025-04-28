@@ -6,19 +6,18 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 const Header = () => {
-
   const pathname = usePathname();
   const isHomePage = pathname === "/";
 
   return (
-    <div>
+    <div className="w-full">
       {isHomePage && (
-        <header className="fixed w-full bg-white z-50 shadow-sm rounded-full">
+        <header className="fixed w-full bg-white z-50 shadow-sm">
           <Navigation />
         </header>
       )}
       {!isHomePage && (
-        <div className="relative h-[300px] w-full">
+        <div className="relative h-[200px] md:h-[300px] w-full">
           <Image
             src="/other/background.png"
             alt="Main Background"

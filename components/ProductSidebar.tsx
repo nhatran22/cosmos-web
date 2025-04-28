@@ -83,22 +83,22 @@ const ProductCategoryItem = ({
     return (
         <div className="mb-2">
             <div
-                className={`flex items-center justify-between p-2 rounded-md cursor-pointer ${isOpen ? 'bg-green-50 text-green-600' : 'hover:bg-gray-100'}`}
+                className={`flex items-center justify-between p-2 sm:p-3 rounded-md cursor-pointer text-sm sm:text-base ${isOpen ? 'bg-green-50 text-green-600' : 'hover:bg-gray-100'}`}
                 onClick={onToggle}
             >
                 <span className="font-medium">{category.title}</span>
                 <ChevronRight
-                    size={18}
+                    size={16}
                     className={`transition-transform duration-200 ${isOpen ? 'transform rotate-90' : ''}`}
                 />
             </div>
             {isOpen && category.items && (
-                <div className="ml-4 mt-1 border-l-2 border-gray-200 pl-2">
+                <div className="ml-2 sm:ml-4 mt-1 border-l-2 border-gray-200 pl-1 sm:pl-2">
                     {category.items.map((item, idx) => (
                         <div
                             key={idx}
                             className={`
-                                p-2 text-sm cursor-pointer rounded-md
+                                p-1.5 sm:p-2 text-xs sm:text-sm cursor-pointer rounded-md
                                 transition-colors duration-200
                                 productSubcategoryItem
                                 ${item.isActive ? 'bg-green-50 text-green-600 font-medium' : 'hover:bg-gray-100'}
@@ -115,14 +115,14 @@ const ProductCategoryItem = ({
 };
 
 const ProductSidebarSkeleton = () => (
-    <div className="w-full p-4 bg-white rounded-lg shadow-sm">
-        <div className="h-6 bg-gray-200 rounded w-3/4 mb-4 animate-pulse"></div>
+    <div className="w-full p-3 sm:p-4 bg-white rounded-lg shadow-sm">
+        <div className="h-5 sm:h-6 bg-gray-200 rounded w-3/4 mb-3 sm:mb-4 animate-pulse"></div>
         {[1, 2, 3].map(item => (
-            <div key={item} className="mb-4">
-                <div className="h-5 bg-gray-200 rounded w-full mb-2 animate-pulse"></div>
-                <div className="ml-4">
+            <div key={item} className="mb-3 sm:mb-4">
+                <div className="h-4 sm:h-5 bg-gray-200 rounded w-full mb-1.5 sm:mb-2 animate-pulse"></div>
+                <div className="ml-2 sm:ml-4">
                     {[1, 2].map(subItem => (
-                        <div key={subItem} className="h-4 bg-gray-200 rounded w-4/5 mb-2 animate-pulse"></div>
+                        <div key={subItem} className="h-3 sm:h-4 bg-gray-200 rounded w-4/5 mb-1.5 sm:mb-2 animate-pulse"></div>
                     ))}
                 </div>
             </div>
@@ -376,66 +376,24 @@ const ProductSidebar = () => {
 
     return (
         <div className="w-full">
-            {categories.map((category, index) => {
-                const isExpanded = expandedCategory === category.title;
-                const wasExpanded = previouslyExpanded === category.title && expandedCategory !== category.title;
-                // Nếu activeSubcategory là tên, chúng ta cần tìm theo tên thay vì ID
-                const activeSubcategoryParam = searchParams.get('subcategory');
-                const activeSubcategory = activeSubcategoryParam ?
-                    decodeURIComponent(activeSubcategoryParam).replace(/\+/g, ' ') : null;
-
-                return (
-                    <div key={index} className="mb-3">
-                        {/* Header - phần có thể click để mở/đóng */}
-                        <button
-                            type="button"
-                            id={`product-category-${index}`}
-                            className={`w-full flex justify-between items-center p-4 cursor-pointer bg-white rounded-md transition-all duration-300 hover:shadow-md ${isExpanded ? 'shadow-md border-l-4 border-green-600' : 'hover:border-l-4 hover:border-green-600'}`}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                toggleCategory(category.title);
-                            }}
-                        >
-                            <div className={`text-start font-medium transition-colors duration-300 ${isExpanded ? 'text-green-600' : 'text-gray-700 hover:text-green-600'}`}>
-                                {category.title}
-                            </div>
-                            <ChevronRight
-                                className={`h-5 w-5 transition-all duration-300 ${isExpanded ? 'text-green-600 rotate-90' : 'text-gray-500'}`}
+            {!isMounted || categories.length === 0 ? (
+                <ProductSidebarSkeleton />
+            ) : (
+                <div className="w-full p-3 sm:p-4 bg-white rounded-lg shadow-sm">
+                    <h3 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4 text-gray-800">Product Categories</h3>
+                    <div className="space-y-1 sm:space-y-2">
+                        {categories.map((category, index) => (
+                            <ProductCategoryItem
+                                key={index}
+                                category={category}
+                                isOpen={expandedCategory === category.title}
+                                onToggle={() => toggleCategory(category.title)}
+                                onItemClick={handleItemClick}
                             />
-                        </button>
-
-                        {/* Content - phần hiển thị khi mở */}
-                        {isExpanded && (
-                            <div className="mt-1 rounded-md overflow-hidden transition-all duration-300">
-                                {category.items && (
-                                    <div className="bg-[#F6F6F6] rounded-md">
-                                        {category.items.map((item) => {
-                                            // Kiểm tra xem item có phải là subcategory đang active không
-                                            // So sánh tên subcategory thay vì ID
-                                            const isActive = activeSubcategory === item.name;
-
-                                            return (
-                                                <div
-                                                    key={item.id || item.name}
-                                                    className={`px-4 py-3 cursor-pointer transition-all duration-300 ${isActive
-                                                        ? 'text-green-600 font-medium bg-white shadow-md border-l-4 border-green-600'
-                                                        : 'text-gray-700 hover:bg-white hover:shadow-sm hover:text-green-600 hover:border-l-2 hover:border-green-300'}`}
-                                                    onClick={() => handleItemClick(item.href, category.title, item)}
-                                                >
-                                                    <span className="line-clamp-2 break-words hover:line-clamp-none">
-                                                        {item.fullName || item.name}
-                                                    </span>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                        ))}
                     </div>
-                );
-            })}
+                </div>
+            )}
         </div>
     );
 };

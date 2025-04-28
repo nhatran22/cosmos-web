@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,6 +8,7 @@ import { CheckCircle, ShieldCheck, Zap, Settings } from 'lucide-react';
 import { RelatedProductsCarousel } from './RelatedProductsCarousel';
 import { Advantage, Solution } from '@/app/interface/solutions';
 import { getSolutionBySlug } from '@/data/solution-data';
+import { motion } from 'framer-motion';
 
 // Mock data for advantages
 const advantages: Advantage[] = [
@@ -36,6 +37,10 @@ const advantages: Advantage[] = [
 
 // Detail page component
 export default function SolutionDetail({ params }: { params: { slug: string } }) {
+    // State for animation
+    const [isAdvantageVisible, setIsAdvantageVisible] = useState(false);
+    const advantageRef = useRef<HTMLDivElement>(null);
+
     // Add page transition effect
     useEffect(() => {
         // Page entry animation
@@ -62,6 +67,67 @@ export default function SolutionDetail({ params }: { params: { slug: string } })
             handleRouteChange();
         };
     }, []);
+
+    // Observe advantage section for animation
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsAdvantageVisible(true);
+                    observer.unobserve(entry.target);
+                }
+            },
+            {
+                threshold: 0.2 // Trigger when 20% of the element is visible
+            }
+        );
+
+        if (advantageRef.current) {
+            observer.observe(advantageRef.current);
+        }
+
+        return () => {
+            if (advantageRef.current) {
+                observer.unobserve(advantageRef.current);
+            }
+        };
+    }, []);
+
+    // Animation variants
+    const titleVariants = {
+        hidden: { y: -30, opacity: 0 },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                duration: 0.6,
+                ease: "easeOut"
+            }
+        }
+    };
+
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                delayChildren: 0.3,
+                staggerChildren: 0.2
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { y: 50, opacity: 0 },
+        visible: {
+            y: 0,
+            opacity: 1,
+            transition: {
+                duration: 0.5,
+                ease: [0.25, 0.1, 0.25, 1.0]
+            }
+        }
+    };
 
     // Get solution from slug
     const solution = getSolutionBySlug(params.slug);
@@ -96,19 +162,35 @@ export default function SolutionDetail({ params }: { params: { slug: string } })
             </div>
 
             {/* Section 2: Our Advantages */}
-            <div className="mb-20 transition-all duration-500 hover:shadow-xl rounded-lg p-6">
-                <h2 className="text-3xl font-bold text-center mb-12 text-gray-800">Our advantages</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div ref={advantageRef} className="mb-20 transition-all duration-500 hover:shadow-xl rounded-lg p-6">
+                <motion.h2
+                    className="text-3xl font-bold text-center mb-12 text-gray-800"
+                    initial="hidden"
+                    animate={isAdvantageVisible ? "visible" : "hidden"}
+                    variants={titleVariants}
+                >
+                    Our advantages
+                </motion.h2>
+                <motion.div
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+                    initial="hidden"
+                    animate={isAdvantageVisible ? "visible" : "hidden"}
+                    variants={containerVariants}
+                >
                     {advantages.map((advantage) => (
-                        <div key={advantage.id} className="flex flex-col items-center text-center transition-all duration-300 transform hover:scale-105 hover:shadow-md p-4 rounded-lg">
+                        <motion.div
+                            key={advantage.id}
+                            className="flex flex-col items-center text-center transition-all duration-300 transform hover:scale-105 hover:shadow-md p-4 rounded-lg"
+                            variants={itemVariants}
+                        >
                             <div className="mb-4">
                                 {advantage.icon}
                             </div>
                             <h3 className="text-lg font-semibold mb-2">{advantage.title}</h3>
                             <p className="text-gray-600">{advantage.description}</p>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
             </div>
 
             {/* Section 3: Solution System Chart */}

@@ -298,9 +298,35 @@ export default function ProductList() {
 
     // Product list
     return (
-        <div className="py-4">
-            <h2 className="text-2xl font-semibold mb-6">{title}</h2>
-            <ProductSlider products={products!} isParentCategory={isParentCategory} />
+        <div className="w-full">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 md:mb-8 text-gray-800">
+                {title}
+            </h1>
+
+            {isLoading && (
+                <div className="animate-pulse space-y-4 md:space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                        {[...Array(6)].map((_, index) => (
+                            <div key={index} className="bg-gray-100 rounded-lg h-[300px] md:h-[350px]"></div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {!isLoading && products && products.length > 0 && (
+                <ProductSlider
+                    products={products}
+                    isParentCategory={isParentCategory}
+                />
+            )}
+
+            {!isLoading && (!products || products.length === 0) && (
+                <div className="bg-gray-50 p-4 md:p-8 rounded-lg text-center">
+                    <p className="text-gray-600 text-sm md:text-base">
+                        No products available in this category. Please select another category.
+                    </p>
+                </div>
+            )}
         </div>
     );
 } 
