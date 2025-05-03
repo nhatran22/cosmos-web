@@ -9,19 +9,19 @@ export const metadata: Metadata = {
 const AboutContent = () => (
   <div className="prose max-w-none text-gray-600 space-y-4">
     <p className="text-sm md:text-base">
-      <span className='font-bold'>Cosmos RF Inc.</span> is a Canada-based high-tech enterprise with a global vision, committed to providing cutting-edge digital infrastructure integration solutions and energy storage system solutions for industrial and commercial applications. With the mission of "Innovating for a Sustainable Digital Future," Cosmos RF focuses on delivering reliable, scalable, and environmentally responsible systems to support the evolving demands of smart energy and digital transformation across the globe.
+      <span className='font-bold'>Cosmos RF Inc.</span> is a Canada-based high-tech company with a global outlook, dedicated to delivering state-of-the-art digital infrastructure and energy storage solutions for industrial and commercial applications. Guided by our mission, "Innovating for a Sustainable Digital Future," we provide reliable, scalable, and eco-conscious systems to meet the growing demands of smart energy and digital transformation worldwide.
     </p>
     <p className="text-sm md:text-base">
-      Our company possesses a seasoned professional team, and we combine strong R&D capability with strategic global partnerships. Cosmos RF holds multiple core technologies and patents in intelligent power management, energy efficiency, and data infrastructure design. Our core solutions include modular data center infrastructure, smart power backup systems, intelligent monitoring & cooling systems, and advanced commercial energy storage systems.
+      Our team of seasoned professionals combines robust R&D capabilities with strategic global partnerships. Cosmos RF holds numerous core technologies and patents in intelligent power management, energy efficiency, and data infrastructure design. Our key offerings include modular data center infrastructure, smart power backup systems, intelligent monitoring and cooling solutions, and advanced commercial energy storage systems.
     </p>
     <p className="text-sm md:text-base">
-      To ensure optimal quality and efficiency, Cosmos RF follows international quality standards, including ISO 9001 and ISO 14001, and operates a robust management framework supported by CRM, ERP, and MES systems. Our global supply chain and marketing network allow us to respond quickly and effectively to the needs of our partners in North America, Europe, and Asia-Pacific.
+      Committed to excellence, <span className='font-bold'>Cosmos RF</span> adheres to international standards such as ISO 9001 and ISO 14001, supported by a robust management framework powered by CRM, ERP, and MES systems. Our global supply chain and marketing network enable us to respond swiftly and effectively to the needs of partners across North America, Europe, and Asia-Pacific.
     </p>
     <p className="text-sm md:text-base">
-      We pride ourselves on delivering professional, customized, and cost-effective solutions, backed by strong technical support and a global service team. Through continuous investment in innovation and sustainability, Cosmos RF is committed to enabling a smarter, greener, and more connected future.
+      We take pride in delivering tailored, cost-effective solutions backed by exceptional technical support and a dedicated global service team. Through sustained investment in innovation and sustainability, Cosmos RF is driving a smarter, greener, and more connected future.
     </p>
     <p className="text-sm md:text-base">
-      Upholding a corporate culture of "co-creation, collaboration, and shared value," we actively embrace our social responsibility, contribute to carbon neutrality goals, and promote the development of a low-carbon, diversified, and digital energy industry.
+      Rooted in a culture of "co-creation, collaboration, and shared value," we embrace our social responsibility, contribute to carbon neutrality, and champion the growth of a low-carbon, diverse, and digital energy industry.
     </p>
   </div>
 );
