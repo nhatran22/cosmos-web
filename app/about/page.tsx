@@ -1,5 +1,14 @@
-import { redirect } from 'next/navigation';
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function AboutPage() {
-  redirect('/about/overview');
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace('/about/overview/');
+  }, [router]);
+
+  return null;
 }
