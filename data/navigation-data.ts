@@ -54,9 +54,5 @@ export const baseNavigation: NavBar[] = [
                 title: 'Contact Us', href: '/support'
             }
         ]
-    },
-    {
-        name: 'Nghiệm Thu',
-        href: '/nghiem-thu'
     }
 ];

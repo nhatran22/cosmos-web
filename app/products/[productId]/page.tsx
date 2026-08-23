@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Download, Phone } from 'lucide-react';
 import ProductIntroductionClient from './ProductIntroductionClient';
+import { DownloadModal } from '@/components/downloadModal';
 
 export default function ProductDetailPage() {
     // Sử dụng useParams hook để lấy productId từ URL
@@ -17,6 +18,7 @@ export default function ProductDetailPage() {
     const [product, setProduct] = useState<IProduct | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Fetch product data ở client-side
     useEffect(() => {
@@ -59,6 +61,26 @@ export default function ProductDetailPage() {
             </div>
         );
     }
+
+    const handleDownload = (e: React.MouseEvent) => {
+        e.preventDefault();
+        const paths = product.downloadPath;
+        console.log(paths);
+        if (!paths) return;
+
+        // Nếu chỉ có 1 file duy nhất -> Tải luôn không cần hiện popup
+        if (typeof paths === 'string' || paths.length === 1) {
+            const url = Array.isArray(paths) ? paths[0] : paths;
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '';
+            a.click();
+            return;
+        }
+
+        // Nếu có từ 2 file trở lên -> Mở Popup
+        setIsModalOpen(true);
+    };
 
     return (
         <div className="min-h-screen flex flex-col w-full">
@@ -252,8 +274,8 @@ export default function ProductDetailPage() {
                                     {product.performanceCharacteristics.length % 3 > 0 && (
                                         <div className="flex justify-center">
                                             <div className={`grid grid-cols-1 ${product.performanceCharacteristics.length % 3 === 1
-                                                    ? 'md:grid-cols-1 max-w-md'
-                                                    : 'md:grid-cols-2 max-w-4xl'
+                                                ? 'md:grid-cols-1 max-w-md'
+                                                : 'md:grid-cols-2 max-w-4xl'
                                                 } gap-6 lg:gap-8`}>
                                                 {product.performanceCharacteristics
                                                     .slice(Math.floor(product.performanceCharacteristics.length / 3) * 3)
@@ -375,7 +397,7 @@ export default function ProductDetailPage() {
                     </div>
 
                     <div className="flex flex-col md:flex-row items-center justify-center gap-6 mt-16 border-t border-white/20 pt-8">
-                        <a href="#" className="flex items-center text-white hover:text-blue-300 transition-colors">
+                        <a onClick={handleDownload} className="flex items-center text-white hover:text-blue-300 transition-colors">
                             <Download className="mr-2" size={20} />
                             <span>Data Download</span>
                         </a>
@@ -385,6 +407,13 @@ export default function ProductDetailPage() {
                         </a>
                     </div>
                 </div>
+                {isModalOpen && (
+                    <DownloadModal
+                        isOpen={isModalOpen}
+                        onClose={() => setIsModalOpen(false)}
+                        filePaths={product.downloadPath}
+                    />
+                )}
             </section>
         </div>
     );
