@@ -49,7 +49,7 @@ const getDownloadPath = (productId: string) => {
     }
     if (productId === '131055bc-e0f3-471c-b379-9f2d92f1814d') {
         return ['/nghiem-thu/ACT Cosmos 60kVA -rebrand/10-200kVA Tower UPS User Manual.pdf',
-            '/nghiem-thu/ACT Cosmos 60kVA -rebrand/ACT_Series_Product_Brochure_170626_060L__Cosmos v24.08.pdf'];
+            '/nghiem-thu/ACT Cosmos 60kVA -rebrand/ACT_Series_Product_Brochure_170626_060L__Cosmos.pdf'];
     }
 };
 
