@@ -21,7 +21,7 @@ export interface Solution {
     name?: string;
     description: string;
     textContent?: string;
-    image: string;
+    image?: string;
     representiveImage?: string;
     category?: string;
     href?: string;

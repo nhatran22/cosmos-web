@@ -63,6 +63,14 @@ export const SOLUTIONS_DATA: Record<string, Solution[]> = {
             image: '/solutions/data-center-solution.png',
             href: '/solutions/data-center',
             category: 'Data Center Critical Infrastructure',
+        },
+        {
+            id: 'backup-time',
+            name: "Backup Time Calculation for UPS Systems",
+            title: "Backup Time Calculation for UPS Systems",
+            description: 'How to estimate the autonomy of a UPS battery bank for IT loads — the formula, the deep-discharge coefficient, worked examples and reference configurations.',
+            href: '/solutions/backup-time',
+            category: 'Data Center Critical Infrastructure',
         }
     ],
     'New Energy Storage System': [

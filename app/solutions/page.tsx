@@ -11,24 +11,35 @@ import { SOLUTIONS_DATA, TABS } from '@/data/solution-data';
 // Tách DataCenterSolutionItem thành component riêng
 const DataCenterSolutionItem = ({ solution }: { solution: Solution }) => (
     <>
-        <div className="relative w-full h-[200px] md:h-[400px]">
-            <Image
-                src={solution.image}
-                alt={solution.title || ''}
-                className="object-cover"
-                fill
-                sizes="(max-width: 768px) 100vw, 800px"
-                loading="lazy"
-            />
-        </div>
-        <div className="p-4 md:p-6 w-full flex flex-col justify-center">
+        <div className="p-4 md:p-6 w-full flex-1 md:w-1/2 flex flex-col justify-center">
             <h3 className="text-xl md:text-2xl font-semibold mb-2 md:mb-4 text-green-600">
                 {solution.title}
             </h3>
             <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base leading-relaxed">
                 {solution.description}
             </p>
+            <Link
+                href={solution.href || '#'}
+                className="inline-flex items-center text-green-600 hover:text-green-700 transition-colors group w-fit"
+            >
+                <span className="font-medium mr-2">Load More</span>
+                <ArrowRight className="h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
+            </Link>
         </div>
+
+        {/* Phần bên phải: Hình ảnh */}
+        {solution.image && (
+            <div className="w-full md:w-1/2 relative h-[200px] md:h-[300px]">
+                <Image
+                    src={solution.image}
+                    alt={solution.title || ''}
+                    className="object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 450px"
+                    loading="lazy"
+                />
+            </div>
+        )}
     </>
 );
 
@@ -55,7 +66,7 @@ const StandardSolutionItem = ({ solution }: { solution: Solution }) => (
         {/* Phần bên phải: Hình ảnh */}
         <div className="w-full md:w-1/2 relative h-[200px] md:h-[300px]">
             <Image
-                src={solution.image}
+                src={solution.image || ''}
                 alt={solution.title || ''}
                 className="object-cover"
                 fill
@@ -68,7 +79,7 @@ const StandardSolutionItem = ({ solution }: { solution: Solution }) => (
 
 // SolutionItem component sử dụng các components con
 const SolutionItem = ({ solution, isDataSolutionPage }: { solution: Solution, isDataSolutionPage: boolean }) => (
-    <div className={`flex flex-col ${isDataSolutionPage ? '' : 'md:flex-row'} items-center gap-4 md:gap-6 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-all duration-300`}>
+    <div className={`flex ${solution.image ? 'flex-row' : ''} items-center gap-4 md:gap-6 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-all duration-300`}>
         {isDataSolutionPage ? (
             <DataCenterSolutionItem solution={solution} />
         ) : (
@@ -159,6 +170,7 @@ export default function SolutionsPage() {
 
     // Sử dụng useMemo để tối ưu việc lọc giải pháp
     const filteredSolutions = useMemo(() => {
+        console.log(solutions)
         const currentTab = TABS.find(tab => tab.id === activeTab);
         if (!currentTab) return [];
         return solutions.filter(solution => solution.category === currentTab.category);
@@ -232,6 +244,7 @@ export default function SolutionsPage() {
     }
 
     return (
+        console.log(filteredSolutions),
         <div className="mb-16 md:mb-24 px-4 md:px-6">
             <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-10 text-gray-800">
                 {activeCategory + ' Solutions'}

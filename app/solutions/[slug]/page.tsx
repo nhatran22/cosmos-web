@@ -200,7 +200,7 @@ export default function SolutionDetail({ params }: { params: { slug: string } })
                     <div className="relative h-[700px] w-full">
                         <div className="absolute inset-0 flex items-center justify-center">
                             <Image
-                                src={solution.image}
+                                src={solution.image || ''}
                                 alt={solution.id}
                                 width={1134}
                                 height={400}

@@ -33,7 +33,8 @@ export const baseNavigation: NavBar[] = [
                 title: 'Data Center Critical Infrastructure',
                 href: `/solutions?category=${encodeURIComponent('Data Center Critical Infrastructure')}`,
                 items: [
-                    { name: 'Intelligent Micro Module System Solution', href: '/solutions' },
+                    { name: 'Intelligent Micro Module System Solution', href: '/solutions/data-center' },
+                    { name: 'Backup Time', href: '/solutions/backup-time' },
                 ]
             },
             {
