@@ -1,3 +1,4 @@
+export const backupHtmlContent = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -128,3 +129,4 @@
 </div>
 </body>
 </html>
+`
