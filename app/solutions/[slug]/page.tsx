@@ -10,6 +10,7 @@ import { Advantage, Solution } from '@/app/interface/solutions';
 import { getSolutionBySlug } from '@/data/solution-data';
 import { motion } from 'framer-motion';
 import BackupTimeContent from './backupTimeContent';
+import DataCenterPage from './dataCenterContent';
 
 // Mock data for advantages
 const advantages: Advantage[] = [
@@ -40,9 +41,9 @@ const advantages: Advantage[] = [
 export default function SolutionDetail({
     params
 }: {
-    params: Promise<{ slug: string }>
+    params: Promise<{ slug: string }> | { slug: string }
 }) {
-    const { slug } = use(params);
+    const { slug } = use(params instanceof Promise ? params : Promise.resolve(params));
 
     if (slug === 'backup-time') {
         return (
@@ -51,6 +52,15 @@ export default function SolutionDetail({
             </div>
         );
     }
+
+    if (slug === 'data-center') {
+        return (
+            <div className="container mx-auto px-4 py-8 bg-white">
+                <DataCenterPage />
+            </div>
+        )
+    }
+
     // State for animation
     const [isAdvantageVisible, setIsAdvantageVisible] = useState(false);
     const advantageRef = useRef<HTMLDivElement>(null);
