@@ -1,11 +1,9 @@
-import { backupHtmlContent } from './backup-html';
+import BackupTimeContent from './BackupTimeContent';
 
 export default function BackupTimePage() {
     return (
-        <div className="w-full bg-white p-6 min-h-screen">
-            <div
-                dangerouslySetInnerHTML={{ __html: backupHtmlContent }}
-            />
+        <div className="w-full bg-white">
+            <BackupTimeContent />
         </div>
     );
 }
