@@ -1,4 +1,5 @@
-import BackupTimeContent from './BackupTimeContent';
+import BackupTimeContent from "./backupTimeContent";
+
 
 export default function BackupTimePage() {
     return (
