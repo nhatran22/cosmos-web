@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,6 +9,7 @@ import { RelatedProductsCarousel } from './RelatedProductsCarousel';
 import { Advantage, Solution } from '@/app/interface/solutions';
 import { getSolutionBySlug } from '@/data/solution-data';
 import { motion } from 'framer-motion';
+import BackupTimeContent from './backupTimeContent';
 
 // Mock data for advantages
 const advantages: Advantage[] = [
@@ -36,7 +37,20 @@ const advantages: Advantage[] = [
 ];
 
 // Detail page component
-export default function SolutionDetail({ params }: { params: { slug: string } }) {
+export default function SolutionDetail({
+    params
+}: {
+    params: Promise<{ slug: string }>
+}) {
+    const { slug } = use(params);
+
+    if (slug === 'backup-time') {
+        return (
+            <div className="container mx-auto px-4 py-8 bg-white">
+                <BackupTimeContent />
+            </div>
+        );
+    }
     // State for animation
     const [isAdvantageVisible, setIsAdvantageVisible] = useState(false);
     const advantageRef = useRef<HTMLDivElement>(null);
@@ -130,7 +144,7 @@ export default function SolutionDetail({ params }: { params: { slug: string } })
     };
 
     // Get solution from slug
-    const solution = getSolutionBySlug(params.slug);
+    const solution = getSolutionBySlug(slug);
 
     // If solution not found, redirect to 404
     if (!solution) {
