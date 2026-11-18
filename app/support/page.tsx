@@ -9,7 +9,7 @@ import { Card } from '@/components/ui/card';
 
 export const metadata: Metadata = {
     title: 'Support & Services | COSMOS RF',
-    description: '24/7 technical support and customer service for COSMOS RF products',
+    description: 'Technical support and customer service for COSMOS RF products',
 }
 
 const ServiceCard = ({ icon: Icon, title, description }: {
@@ -32,15 +32,6 @@ const ContactInfo = () => (
             <h3 className="text-xl font-semibold mb-4">Contact Information</h3>
             <div className="space-y-4">
                 <div className="flex items-start">
-                    <Phone className="text-blue-600 h-5 w-5 mt-1 mr-3" />
-                    <div>
-                        <p className="font-medium">Hotline</p>
-                        <p className="text-gray-600">1800-1234</p>
-                        <p className="text-sm text-gray-500">(24/7 support)</p>
-                    </div>
-                </div>
-
-                <div className="flex items-start">
                     <Mail className="text-blue-600 h-5 w-5 mt-1 mr-3" />
                     <div>
                         <p className="font-medium">Email</p>
@@ -54,18 +45,10 @@ const ContactInfo = () => (
                     <div>
                         <p className="font-medium">Service Center</p>
                         <p className="text-gray-600">COSMOS RF TECHNOLOGIES LP</p>
-                        <p className="text-gray-500">45B West Wilmost st. – Richmond Hill City – Ontario – Canada</p>
+                        <p className="text-gray-500">45B West Wilmot Street, Richmond Hill, Ontario, Canada</p>
                     </div>
                 </div>
             </div>
-        </Card>
-
-        <Card className="bg-blue-900 text-white p-6">
-            <h3 className="text-xl font-semibold mb-4">Emergency Support</h3>
-            <p className="mb-4">For urgent issues, please call our 24/7 hotline</p>
-            <Button variant="secondary" asChild>
-                <a href="tel:18001234">Call now 1800-1234</a>
-            </Button>
         </Card>
     </div>
 );
@@ -165,7 +148,7 @@ export default function SupportPage() {
                     <div className="max-w-4xl mx-auto text-center">
                         <h1 className="text-3xl md:text-5xl font-bold mb-6">Support & Services</h1>
                         <p className="text-lg md:text-xl text-blue-100 mb-8">
-                            Our expert team is available 24/7 to assist you with any technical issues
+                            Our expert team is ready to assist you with any technical issues
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Button variant="secondary" asChild>

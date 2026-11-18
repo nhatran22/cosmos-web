@@ -12,10 +12,10 @@ export default function AboutSection() {
                 </div>
 
                 <div className="max-w-4xl mx-auto">
-                    <h3 className="text-2xl font-medium text-center mb-8">For the green Digital World</h3>
+                    <h3 className="text-2xl font-medium text-center mb-8">For the Green Digital World</h3>
 
                     <p className="text-gray-700 text-center mb-8 leading-relaxed">
-                        <span className="font-bold">COSMOS RF</span> is a Canadian-based professional manufacturer specializing in high-performance, full-featured radio frequency (RF) products designed to mitigate unwanted interference in an increasingly crowded radio spectrum. As today’s higher data rates demand improved radio signal-to-noise ratios, COSMOS RF’s high-linearity RF components meet this critical need.
+                        <span className="font-bold">COSMOS RF</span> is a Canada-based technology company delivering reliable digital infrastructure and energy storage solutions for industrial and commercial applications. Our portfolio covers UPS power systems, modular data centers, precision cooling and hybrid energy storage inverters, helping customers keep critical loads running while moving toward a cleaner, more efficient energy future.
                     </p>
 
                     <div className="text-center">

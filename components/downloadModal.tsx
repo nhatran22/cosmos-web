@@ -23,7 +23,7 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose, f
             <div className="w-full max-w-md rounded-lg bg-gray-800 p-6 text-white shadow-xl border border-gray-700">
                 {/* Header */}
                 <div className="flex items-center justify-between border-b border-gray-700 pb-3">
-                    <h3 className="text-lg font-semibold">Tài liệu tải xuống</h3>
+                    <h3 className="text-lg font-semibold">Downloads</h3>
                     <button
                         onClick={onClose}
                         className="text-gray-400 hover:text-white transition-colors"

@@ -3,13 +3,13 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About Us | COSMOS RF',
-  description: 'Learn about COSMOS RF - A Canadian-based professional manufacturer specializing in high-performance RF products.',
+  description: 'Learn about COSMOS RF - a Canada-based provider of digital infrastructure and energy storage solutions for industrial and commercial applications.',
 };
 
 const AboutContent = () => (
   <div className="prose max-w-none text-gray-600 space-y-4">
     <p className="text-sm md:text-base">
-      <span className='font-bold'>Cosmos RF Inc.</span> is a Canada-based high-tech company with a global outlook, dedicated to delivering state-of-the-art digital infrastructure and energy storage solutions for industrial and commercial applications. Guided by our mission, "Innovating for a Sustainable Digital Future," we provide reliable, scalable, and eco-conscious systems to meet the growing demands of smart energy and digital transformation worldwide.
+      <span className='font-bold'>COSMOS RF TECHNOLOGIES LP</span> is a Canada-based high-tech company with a global outlook, dedicated to delivering state-of-the-art digital infrastructure and energy storage solutions for industrial and commercial applications. Guided by our mission, "Innovating for a Sustainable Digital Future," we provide reliable, scalable, and eco-conscious systems to meet the growing demands of smart energy and digital transformation worldwide.
     </p>
     <p className="text-sm md:text-base">
       Our team of seasoned professionals combines robust R&D capabilities with strategic global partnerships. Cosmos RF holds numerous core technologies and patents in intelligent power management, energy efficiency, and data infrastructure design. Our key offerings include modular data center infrastructure, smart power backup systems, intelligent monitoring and cooling solutions, and advanced commercial energy storage systems.
@@ -44,7 +44,7 @@ export default function Overview() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6 md:py-8">
         <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-6">About Us</h1>
-        <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">Cosmos RF Inc.</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">COSMOS RF TECHNOLOGIES LP</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12">
           <AboutContent />
