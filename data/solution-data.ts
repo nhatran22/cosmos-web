@@ -7,7 +7,7 @@ const relatedProducts = [
         slug: 'inverter-5kw',
         description: 'is widely used in government, finance, communications, education, transportation, meteorology, radio and television, industrial and commercial taxation, medical and health, energy and power and other industries.',
         features: ['15 ~ 120kVA', 'Rack Modular UPS'],
-        image: '/products/acm-series-15.png',
+        image: '/products/cosmos/home-acm-series-15.png',
         href: '/products/cb628a80-95be-4622-9df6-b76e87bb7ea6/',
     },
     {
@@ -16,7 +16,7 @@ const relatedProducts = [
         slug: 'battery-10kwh',
         description: 'is widely used in government, finance, communications, education, transportation, meteorology, radio and television, industrial and commercial taxation, medical and health, energy and power and other industries.',
         features: ['50 ~ 600kVA', 'Modular UPS'],
-        image: '/products/acm-series-50.png',
+        image: '/products/cosmos/home-acm-series-50.png',
         href: '/products/6c6acd4a-e7a3-4aad-a98e-bc18a2439c4f/',
     },
     {
@@ -25,7 +25,7 @@ const relatedProducts = [
         slug: 'battery-10kwh',
         description: 'Application sites: data centers, computer rooms, network rooms, server rooms, switch rooms and communication base stations.',
         features: ['In-Row', 'Precision Cooling'],
-        image: '/products/precision-cooling.png',
+        image: '/products/cosmos/home-precision-cooling.png',
         href: '/products/3eead92d-c45b-4077-80c6-1a43d155303d/',
     },
     {
@@ -60,7 +60,7 @@ export const SOLUTIONS_DATA: Record<string, Solution[]> = {
             name: "Data Center Solution",
             title: "Data Center Critical Infrastructure",
             description: 'The key infrastructure system solution for the data center adopts a modular, prefabricated, and intelligent design concept. It efficiently integrates power supply and distribution systems, UPS power supply systems, intelligent temperature control systems, cabinet systems, closed channel systems, dynamic and environmental monitoring systems, and is equipped with various environmental data sampling sensors for unified monitoring and management, achieving automatic control, intelligent operation and maintenance, and improving the reliability, availability and maintainability of the data center.',
-            image: '/solutions/data-center-solution.png',
+            image: '/solutions/cosmos/data-center-solution.png',
             href: '/solutions/data-center',
             category: 'Data Center Critical Infrastructure',
         },
@@ -80,8 +80,8 @@ export const SOLUTIONS_DATA: Record<string, Solution[]> = {
             title: 'Household Hybrid Inverter',
             description: 'COSMOS RF household energy storage solutions include a complete "energy storage converter + energy storage battery" solution, with a variety of energy storage converter and battery products, suitable for new PV-plus-storage installations, retrofits of existing household grid-connected systems, and areas with weak or no grid. The COSMOS RF household energy storage solution enables a higher share of self-consumed green electricity and reduces electricity',
             textContent: 'COSMOS RF household energy storage solutions include a complete "energy storage converter + energy storage battery" solution, with a variety of energy storage converter and battery products, suitable for new PV-plus-storage installations, retrofits of existing household grid-connected systems, and areas with weak or no grid. The COSMOS RF household energy storage solution enables a higher share of self-consumed green electricity and reduces electricity expenses. It can also provide UPS (uninterruptible power supply) functionality to keep critical equipment powered. Users can easily track their energy consumption through COSMOS RF cloud monitoring and enjoy a zero-carbon home.',
-            image: '/solutions/household-storage.png',
-            representiveImage: '/products/hybrid-inverter-1.png',
+            image: '/solutions/cosmos/household-storage.png',
+            representiveImage: '/products/cosmos/home-hybrid-inverter-1.png',
             href: '/solutions/household-storage',
             category: 'New Energy Storage System',
             relatedProducts: relatedProducts
@@ -92,8 +92,8 @@ export const SOLUTIONS_DATA: Record<string, Solution[]> = {
             title: 'Industrial and Commercial Hybrid Inverter',
             description: 'COSMOS RF industrial and commercial rooftop applications include not only standard industrial and commercial roofs such as factory roofs, supermarkets and office buildings, but also government institutions (courts, government buildings, etc.), roofs of public buildings (schools, hospitals, stations, etc.) and some application scenarios of "photovoltaic energy storage". Industrial and commercial rooftops are large, electricity consumption is high and electricity prices are relatively high. The return on',
             textContent: 'COSMOS RF industrial and commercial rooftop applications include not only standard industrial and commercial roofs such as factory roofs, supermarkets and office buildings, but also government institutions (courts, government buildings, etc.), roofs of public buildings (schools, hospitals, stations, etc.) and some application scenarios of "photovoltaic energy storage". Industrial and commercial rooftops are large, electricity consumption is high and electricity prices are relatively high. As a result, the return on investment is attractive, with clear energy-saving, emission-reduction and environmental benefits. COSMOS RF industrial and commercial solutions deliver higher income, lower investment, safety and reliability, and intelligent operation and maintenance across all of the scenarios above.',
-            image: '/solutions/commercial-storage.png',
-            representiveImage: '/products/industrial-converter.png',
+            image: '/solutions/cosmos/commercial-storage.png',
+            representiveImage: '/products/cosmos/home-industrial-converter.png',
             href: '/solutions/commercial-storage',
             category: 'New Energy Storage System',
             relatedProducts: relatedProducts

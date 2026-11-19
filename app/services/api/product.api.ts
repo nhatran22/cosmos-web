@@ -48,6 +48,45 @@ const ACS_SERIES_NAME = 'ACS Series 1 ~ 3kVA Online Tower UPS';
 const ACS620_SERIES_ID = 'a4aee5e4-c8b4-4cbb-8fc7-57ef2d0e39b2';
 const ACS620_SERIES_IMAGE = '/products/acs620-series-cosmos.png';
 
+// Backend product photos that still carry the ACwatt badge -> COSMOS RF-branded copies in /public/products/cosmos.
+// Keyed by the S3 object path after "/images/" (the backend returns signed URLs, so the query string is ignored).
+const COSMOS_IMAGE_MAP: Record<string, string> = {
+    'sh-series.png': '/products/cosmos/sh-series.png',
+    'th-series.png': '/products/cosmos/th-series.png',
+    'ha-series.png': '/products/cosmos/ha-series.png',
+    'ma-series.png': '/products/cosmos/ma-series.png',
+    'modular-data-center.png': '/products/cosmos/modular-data-center.png',
+    'acm-series.png': '/products/cosmos/acm-series.png',
+    'act-series.png': '/products/cosmos/act-series.png',
+    'acm-series-480.png': '/products/cosmos/acm-series-480.png',
+    'acm-series-208.png': '/products/cosmos/acm-series-208.png',
+    'acs-tower.png': '/products/cosmos/acs-tower.png',
+    'acs-rack.png': '/products/cosmos/acs-rack.png',
+    'csh-series.png': '/products/cosmos/csh-series.png',
+    'cst-series.png': '/products/cosmos/cst-series.png',
+    'acm-series/acm-series-25.png': '/products/cosmos/acm-series-25.png',
+    'acm-series/acm-series-15.png': '/products/cosmos/acm-series-15.png',
+    'acm-series/acm-series-50.png': '/products/cosmos/acm-series-50.png',
+    'acm-series/acm-series-25-rack.png': '/products/cosmos/acm-series-25-rack.png',
+    'act-series/act-series-120.png': '/products/cosmos/act-series-120.png',
+    'acm-series-208/acm-series-12.png': '/products/cosmos/acm-series-12.png',
+    'acm-series-208/acm-series-20.png': '/products/cosmos/acm-series-20.png',
+    'acs-tower-series/acs-tower-1.png': '/products/cosmos/acs-tower-1.png',
+    'acs-tower-series/acs-tower-10.png': '/products/cosmos/acs-tower-10.png',
+    'acs-tower-series/acs-tower-6.png': '/products/cosmos/acs-tower-6.png',
+    'acs-rack-series/acs-rack-10.png': '/products/cosmos/acs-rack-10.png',
+    'acs-rack-series/acs-rack-1.png': '/products/cosmos/acs-rack-1.png',
+    'acs-rack-series/acs-rack-6.png': '/products/cosmos/acs-rack-6.png',
+    'precision-cooling-outdoor-1.png': '/products/cosmos/precision-cooling-outdoor-1.png',
+    'precision-cooling-outdoor-2.png': '/products/cosmos/precision-cooling-outdoor-2.png',
+};
+
+export const toCosmosImage = (url?: string): string | undefined => {
+    if (!url) return url;
+    const key = url.split('?')[0].split('/images/')[1];
+    return (key && COSMOS_IMAGE_MAP[key]) || url;
+};
+
 const getDownloadPath = (productId: string) => {
     console.log(productId);
     if (productId === '9c8380b9-1b49-4277-baea-f3006d24b4f7') {
@@ -76,7 +115,7 @@ class ProductAPI {
             const updatedResponse = response.data.map((product) => ({
                 ...product,
                 name: product.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "ACT Series 10-200kVA Tower UPS" : product.id === ACS_SERIES_ID ? ACS_SERIES_NAME : product.name,
-                image: product.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : product.id === ACS_SERIES_ID ? ACS_SERIES_IMAGE : product.id === ACS620_SERIES_ID ? ACS620_SERIES_IMAGE : product.image,
+                image: product.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : product.id === ACS_SERIES_ID ? ACS_SERIES_IMAGE : product.id === ACS620_SERIES_ID ? ACS620_SERIES_IMAGE : toCosmosImage(product.image),
                 downloadPath: getDownloadPath(product.id)
             }));
 
@@ -95,9 +134,9 @@ class ProductAPI {
                 ...response.data,
                 name: response.data.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "ACT Series 10-200kVA Tower UPS" : response.data.id === ACS_SERIES_ID ? ACS_SERIES_NAME : response.data.name,
                 powerRange: response.data.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "10-200kVA" : response.data.powerRange,
-                image: response.data.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : response.data.id === ACS_SERIES_ID ? ACS_SERIES_IMAGE : response.data.id === ACS620_SERIES_ID ? ACS620_SERIES_IMAGE : response.data.image,
+                image: response.data.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : response.data.id === ACS_SERIES_ID ? ACS_SERIES_IMAGE : response.data.id === ACS620_SERIES_ID ? ACS620_SERIES_IMAGE : toCosmosImage(response.data.image) as string,
                 // ACT Series: hide the "Power Module Diagram" section (backend diagram belongs to another product)
-                diagrams: response.data.id === ACT_SERIES_ID ? [] : response.data.diagrams,
+                diagrams: response.data.id === ACT_SERIES_ID ? [] : (response.data.diagrams || []).map((d) => ({ ...d, image: toCosmosImage(d.image) as string })),
                 downloadPath: getDownloadPath(response.data.id)
             };
 
