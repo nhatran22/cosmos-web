@@ -89,6 +89,8 @@ class ProductAPI {
                 name: response.data.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "ACT Series 10-200kVA Tower UPS" : response.data.name,
                 powerRange: response.data.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "10-200kVA" : response.data.powerRange,
                 image: response.data.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : response.data.image,
+                // ACT Series: hide the "Power Module Diagram" section (backend diagram belongs to another product)
+                diagrams: response.data.id === ACT_SERIES_ID ? [] : response.data.diagrams,
                 downloadPath: getDownloadPath(response.data.id)
             };
 

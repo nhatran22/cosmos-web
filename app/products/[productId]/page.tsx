@@ -323,7 +323,7 @@ export default function ProductDetailPage() {
             </section>
 
             {/* Phần 4: Power Module Diagram */}
-            {product.diagrams[0].title && product.diagrams[0].description && (
+            {product.diagrams?.[0]?.title && product.diagrams[0].description && (
                 <section className="py-16 bg-white">
                     <div className="container mx-auto px-4">
                         <h2 className="text-3xl font-bold text-center mb-16 text-gray-800">{product.diagrams[0].title}</h2>
