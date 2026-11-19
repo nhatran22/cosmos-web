@@ -34,7 +34,7 @@ const relatedProducts = [
         slug: 'battery-10kwh',
         description: 'is widely used in government, finance, communications, education, transportation, meteorology, radio and television, industrial and commercial taxation, medical and health, energy and power and other industries.',
         features: ['10 ~ 40kVA', 'Three Phase Rack UPS'],
-        image: '/products/act-series-10.png',
+        image: '/products/act-series-cosmos.png',
         href: '/products/131055bc-e0f3-471c-b379-9f2d92f1814d/',
     }
 ]

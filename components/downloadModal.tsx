@@ -54,7 +54,7 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({ isOpen, onClose, f
                                 className="flex items-center space-x-1 px-3 py-1.5 text-xs bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors shrink-0"
                             >
                                 <Download size={14} />
-                                <span>Tải</span>
+                                <span>Download</span>
                             </a>
                         </div>
                     ))}

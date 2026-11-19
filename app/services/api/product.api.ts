@@ -37,6 +37,10 @@ export interface ICreateProductDto {
 
 export interface IUpdateProductDto extends Partial<ICreateProductDto> { }
 
+// ACT Series 10-200kVA: COSMOS-branded product photo (overrides the image stored in the backend)
+const ACT_SERIES_ID = '131055bc-e0f3-471c-b379-9f2d92f1814d';
+const ACT_SERIES_IMAGE = '/products/act-series-cosmos.png';
+
 const getDownloadPath = (productId: string) => {
     console.log(productId);
     if (productId === '9c8380b9-1b49-4277-baea-f3006d24b4f7') {
@@ -65,6 +69,7 @@ class ProductAPI {
             const updatedResponse = response.data.map((product) => ({
                 ...product,
                 name: product.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "ACT Series 10-200kVA Rack UPS" : product.name,
+                image: product.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : product.image,
                 downloadPath: getDownloadPath(product.id)
             }));
 
@@ -83,6 +88,7 @@ class ProductAPI {
                 ...response.data,
                 name: response.data.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "ACT Series 10-200kVA Rack UPS" : response.data.name,
                 powerRange: response.data.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "10-200kVA" : response.data.powerRange,
+                image: response.data.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : response.data.image,
                 downloadPath: getDownloadPath(response.data.id)
             };
 
