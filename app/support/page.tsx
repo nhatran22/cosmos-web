@@ -45,7 +45,7 @@ const ContactInfo = () => (
                     <div>
                         <p className="font-medium">Service Center</p>
                         <p className="text-gray-600">COSMOS RF TECHNOLOGIES LP</p>
-                        <p className="text-gray-500">45B West Wilmot Street, Richmond Hill, Ontario, Canada</p>
+                        <p className="text-gray-500">45B West Wilmot Street, Suite 201, Richmond Hill, Ontario, Canada</p>
                     </div>
                 </div>
             </div>

@@ -40,6 +40,10 @@ export interface IUpdateProductDto extends Partial<ICreateProductDto> { }
 // ACT Series 10-200kVA: COSMOS-branded product photo (overrides the image stored in the backend)
 const ACT_SERIES_ID = '131055bc-e0f3-471c-b379-9f2d92f1814d';
 const ACT_SERIES_IMAGE = '/products/act-series-cosmos.png';
+// ACS Series 1-3kVA: COSMOS-branded product photo + corrected name
+const ACS_SERIES_ID = '9c8380b9-1b49-4277-baea-f3006d24b4f7';
+const ACS_SERIES_IMAGE = '/products/acs-series-cosmos.png';
+const ACS_SERIES_NAME = 'ACS Series 1 ~ 3kVA Online Tower UPS';
 
 const getDownloadPath = (productId: string) => {
     console.log(productId);
@@ -68,8 +72,8 @@ class ProductAPI {
 
             const updatedResponse = response.data.map((product) => ({
                 ...product,
-                name: product.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "ACT Series 10-200kVA Tower UPS" : product.name,
-                image: product.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : product.image,
+                name: product.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "ACT Series 10-200kVA Tower UPS" : product.id === ACS_SERIES_ID ? ACS_SERIES_NAME : product.name,
+                image: product.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : product.id === ACS_SERIES_ID ? ACS_SERIES_IMAGE : product.image,
                 downloadPath: getDownloadPath(product.id)
             }));
 
@@ -86,9 +90,9 @@ class ProductAPI {
             const response = await privateAPIHttpServices.httpGetRequest<IProduct>(`${this.BASE_URL}/${productId}`);
             const updatedResponse = {
                 ...response.data,
-                name: response.data.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "ACT Series 10-200kVA Tower UPS" : response.data.name,
+                name: response.data.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "ACT Series 10-200kVA Tower UPS" : response.data.id === ACS_SERIES_ID ? ACS_SERIES_NAME : response.data.name,
                 powerRange: response.data.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "10-200kVA" : response.data.powerRange,
-                image: response.data.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : response.data.image,
+                image: response.data.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : response.data.id === ACS_SERIES_ID ? ACS_SERIES_IMAGE : response.data.image,
                 // ACT Series: hide the "Power Module Diagram" section (backend diagram belongs to another product)
                 diagrams: response.data.id === ACT_SERIES_ID ? [] : response.data.diagrams,
                 downloadPath: getDownloadPath(response.data.id)
