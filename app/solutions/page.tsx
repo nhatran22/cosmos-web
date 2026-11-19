@@ -114,7 +114,7 @@ const RelatedProducts = React.memo(({ products }: { products?: RelatedProduct[] 
 
     return (
         <div className="mt-6 md:mt-8 p-4 md:p-6 bg-gray-50 rounded-lg">
-            <h4 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-gray-800">Sản phẩm liên quan</h4>
+            <h4 className="text-lg md:text-xl font-semibold mb-3 md:mb-4 text-gray-800">Related Products</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                 {products.map(product => (
                     <Link

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
     title: 'Join Us | COSMOS RF',
-    description: 'Join our team at COSMOS RF and be part of the future of RF technology.',
+    description: 'Join our team at COSMOS RF and help build the future of digital infrastructure and clean energy.',
 };
 
 const JobCard = ({ title, location, type, description }: {

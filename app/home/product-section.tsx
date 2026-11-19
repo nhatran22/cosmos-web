@@ -201,7 +201,7 @@ export default function ProductSection() {
                                 />
                             </div>
                             <div className="py-4 md:py-8">
-                                <h3 className="text-xl md:text-[26px] font-semibold text-green-500 mb-4 md:mb-8">Modula Data Center</h3>
+                                <h3 className="text-xl md:text-[26px] font-semibold text-green-500 mb-4 md:mb-8">Modular Data Center</h3>
                                 <Link
                                     href="/products?category=Modular%20Data%20Center"
                                     className="inline-flex text-[14px] items-center text-green-500 hover:text-green-600 hover:underline"

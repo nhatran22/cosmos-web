@@ -5,7 +5,7 @@ import { ProductAPI } from '@/app/services/api';
 import { IProduct } from '@/app/services/api/product.api';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { Download, Phone } from 'lucide-react';
+import { Download, Mail } from 'lucide-react';
 import ProductIntroductionClient from './ProductIntroductionClient';
 import { DownloadModal } from '@/components/downloadModal';
 
@@ -401,8 +401,8 @@ export default function ProductDetailPage() {
                             <Download className="mr-2" size={20} />
                             <span>Data Download</span>
                         </a>
-                        <a href="#" className="flex items-center text-white hover:text-blue-300 transition-colors">
-                            <Phone className="mr-2" size={20} />
+                        <a href="/support#contact" className="flex items-center text-white hover:text-blue-300 transition-colors">
+                            <Mail className="mr-2" size={20} />
                             <span>Contact Us</span>
                         </a>
                     </div>
