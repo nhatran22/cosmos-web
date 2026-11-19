@@ -41,9 +41,14 @@ export default function ProductSlider({ products, isParentCategory, onTabClose }
         }
     }, [onTabClose]);
 
+    // A card is a sub-category card when it was built from the navigation (it carries `catalogue`);
+    // real products from the API never have it. Deciding per card avoids sending a sub-category id
+    // to /products/<id> (404) while the list is still showing the previous category's cards.
+    const isCategoryCard = (product: IProductListItem) => !!product.catalogue || (isParentCategory && !!product.originalItem);
+
     // Xử lý khi nhấn Load More hoặc View Detail
     const handleButtonClick = (product: IProductListItem) => {
-        if (isParentCategory) {
+        if (isCategoryCard(product)) {
             // Load More - redirect to subcategory
             // Sử dụng tên sản phẩm thay vì ID
             const subcategoryName = product.name;
@@ -89,12 +94,12 @@ export default function ProductSlider({ products, isParentCategory, onTabClose }
 
                         <button
                             onClick={() => handleButtonClick(product)}
-                            className={`mt-auto px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-white transition-colors w-full text-center text-xs sm:text-sm ${isParentCategory
+                            className={`mt-auto px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-white transition-colors w-full text-center text-xs sm:text-sm ${isCategoryCard(product)
                                     ? 'bg-green-500 hover:bg-green-600'
                                     : 'bg-blue-500 hover:bg-blue-600'
                                 }`}
                         >
-                            {isParentCategory ? 'Load More' : 'View Detail'}
+                            {isCategoryCard(product) ? 'Load More' : 'View Detail'}
                         </button>
                     </div>
                 ))}
