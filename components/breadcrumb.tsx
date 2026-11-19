@@ -7,6 +7,7 @@ import { Home, ChevronRight } from 'lucide-react';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useCategories } from '@/app/contexts/CategoriesContext';
 import { setSolutionCategoryEvent } from './SolutionSidebar';
+import ProductAPI from '@/app/services/api/product.api';
 
 interface BreadcrumbItemType {
     name: string;
@@ -40,6 +41,22 @@ export default function Breadcrumb() {
     const [breadcrumbData, setBreadcrumbData] = useState<BreadcrumbData | null>(null); // Hook #6
     const { navigation } = useCategories(); // Hook #7
     const [shouldRender, setShouldRender] = useState<boolean>(pathname !== '/'); // Hook để kiểm soát việc render
+
+    // Product detail page (/products/<id>): load the product name for the breadcrumb
+    const productIdFromPath = useMemo(() => {
+        const parts = (pathname || '').split('/').filter(Boolean);
+        return parts.length === 2 && parts[0] === 'products' ? decodeURIComponent(parts[1]) : null;
+    }, [pathname]);
+    const [productName, setProductName] = useState<string | null>(null);
+    useEffect(() => {
+        let cancelled = false;
+        setProductName(null);
+        if (!productIdFromPath) return;
+        ProductAPI.getProductDetail(productIdFromPath)
+            .then(p => { if (!cancelled && p?.name) setProductName(p.name); })
+            .catch(() => { /* keep breadcrumb without product name */ });
+        return () => { cancelled = true; };
+    }, [productIdFromPath]);
 
     // Kiểm tra xem active tab có phải là tab Products không
     const isProductTab = pathname?.startsWith('/products');
@@ -356,10 +373,10 @@ export default function Breadcrumb() {
             }
 
             // Chỉ thêm product khi xem trang chi tiết sản phẩm
-            if (isProductDetail && breadcrumbData.product) {
+            if (isProductDetail && (breadcrumbData.product?.name || productName)) {
                 breadcrumbItems.push({
-                    name: breadcrumbData.product.name,
-                    href: breadcrumbData.product.href
+                    name: productName || breadcrumbData.product!.name,
+                    href: pathname
                 });
             }
         } else {
@@ -367,7 +384,12 @@ export default function Breadcrumb() {
             // Lấy thông tin từ URL
             const urlParts = pathname.split('/').filter(Boolean);
 
-            if (urlParts.length > 1) {
+            if (isProductDetail) {
+                // Product detail opened directly: show the product name, never the raw id
+                if (productName) {
+                    breadcrumbItems.push({ name: productName, href: pathname });
+                }
+            } else if (urlParts.length > 1) {
                 const categorySlug = urlParts[1]; // Lấy category slug từ URL
 
                 // Tìm category từ navigation

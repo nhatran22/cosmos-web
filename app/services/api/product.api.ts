@@ -44,6 +44,9 @@ const ACT_SERIES_IMAGE = '/products/act-series-cosmos.png';
 const ACS_SERIES_ID = '9c8380b9-1b49-4277-baea-f3006d24b4f7';
 const ACS_SERIES_IMAGE = '/products/acs-series-cosmos.png';
 const ACS_SERIES_NAME = 'ACS Series 1 ~ 3kVA Online Tower UPS';
+// ACS Series 6-20kVA: COSMOS-branded product photo
+const ACS620_SERIES_ID = 'a4aee5e4-c8b4-4cbb-8fc7-57ef2d0e39b2';
+const ACS620_SERIES_IMAGE = '/products/acs620-series-cosmos.png';
 
 const getDownloadPath = (productId: string) => {
     console.log(productId);
@@ -73,7 +76,7 @@ class ProductAPI {
             const updatedResponse = response.data.map((product) => ({
                 ...product,
                 name: product.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "ACT Series 10-200kVA Tower UPS" : product.id === ACS_SERIES_ID ? ACS_SERIES_NAME : product.name,
-                image: product.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : product.id === ACS_SERIES_ID ? ACS_SERIES_IMAGE : product.image,
+                image: product.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : product.id === ACS_SERIES_ID ? ACS_SERIES_IMAGE : product.id === ACS620_SERIES_ID ? ACS620_SERIES_IMAGE : product.image,
                 downloadPath: getDownloadPath(product.id)
             }));
 
@@ -92,7 +95,7 @@ class ProductAPI {
                 ...response.data,
                 name: response.data.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "ACT Series 10-200kVA Tower UPS" : response.data.id === ACS_SERIES_ID ? ACS_SERIES_NAME : response.data.name,
                 powerRange: response.data.id === "131055bc-e0f3-471c-b379-9f2d92f1814d" ? "10-200kVA" : response.data.powerRange,
-                image: response.data.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : response.data.id === ACS_SERIES_ID ? ACS_SERIES_IMAGE : response.data.image,
+                image: response.data.id === ACT_SERIES_ID ? ACT_SERIES_IMAGE : response.data.id === ACS_SERIES_ID ? ACS_SERIES_IMAGE : response.data.id === ACS620_SERIES_ID ? ACS620_SERIES_IMAGE : response.data.image,
                 // ACT Series: hide the "Power Module Diagram" section (backend diagram belongs to another product)
                 diagrams: response.data.id === ACT_SERIES_ID ? [] : response.data.diagrams,
                 downloadPath: getDownloadPath(response.data.id)

@@ -326,26 +326,14 @@ const ProductSidebar = () => {
                 }
             }
 
-            // Cập nhật URL mà không reload trang
-            const url = new URL(window.location.href);
-            const params = new URLSearchParams(url.search);
-
+            // Cập nhật URL mà không reload trang (mã hóa đúng 1 lần, dùng %20)
             if (normalizedCategory) {
-                // Mã hóa category với %20 cho URL
-                const categoryParam = encodeURIComponent(normalizedCategory);
-                params.set('category', categoryParam);
-
+                let search = `?category=${encodeURIComponent(normalizedCategory)}`;
                 if (normalizedSubcategory) {
-                    // Mã hóa subcategory với %20 cho URL
-                    const subcategoryParam = normalizedSubcategory.replace(/ /g, '%20');
-                    params.set('subcategory', subcategoryParam);
-                } else {
-                    params.delete('subcategory');
+                    search += `&subcategory=${encodeURIComponent(normalizedSubcategory)}`;
                 }
+                window.history.pushState({}, '', `${window.location.pathname}${search}`);
             }
-
-            url.search = params.toString();
-            window.history.pushState({}, '', url.toString());
         }
     };
 
