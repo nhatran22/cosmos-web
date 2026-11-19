@@ -105,7 +105,7 @@ export default function ProductSection() {
                         </div>
                         <div className="relative h-48 md:h-64">
                             <Image
-                                src="/products/ups-power-supply.png?height=300&width=500"
+                                src="/products/cosmos/home-ups-power-supply.png?height=300&width=500"
                                 alt="UPS Power Supply"
                                 fill
                                 className="object-contain p-4"
@@ -129,14 +129,14 @@ export default function ProductSection() {
                             </div>
                             <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-4 md:mt-0">
                                 <Image
-                                    src="/products/hybrid-inverter-1.png"
+                                    src="/products/cosmos/home-hybrid-inverter-1.png"
                                     width={160}
                                     height={120}
                                     alt="Hybrid Inverter 1"
                                     className="object-contain"
                                 />
                                 <Image
-                                    src="/products/hybrid-inverter-2.png"
+                                    src="/products/cosmos/home-hybrid-inverter-2.png"
                                     width={140}
                                     height={40}
                                     alt="Hybrid Inverter 2"
@@ -150,7 +150,7 @@ export default function ProductSection() {
                         >
                             <div className="md:pl-8">
                                 <Image
-                                    src="/products/industrial-converter.png"
+                                    src="/products/cosmos/home-industrial-converter.png"
                                     width={100}
                                     height={40}
                                     alt="Industrial Converter"
@@ -193,7 +193,7 @@ export default function ProductSection() {
                         <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-x-10 p-4 md:p-0">
                             <div className="relative h-48 w-full md:h-64 md:w-auto">
                                 <Image
-                                    src="/products/modular-data-center.png"
+                                    src="/products/cosmos/home-modular-data-center.png"
                                     height={300}
                                     width={240}
                                     alt="Modular Data Center"
@@ -218,7 +218,7 @@ export default function ProductSection() {
                         <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-x-10 p-4 md:p-0">
                             <div className="relative h-48 w-full md:h-64 md:w-auto">
                                 <Image
-                                    src="/products/precision-cooling.png"
+                                    src="/products/cosmos/home-precision-cooling.png"
                                     height={280}
                                     width={120}
                                     alt="Precision Cooling"

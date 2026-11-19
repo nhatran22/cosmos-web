@@ -1,5 +1,6 @@
 import { AdditionalHeader } from '@/app/interface/navigation';
 import { privateAPIHttpServices, IResponse } from '../http-service';
+import { toCosmosImage } from './product.api';
 
 export interface ICategory {
     id: string;
@@ -25,7 +26,11 @@ class CategoryAPI {
     static async getCategories(): Promise<AdditionalHeader[]> {
         try {
             const response = await privateAPIHttpServices.httpGetRequest<AdditionalHeader[]>(this.BASE_URL);
-            return response.data;
+            // Swap ACwatt-branded subcategory photos for the COSMOS RF versions
+            return response.data.map((cat) => ({
+                ...cat,
+                subCategory: (cat.subCategory || []).map((sub: any) => ({ ...sub, image: toCosmosImage(sub.image) })),
+            }));
         } catch (error) {
             console.error('Error fetching categories:', error);
             throw error;
